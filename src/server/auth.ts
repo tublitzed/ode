@@ -28,11 +28,16 @@ type AuthOptions = {
 
 export type IsPublicPath = AuthOptions["isPublicPath"];
 
+const sha256 = (value: string) => createHash("sha256").update(value).digest();
+
+const safeEqual = (a: string, b: string) =>
+  timingSafeEqual(sha256(a), sha256(b));
+
 const sign = (key: Buffer, value: string) =>
   createHmac("sha256", key).update(value).digest("base64url");
 
 export const deriveSessionKey = (password: string) =>
-  createHash("sha256").update(`session:${password}`).digest();
+  sha256(`session:${password}`);
 
 export const createSessionToken = (key: Buffer, now = Date.now()) => {
   const issuedAt = String(now);
@@ -49,9 +54,7 @@ export const isValidSessionToken = (
     return false;
   }
 
-  const expected = Buffer.from(sign(key, issuedAt));
-  const actual = Buffer.from(signature);
-  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
+  if (!safeEqual(signature, sign(key, issuedAt))) {
     return false;
   }
 
@@ -125,7 +128,10 @@ export const createAuth = ({
 
   router.post("/api/login", express.json(), (req, res) => {
     const provided: unknown = req.body?.password;
-    if (typeof provided !== "string" || provided.trim() !== expectedPassword) {
+    if (
+      typeof provided !== "string" ||
+      !safeEqual(provided.trim(), expectedPassword)
+    ) {
       res.sendStatus(401);
       return;
     }
