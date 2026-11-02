@@ -29,6 +29,9 @@ See @package.json for all available commands for this project.
 ## TypeScript/Javascript
 - Prefer arrow functions.
 
+## Working with 3rd party libs
+- If you see a method marked as deprecated, don't use it without good reason to do so (and ask first).
+
 ## Communication
 
 - Communicate with humans in a concise manner. Be as short and to the point as possible.
@@ -41,9 +44,11 @@ See @package.json for all available commands for this project.
 - If you need to run the app within a worktree, run `npm run worktree` to sync required files.
 
 # Workflow
+- Do not run the app against the default PORT, use a different port to avoid conflicting with other developers. When you are done running the app, release the port.
 - Be sure to run linters and fix issues when you're done making a series of code changes.
 - Be sure to typecheck when you're done making a series of code changes.
 
 # Tests
 - Don't add them unless you are asked to do so.
 - Prefer running single tests, and not the whole test suite, for performance.
+- Follow the app's directory structure where possible when adding new test files.

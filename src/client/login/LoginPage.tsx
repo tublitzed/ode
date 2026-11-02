@@ -1,14 +1,8 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -19,7 +13,7 @@ const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(undefined);
     setIsSubmitting(true);
@@ -52,14 +46,10 @@ const LoginPage = () => {
   return (
     <main className="flex min-h-svh items-center justify-center p-4">
       <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Log in</CardTitle>
-          <CardDescription>Enter the password to continue.</CardDescription>
-        </CardHeader>
         <CardContent>
           <form className="grid gap-4" onSubmit={handleSubmit}>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Enter the password to continue:</Label>
               <Input
                 aria-describedby={error ? "password-error" : undefined}
                 aria-invalid={error ? true : undefined}
@@ -82,7 +72,7 @@ const LoginPage = () => {
               )}
             </div>
             <Button className="w-full" disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Logging in…" : "Log in"}
+              {isSubmitting ? "Logging in…" : "Log in to Ode"}
             </Button>
           </form>
         </CardContent>

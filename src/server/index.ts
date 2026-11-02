@@ -31,5 +31,5 @@ server.on("error", (error) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`Server running: ${process.env.APP_HOST}:${port}`);
 });

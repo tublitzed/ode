@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { collectEntryFiles } from "./manifest.ts";
-import type { Manifest } from "./manifest.ts";
+import { collectEntryFiles } from "@/server/manifest.ts";
+import type { Manifest } from "@/server/manifest.ts";
 
 const manifest: Manifest = {
   "_shared-react.js": { file: "assets/shared-react.js" },

@@ -1,13 +1,13 @@
 import request from "supertest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createApp } from "./app.ts";
+import { createApp } from "@/server/app.ts";
 import {
   createSessionToken,
   deriveSessionKey,
   isDevPublicPath,
   SESSION_MAX_AGE_MS,
-} from "./auth.ts";
+} from "@/server/auth.ts";
 
 const PASSWORD = "correct horse";
 

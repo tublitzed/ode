@@ -1,6 +1,7 @@
 const FALLBACK_PATH = "/";
 const PARSE_BASE = "http://same-origin.invalid";
 
+// Only allow next path if same domain.
 export const safeNextPath = (next: string | null) => {
   if (!next?.startsWith("/")) {
     return FALLBACK_PATH;
