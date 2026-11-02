@@ -6,14 +6,17 @@ import {
   createSessionToken,
   deriveSessionKey,
   isDevPublicPath,
+  SESSION_COOKIE,
   SESSION_MAX_AGE_MS,
 } from "@/server/auth.ts";
 
 const PASSWORD = "correct horse";
 
+const isTestPublicPath = (path: string) => path.startsWith("/public/");
+
 const buildApp = (password = PASSWORD) =>
   createApp({
-    isPublicPath: isDevPublicPath,
+    isPublicPath: isTestPublicPath,
     mountClient: (app) => {
       app.use((_req, res) => {
         res.type("html").send("client");
@@ -24,7 +27,7 @@ const buildApp = (password = PASSWORD) =>
   });
 
 const sessionCookieFor = (password: string, now = Date.now()) =>
-  `session=${createSessionToken(deriveSessionKey(password), now)}`;
+  `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(password), now)}`;
 
 const loginAndGetCookie = async () => {
   const app = await buildApp();
@@ -43,7 +46,7 @@ describe("createApp", () => {
   it("throws when the password is missing", async () => {
     await expect(
       createApp({
-        isPublicPath: isDevPublicPath,
+        isPublicPath: isTestPublicPath,
         mountClient: () => {},
         password: undefined,
         secureCookies: false,
@@ -75,34 +78,18 @@ describe("session gate without a cookie", () => {
     expect(res.headers.location).toBe("/login?next=%2Ffoo%3Fx%3D1");
   });
 
-  it("returns 401 for app code", async () => {
+  it("returns 401 for a non-public file", async () => {
     const app = await buildApp();
 
-    const res = await request(app).get("/src/client/app/main.tsx");
+    const res = await request(app).get("/private/app.js");
 
     expect(res.status).toBe(401);
   });
 
-  it("returns 401 for app code reached via path traversal", async () => {
+  it("returns 401 for a non-public file reached via path traversal", async () => {
     const app = await buildApp();
 
-    const res = await request(app).get("/src/client/login/%2E%2E/app/main.tsx");
-
-    expect(res.status).toBe(401);
-  });
-
-  it("returns 401 for app code requested with different casing", async () => {
-    const app = await buildApp();
-
-    const res = await request(app).get("/src/Client/App/main.tsx");
-
-    expect(res.status).toBe(401);
-  });
-
-  it("returns 401 for server source", async () => {
-    const app = await buildApp();
-
-    const res = await request(app).get("/src/server/auth.ts");
+    const res = await request(app).get("/public/%2E%2E/private/app.js");
 
     expect(res.status).toBe(401);
   });
@@ -141,20 +128,32 @@ describe("public paths", () => {
     expect(res.status).toBe(200);
   });
 
-  it.each([
-    "/@vite/client",
-    "/node_modules/.vite/deps/react.js",
-    "/src/client/login/main.tsx",
-    "/src/components/ui/button.tsx",
-    "/src/index.css",
-    "/src/lib/utils.ts",
-  ])("lets %s through without a session", async (path) => {
+  it("lets a public path through without a session", async () => {
     const app = await buildApp();
 
-    const res = await request(app).get(path);
+    const res = await request(app).get("/public/login.js");
 
     expect(res.status).toBe(200);
   });
+});
+
+describe("isDevPublicPath", () => {
+  it.each([
+    "/@vite/client",
+    "/@react-refresh",
+    "/node_modules/.vite/deps/react.js",
+    "/src/client/app/main.tsx",
+    "/src/index.css",
+  ])("treats file %s as public", (path) => {
+    expect(isDevPublicPath(path)).toBe(true);
+  });
+
+  it.each(["/", "/foo", "/login/", "/api/anything", "/api/data.json"])(
+    "keeps %s behind the login",
+    (path) => {
+      expect(isDevPublicPath(path)).toBe(false);
+    },
+  );
 });
 
 describe("POST /api/login", () => {
@@ -167,7 +166,7 @@ describe("POST /api/login", () => {
 
     expect(res.status).toBe(204);
     const [cookie] = res.get("Set-Cookie") ?? [];
-    expect(cookie).toMatch(/^session=\d+\.[\w-]+;/);
+    expect(cookie).toMatch(new RegExp(`^${SESSION_COOKIE}=\\d+\\.[\\w-]+;`));
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("SameSite=Lax");
     expect(cookie).toContain(`Max-Age=${SESSION_MAX_AGE_MS / 1000}`);
@@ -176,7 +175,7 @@ describe("POST /api/login", () => {
 
   it("sets a Secure cookie when secureCookies is on", async () => {
     const app = await createApp({
-      isPublicPath: isDevPublicPath,
+      isPublicPath: isTestPublicPath,
       mountClient: () => {},
       password: PASSWORD,
       secureCookies: true,
@@ -242,7 +241,7 @@ describe("session gate with a cookie", () => {
     const app = await buildApp();
 
     const res = await request(app)
-      .get("/src/client/app/main.tsx")
+      .get("/private/app.js")
       .set("Cookie", sessionCookieFor(PASSWORD));
 
     expect(res.status).toBe(200);
@@ -266,7 +265,7 @@ describe("session gate with a cookie", () => {
 
     const res = await request(app)
       .get("/api/anything")
-      .set("Cookie", `session=${Number(issuedAt) + 1}.${signature}`);
+      .set("Cookie", `${SESSION_COOKIE}=${Number(issuedAt) + 1}.${signature}`);
 
     expect(res.status).toBe(401);
   });
@@ -278,7 +277,7 @@ describe("session gate with a cookie", () => {
 
       const res = await request(app)
         .get("/api/anything")
-        .set("Cookie", `session=${token}`);
+        .set("Cookie", `${SESSION_COOKIE}=${token}`);
 
       expect(res.status).toBe(401);
     },
@@ -339,7 +338,7 @@ describe("POST /api/logout", () => {
 
     expect(res.status).toBe(204);
     const [cleared] = res.get("Set-Cookie") ?? [];
-    expect(cleared).toMatch(/^session=;/);
+    expect(cleared).toMatch(new RegExp(`^${SESSION_COOKIE}=;`));
     expect(cleared).toContain("Path=/");
     expect(cleared).toContain("Expires=Thu, 01 Jan 1970");
   });
@@ -350,6 +349,8 @@ describe("POST /api/logout", () => {
     const res = await request(app).post("/api/logout");
 
     expect(res.status).toBe(204);
-    expect(res.get("Set-Cookie")?.[0]).toMatch(/^session=;/);
+    expect(res.get("Set-Cookie")?.[0]).toMatch(
+      new RegExp(`^${SESSION_COOKIE}=;`),
+    );
   });
 });

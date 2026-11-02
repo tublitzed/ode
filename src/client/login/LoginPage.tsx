@@ -54,6 +54,7 @@ const LoginPage = () => {
                 aria-describedby={error ? "password-error" : undefined}
                 aria-invalid={error ? true : undefined}
                 autoComplete="current-password"
+                autoFocus
                 id="password"
                 name="password"
                 onChange={(event) => setPassword(event.target.value)}

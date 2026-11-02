@@ -4,21 +4,10 @@ import type { Request, RequestHandler, Router } from "express";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { extname, posix } from "node:path";
 
-export const SESSION_COOKIE = "session";
-export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+export const SESSION_COOKIE = "ode_session";
+export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const PUBLIC_PATHS = new Set(["/api/login", "/login"]);
-
-const DEV_PUBLIC_PREFIXES = [
-  "/@id/",
-  "/@react-refresh",
-  "/@vite/",
-  "/node_modules/",
-  "/src/client/login/",
-  "/src/components/",
-  "/src/index.css",
-  "/src/lib/",
-];
 
 type AuthOptions = {
   isPublicPath: (path: string) => boolean;
@@ -75,7 +64,7 @@ export const normalizePath = (path: string) => {
 };
 
 export const isDevPublicPath: IsPublicPath = (path) =>
-  DEV_PUBLIC_PREFIXES.some((prefix) => path.startsWith(prefix));
+  !path.startsWith("/api/") && (path.startsWith("/@") || extname(path) !== "");
 
 const isPageRequest = (req: Request, path: string) => {
   if (req.method !== "GET" || path.startsWith("/api/")) {
