@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { readFile } from "node:fs/promises";
+import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { createServer as createViteServer } from "vite";
 
@@ -8,11 +9,12 @@ import { isDevPublicPath } from "./auth.ts";
 
 const port = Number(process.env.PORT ?? 3000);
 const indexHtmlPath = resolve(process.cwd(), "index.html");
+const server = createServer();
 
 const mountViteDev = async (app: Express) => {
   const vite = await createViteServer({
     appType: "custom",
-    server: { middlewareMode: true },
+    server: { hmr: { server }, middlewareMode: true },
   });
 
   app.use(vite.middlewares);
@@ -41,6 +43,13 @@ const app = await createApp({
   secureCookies: process.env.NODE_ENV === "production",
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+server.on("request", app);
+
+server.on("error", (error) => {
+  console.error(error);
+  process.exit(1);
+});
+
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
