@@ -328,3 +328,28 @@ describe("session gate with a cookie", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("POST /api/logout", () => {
+  it("returns 204 and expires the session cookie", async () => {
+    const { app, cookie } = await loginAndGetCookie();
+
+    const res = await request(app)
+      .post("/api/logout")
+      .set("Cookie", cookie ?? "");
+
+    expect(res.status).toBe(204);
+    const [cleared] = res.get("Set-Cookie") ?? [];
+    expect(cleared).toMatch(/^session=;/);
+    expect(cleared).toContain("Path=/");
+    expect(cleared).toContain("Expires=Thu, 01 Jan 1970");
+  });
+
+  it("works without a session so a stale cookie can always be cleared", async () => {
+    const app = await buildApp();
+
+    const res = await request(app).post("/api/logout");
+
+    expect(res.status).toBe(204);
+    expect(res.get("Set-Cookie")?.[0]).toMatch(/^session=;/);
+  });
+});

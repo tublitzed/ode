@@ -7,6 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const logOut = async () => {
+  try {
+    await fetch("/api/logout", { method: "POST" });
+  } finally {
+    window.location.assign("/login");
+  }
+};
+
 const App = () => (
   <main className="flex min-h-svh items-center justify-center p-4">
     <Card className="w-full max-w-sm">
@@ -15,7 +23,9 @@ const App = () => (
         <CardDescription>The ode app skeleton is running.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button className="w-full">Get started</Button>
+        <Button className="w-full" onClick={logOut} variant="outline">
+          Log out
+        </Button>
       </CardContent>
     </Card>
   </main>

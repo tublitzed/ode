@@ -124,6 +124,13 @@ export const createAuth = ({
     res.sendStatus(401);
   };
 
+  const cookieOptions = {
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+    secure: secureCookies,
+  } as const;
+
   const router: Router = express.Router();
 
   router.post("/api/login", express.json(), (req, res) => {
@@ -137,12 +144,14 @@ export const createAuth = ({
     }
 
     res.cookie(SESSION_COOKIE, createSessionToken(key), {
-      httpOnly: true,
+      ...cookieOptions,
       maxAge: SESSION_MAX_AGE_MS,
-      path: "/",
-      sameSite: "lax",
-      secure: secureCookies,
     });
+    res.sendStatus(204);
+  });
+
+  router.post("/api/logout", (_req, res) => {
+    res.clearCookie(SESSION_COOKIE, cookieOptions);
     res.sendStatus(204);
   });
 
