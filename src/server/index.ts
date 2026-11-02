@@ -1,48 +1,26 @@
-import type { Express } from "express";
-import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
-import { createServer as createViteServer } from "vite";
 
 import { createApp } from "./app.ts";
-import { isDevPublicPath } from "./auth.ts";
 
+const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT ?? 3000);
-const indexHtmlPath = resolve(process.cwd(), "index.html");
-const loginHtmlPath = resolve(process.cwd(), "login.html");
 const server = createServer();
 
-const mountViteDev = async (app: Express) => {
-  const vite = await createViteServer({
-    appType: "custom",
-    server: { hmr: { server }, middlewareMode: true },
-  });
+const createClient = async () => {
+  if (isProduction) {
+    const { createProdClient } = await import("./prod.ts");
+    return createProdClient(resolve(process.cwd(), "dist", "client"));
+  }
 
-  app.use(vite.middlewares);
-
-  app.use(async (req, res, next) => {
-    if (req.method !== "GET") {
-      next();
-      return;
-    }
-
-    try {
-      const htmlPath = req.path === "/login" ? loginHtmlPath : indexHtmlPath;
-      const template = await readFile(htmlPath, "utf-8");
-      const html = await vite.transformIndexHtml(req.originalUrl, template);
-      res.status(200).type("html").send(html);
-    } catch (error) {
-      vite.ssrFixStacktrace(error as Error);
-      next(error);
-    }
-  });
+  const { createDevClient } = await import("./dev.ts");
+  return createDevClient(server);
 };
 
 const app = await createApp({
-  isPublicPath: isDevPublicPath,
-  mountClient: mountViteDev,
+  ...(await createClient()),
   password: process.env.APP_PASSWORD,
-  secureCookies: process.env.NODE_ENV === "production",
+  secureCookies: isProduction,
 });
 
 server.on("request", app);

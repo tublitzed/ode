@@ -5,6 +5,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
+    emptyOutDir: true,
+    manifest: true,
+    outDir: "dist/client",
     rolldownOptions: {
       input: {
         app: fileURLToPath(new URL("./index.html", import.meta.url)),
