@@ -65,7 +65,7 @@ export const isValidSessionToken = (
 
 export const normalizePath = (path: string) => {
   try {
-    return posix.normalize(decodeURIComponent(path)).toLowerCase();
+    return posix.normalize(decodeURIComponent(path));
   } catch {
     return undefined;
   }
