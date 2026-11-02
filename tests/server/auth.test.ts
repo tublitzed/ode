@@ -14,8 +14,11 @@ const PASSWORD = "correct horse";
 
 const isTestPublicPath = (path: string) => path.startsWith("/public/");
 
+const generateOde = async () => ({ ode: "An ode", status: "ode" as const });
+
 const buildApp = (password = PASSWORD) =>
   createApp({
+    generateOde,
     isPublicPath: isTestPublicPath,
     mountClient: (app) => {
       app.use((_req, res) => {
@@ -46,6 +49,7 @@ describe("createApp", () => {
   it("throws when the password is missing", async () => {
     await expect(
       createApp({
+        generateOde,
         isPublicPath: isTestPublicPath,
         mountClient: () => {},
         password: undefined,
@@ -175,6 +179,7 @@ describe("POST /api/login", () => {
 
   it("sets a Secure cookie when secureCookies is on", async () => {
     const app = await createApp({
+      generateOde,
       isPublicPath: isTestPublicPath,
       mountClient: () => {},
       password: PASSWORD,

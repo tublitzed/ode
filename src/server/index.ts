@@ -1,7 +1,8 @@
 import { createServer } from "node:http";
 
-import { createApp } from "./app.ts";
-import { createClient } from "./client.ts";
+import { createApp } from "#/server/app.ts";
+import { createClient } from "#/server/client.ts";
+import { createOdeGenerator } from "#/server/generateOde.ts";
 
 const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT ?? 3000);
@@ -9,6 +10,7 @@ const server = createServer();
 
 const app = await createApp({
   ...(await createClient({ isProduction, server })),
+  generateOde: createOdeGenerator(),
   password: process.env.APP_PASSWORD,
   secureCookies: isProduction,
 });

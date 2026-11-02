@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 
 import "@/index.css";
 
-import LoginPage from "./LoginPage";
+import LoginPage from "@/client/login/LoginPage";
 
 const root = document.getElementById("root");
 

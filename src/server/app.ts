@@ -1,10 +1,13 @@
 import express from "express";
 import type { Express } from "express";
 
-import { createAuth } from "./auth.ts";
-import type { IsPublicPath } from "./auth.ts";
+import { createAuth } from "#/server/auth.ts";
+import type { IsPublicPath } from "#/server/auth.ts";
+import type { GenerateOde } from "#/server/generateOde.ts";
+import { createAuthRouter, createOdesRouter } from "#/server/routes/routes.ts";
 
 type AppOptions = {
+  generateOde: GenerateOde;
   isPublicPath: IsPublicPath;
   mountClient: (app: Express) => Promise<void> | void;
   password: string | undefined;
@@ -12,21 +15,22 @@ type AppOptions = {
 };
 
 export const createApp = async ({
+  generateOde,
   isPublicPath,
   mountClient,
   password,
   secureCookies,
 }: AppOptions) => {
-  const { gate, router } = createAuth({
+  const { expectedPassword, gate, key } = createAuth({
     isPublicPath,
     password,
-    secureCookies,
   });
 
   const app = express();
 
-  app.use(router);
+  app.use(createAuthRouter({ expectedPassword, key, secureCookies }));
   app.use(gate);
+  app.use(createOdesRouter(generateOde));
 
   await mountClient(app);
 

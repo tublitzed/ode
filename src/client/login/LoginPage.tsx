@@ -1,12 +1,11 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
+import { safeNextPath } from "@/client/login/safeNextPath";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { safeNextPath } from "./safeNextPath";
 
 const LoginPage = () => {
   const [error, setError] = useState<string>();

@@ -1,6 +1,5 @@
 import { parseCookie } from "cookie";
-import express from "express";
-import type { Request, RequestHandler, Router } from "express";
+import type { Request, RequestHandler } from "express";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { extname, posix } from "node:path";
 
@@ -12,14 +11,13 @@ const PUBLIC_PATHS = new Set(["/api/login", "/login"]);
 type AuthOptions = {
   isPublicPath: (path: string) => boolean;
   password: string | undefined;
-  secureCookies: boolean;
 };
 
 export type IsPublicPath = AuthOptions["isPublicPath"];
 
 const sha256 = (value: string) => createHash("sha256").update(value).digest();
 
-const safeEqual = (a: string, b: string) =>
+export const safeEqual = (a: string, b: string) =>
   timingSafeEqual(sha256(a), sha256(b));
 
 const sign = (key: Buffer, value: string) =>
@@ -76,11 +74,7 @@ const isPageRequest = (req: Request, path: string) => {
   );
 };
 
-export const createAuth = ({
-  isPublicPath,
-  password,
-  secureCookies,
-}: AuthOptions) => {
+export const createAuth = ({ isPublicPath, password }: AuthOptions) => {
   const expectedPassword = password?.trim();
   if (!expectedPassword) {
     throw new Error("APP_PASSWORD must be set to a non-blank value.");
@@ -113,36 +107,5 @@ export const createAuth = ({
     res.sendStatus(401);
   };
 
-  const cookieOptions = {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: secureCookies,
-  } as const;
-
-  const router: Router = express.Router();
-
-  router.post("/api/login", express.json(), (req, res) => {
-    const provided: unknown = req.body?.password;
-    if (
-      typeof provided !== "string" ||
-      !safeEqual(provided.trim(), expectedPassword)
-    ) {
-      res.sendStatus(401);
-      return;
-    }
-
-    res.cookie(SESSION_COOKIE, createSessionToken(key), {
-      ...cookieOptions,
-      maxAge: SESSION_MAX_AGE_MS,
-    });
-    res.sendStatus(204);
-  });
-
-  router.post("/api/logout", (_req, res) => {
-    res.clearCookie(SESSION_COOKIE, cookieOptions);
-    res.sendStatus(204);
-  });
-
-  return { gate, router };
+  return { expectedPassword, gate, key };
 };

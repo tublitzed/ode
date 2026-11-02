@@ -4,10 +4,10 @@ import { readFile } from "node:fs/promises";
 import type { Server } from "node:http";
 import { extname, join } from "node:path";
 
-import { isDevPublicPath } from "./auth.ts";
-import type { IsPublicPath } from "./auth.ts";
-import { collectEntryFiles } from "./manifest.ts";
-import type { Manifest } from "./manifest.ts";
+import { isDevPublicPath } from "#/server/auth.ts";
+import type { IsPublicPath } from "#/server/auth.ts";
+import { collectEntryFiles } from "#/server/manifest.ts";
+import type { Manifest } from "#/server/manifest.ts";
 
 type ClientOptions = {
   isProduction: boolean;
