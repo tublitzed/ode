@@ -9,6 +9,7 @@ import { isDevPublicPath } from "./auth.ts";
 
 const port = Number(process.env.PORT ?? 3000);
 const indexHtmlPath = resolve(process.cwd(), "index.html");
+const loginHtmlPath = resolve(process.cwd(), "login.html");
 const server = createServer();
 
 const mountViteDev = async (app: Express) => {
@@ -26,7 +27,8 @@ const mountViteDev = async (app: Express) => {
     }
 
     try {
-      const template = await readFile(indexHtmlPath, "utf-8");
+      const htmlPath = req.path === "/login" ? loginHtmlPath : indexHtmlPath;
+      const template = await readFile(htmlPath, "utf-8");
       const html = await vite.transformIndexHtml(req.originalUrl, template);
       res.status(200).type("html").send(html);
     } catch (error) {

@@ -11,9 +11,6 @@ type AppOptions = {
   secureCookies: boolean;
 };
 
-const LOGIN_PLACEHOLDER_HTML =
-  "<!doctype html><html><head><title>Login</title></head><body>Login</body></html>";
-
 export const createApp = async ({
   isPublicPath,
   mountClient,
@@ -30,10 +27,6 @@ export const createApp = async ({
 
   app.use(router);
   app.use(gate);
-
-  app.get("/login", (_req, res) => {
-    res.type("html").send(LOGIN_PLACEHOLDER_HTML);
-  });
 
   await mountClient(app);
 
