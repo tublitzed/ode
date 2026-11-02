@@ -6,7 +6,10 @@
     "suspicious": "warn"
   },
   "rules": {
-    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+    "import/no-unassigned-import": [
+      "warn",
+      { "allow": ["**/*.css", "@/client/instrument"] }
+    ],
     "jsx-a11y/no-autofocus": ["error", { "ignoreNonDOM": true }],
     "no-unused-vars": "error",
     "oxc/no-async-endpoint-handlers": "off",
