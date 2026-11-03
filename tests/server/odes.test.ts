@@ -135,6 +135,25 @@ describe("POST /api/odes", () => {
     expect(generateOde).toHaveBeenCalledWith("Tomatoes");
   });
 
+  it("returns a decline with suggestions without reporting it", async () => {
+    const { app, generateOde } = await buildApp();
+    const declined = {
+      reason: "That's not a subject for an ode.",
+      status: "declined" as const,
+      suggestions: ["Tomatoes", "Rain", "My mug"],
+    };
+    generateOde.mockResolvedValueOnce(declined);
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({ topic: "asdfghjkl" });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(declined);
+    expect(captureException).not.toHaveBeenCalled();
+  });
+
   it("trims the topic before generating", async () => {
     const { app, generateOde } = await buildApp();
 

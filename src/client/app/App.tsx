@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import OdeDeclined from "@/client/app/OdeDeclined";
 import OdeForm from "@/client/app/OdeForm";
 import OdeProgress from "@/client/app/OdeProgress";
 import OdeResult from "@/client/app/OdeResult";
@@ -7,6 +8,7 @@ import { requestOde } from "@/client/app/requestOde";
 import { Button } from "@/components/ui/button";
 
 type View =
+  | { reason: string; status: "declined"; suggestions: string[] }
   | { message: string; status: "error" }
   | { status: "generating"; topic: string }
   | { status: "idle" }
@@ -24,15 +26,10 @@ const App = () => {
   const [topic, setTopic] = useState("");
   const [view, setView] = useState<View>({ status: "idle" });
 
-  const handleSubmit = async () => {
-    const trimmedTopic = topic.trim();
-    if (!trimmedTopic) {
-      return;
-    }
+  const generate = async (nextTopic: string) => {
+    setView({ status: "generating", topic: nextTopic });
 
-    setView({ status: "generating", topic: trimmedTopic });
-
-    const result = await requestOde(trimmedTopic);
+    const result = await requestOde(nextTopic);
 
     if (result.status === "unauthorized") {
       window.location.assign("/login?next=%2F");
@@ -44,7 +41,30 @@ const App = () => {
       return;
     }
 
-    setView({ ode: result.ode, status: "ode", topic: trimmedTopic });
+    if (result.status === "declined") {
+      setView({
+        reason: result.reason,
+        status: "declined",
+        suggestions: result.suggestions,
+      });
+      return;
+    }
+
+    setView({ ode: result.ode, status: "ode", topic: nextTopic });
+  };
+
+  const handleSubmit = () => {
+    const trimmedTopic = topic.trim();
+    if (!trimmedTopic) {
+      return;
+    }
+
+    generate(trimmedTopic);
+  };
+
+  const handleSelectSuggestion = (suggestion: string) => {
+    setTopic(suggestion);
+    generate(suggestion);
   };
 
   const handleTopicChange = (nextTopic: string) => {
@@ -52,7 +72,7 @@ const App = () => {
     setView({ status: "idle" });
   };
 
-  const handleWriteAnother = () => {
+  const startOver = () => {
     setTopic("");
     setView({ status: "idle" });
   };
@@ -62,11 +82,22 @@ const App = () => {
       return <OdeProgress topic={view.topic} />;
     }
 
+    if (view.status === "declined") {
+      return (
+        <OdeDeclined
+          onEnterDifferentTopic={startOver}
+          onSelectSuggestion={handleSelectSuggestion}
+          reason={view.reason}
+          suggestions={view.suggestions}
+        />
+      );
+    }
+
     if (view.status === "ode") {
       return (
         <OdeResult
           ode={view.ode}
-          onWriteAnother={handleWriteAnother}
+          onWriteAnother={startOver}
           topic={view.topic}
         />
       );
