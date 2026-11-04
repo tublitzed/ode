@@ -20,8 +20,6 @@ type View =
   | { status: "loading" }
   | { status: "notFound" };
 
-const NOT_FOUND_STATUS = 404;
-
 const renderView = (view: View) => {
   if (view.status === "loading") {
     return <p className="text-sm text-muted-foreground">Finding this ode…</p>;
@@ -85,7 +83,7 @@ const SharedOdePage = ({ id }: SharedOdePageProps) => {
         return;
       }
 
-      if (result.status === NOT_FOUND_STATUS) {
+      if (result.status === 404) {
         setView({ status: "notFound" });
         return;
       }

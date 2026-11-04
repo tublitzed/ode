@@ -3,11 +3,7 @@ import type { Express } from "express";
 
 import { createGate } from "#/server/auth.ts";
 import type { IsPublicPath } from "#/server/auth.ts";
-import {
-  authRouter,
-  odesRouter,
-  sharesRouter,
-} from "#/server/routes/routes.ts";
+import { apiRouter, authRouter } from "#/server/routes/routes.ts";
 
 type AppOptions = {
   isPublicPath: IsPublicPath;
@@ -22,8 +18,7 @@ export const createApp = async ({ isPublicPath, mountClient }: AppOptions) => {
 
   app.use(authRouter);
   app.use(gate);
-  app.use(odesRouter);
-  app.use(sharesRouter);
+  app.use(apiRouter);
 
   await mountClient(app);
 

@@ -23,8 +23,6 @@ const UNREACHABLE = {
   status: 502,
 };
 
-const OVERLOADED_STATUS = 529;
-
 const toFailure = (error: unknown) => {
   if (error instanceof APIConnectionError) {
     return UNREACHABLE;
@@ -35,7 +33,7 @@ const toFailure = (error: unknown) => {
   }
 
   if (error instanceof InternalServerError) {
-    return error.status === OVERLOADED_STATUS ? BUSY : UNREACHABLE;
+    return error.status === 529 ? BUSY : UNREACHABLE;
   }
 
   return UNEXPECTED;

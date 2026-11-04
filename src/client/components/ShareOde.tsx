@@ -21,8 +21,6 @@ type View =
   | { status: "idle" }
   | { status: "sharing" };
 
-const UNAUTHORIZED_STATUS = 401;
-
 const ShareOde = ({ ode, topic }: ShareOdeProps) => {
   const [link, setLink] = useState<string>();
   const [view, setView] = useState<View>({ status: "idle" });
@@ -34,7 +32,7 @@ const ShareOde = ({ ode, topic }: ShareOdeProps) => {
       method: "POST",
     });
 
-    if (!result.ok && result.status === UNAUTHORIZED_STATUS) {
+    if (!result.ok && result.status === 401) {
       window.location.assign("/login?next=%2F");
       return undefined;
     }

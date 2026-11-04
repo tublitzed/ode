@@ -1,34 +1,14 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 import { randomBytes } from "node:crypto";
 
-import { PrismaClient } from "#/generated/prisma/client.ts";
+import { getDb } from "#/server/db.ts";
 import type { SharedOde } from "#/shared/ode.ts";
 
 const ID_BYTES = 8;
 
-let client: PrismaClient | undefined;
-
-export const getDatabaseUrl = () => {
-  const databaseUrl = process.env.DATABASE_URL?.trim();
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL must be set to a non-blank value.");
-  }
-
-  return databaseUrl;
-};
-
-const getClient = () => {
-  client ??= new PrismaClient({
-    adapter: new PrismaPg({ connectionString: getDatabaseUrl() }),
-  });
-
-  return client;
-};
-
 export const createSharedOde = async ({ ode, topic }: SharedOde) => {
   const id = randomBytes(ID_BYTES).toString("hex");
 
-  await getClient().sharedOde.create({ data: { id, ode, topic } });
+  await getDb().sharedOde.create({ data: { id, ode, topic } });
 
   return id;
 };
@@ -36,7 +16,7 @@ export const createSharedOde = async ({ ode, topic }: SharedOde) => {
 export const getSharedOde = async (
   id: string,
 ): Promise<SharedOde | undefined> => {
-  const sharedOde = await getClient().sharedOde.findUnique({
+  const sharedOde = await getDb().sharedOde.findUnique({
     select: { ode: true, topic: true },
     where: { id },
   });
