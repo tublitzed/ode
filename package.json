@@ -1,7 +1,7 @@
 {
   "name": "ode",
   "version": "0.0.1",
-  "description": "making odes...with Anthropic :)",
+  "description": "making odes... with Anthropic :)",
   "private": true,
   "type": "module",
   "imports": {
@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "build-storybook": "storybook build",
     "dev": "tsx watch --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -19,6 +20,7 @@
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "start": "NODE_ENV=production node --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
+    "storybook": "storybook dev",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "worktree": "npx -y -p github:pariodot/utils worktree-sync"
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@sentry/vite-plugin": "^11.10.0",
+    "@storybook/react-vite": "^10.6.5",
     "@tailwindcss/vite": "^4.3.3",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.6",
@@ -57,6 +60,7 @@
     "oxlint": "^1.90.0",
     "prettier": "^3.9.10",
     "shadcn": "^4.23.0",
+    "storybook": "^10.6.5",
     "supertest": "^7.3.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",

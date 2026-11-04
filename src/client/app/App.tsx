@@ -4,8 +4,10 @@ import OdeDeclined from "@/client/app/OdeDeclined";
 import OdeForm from "@/client/app/OdeForm";
 import OdeProgress from "@/client/app/OdeProgress";
 import OdeResult from "@/client/app/OdeResult";
-import { requestOde } from "@/client/app/requestOde";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/client/components/ui/button";
+import { httpRequest } from "@/client/utils/httpRequest";
+import { loadLastOde, saveLastOde } from "@/client/utils/localStorage";
+import type { OdeResponse } from "@/shared/ode";
 
 type View =
   | { reason: string; status: "declined"; suggestions: string[] }
@@ -22,35 +24,45 @@ const logOut = async () => {
   }
 };
 
+const getInitialView = (): View => {
+  const lastOde = loadLastOde();
+  return lastOde ? { ...lastOde, status: "ode" } : { status: "idle" };
+};
+
 const App = () => {
   const [topic, setTopic] = useState("");
-  const [view, setView] = useState<View>({ status: "idle" });
+  const [view, setView] = useState<View>(getInitialView);
 
   const generate = async (nextTopic: string) => {
     setView({ status: "generating", topic: nextTopic });
 
-    const result = await requestOde(nextTopic);
+    const result = await httpRequest<OdeResponse>("/api/odes", {
+      body: { topic: nextTopic },
+      method: "POST",
+    });
 
-    if (result.status === "unauthorized") {
+    if (!result.ok && result.status === 401) {
       window.location.assign("/login?next=%2F");
       return;
     }
 
-    if (result.status === "error") {
+    if (!result.ok) {
       setView({ message: result.message, status: "error" });
       return;
     }
 
-    if (result.status === "declined") {
+    if (result.data.status === "declined") {
       setView({
-        reason: result.reason,
+        reason: result.data.reason,
         status: "declined",
-        suggestions: result.suggestions,
+        suggestions: result.data.suggestions,
       });
       return;
     }
 
-    setView({ ode: result.ode, status: "ode", topic: nextTopic });
+    const lastOde = { ode: result.data.ode, topic: nextTopic };
+    saveLastOde(lastOde);
+    setView({ ...lastOde, status: "ode" });
   };
 
   const handleSubmit = () => {

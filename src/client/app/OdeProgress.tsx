@@ -1,7 +1,12 @@
 import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/client/components/ui/card";
 
 const PHRASE_INTERVAL_MS = 2000;
 

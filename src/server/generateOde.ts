@@ -46,8 +46,6 @@ type ModelOutput = {
   suggestions: string[];
 };
 
-export type GenerateOde = (topic: string) => Promise<OdeResponse>;
-
 const parseOutput = (text: string): ModelOutput => {
   try {
     return JSON.parse(text);
@@ -73,40 +71,38 @@ const toOdeResponse = ({
   };
 };
 
-export const createOdeGenerator = (): GenerateOde => {
-  const client = new Anthropic({ maxRetries: 1, timeout: REQUEST_TIMEOUT_MS });
+const client = new Anthropic({ maxRetries: 1, timeout: REQUEST_TIMEOUT_MS });
 
-  return async (topic) => {
-    const response = await client.beta.messages.create({
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      max_tokens: 16000,
-      messages: [{ content: `<topic>${topic}</topic>`, role: "user" }],
-      model: MODEL,
-      output_config: {
-        effort: "medium",
-        format: { schema: OUTPUT_SCHEMA, type: "json_schema" },
-      },
-      system: SYSTEM_PROMPT,
-    });
+export const generateOde = async (topic: string): Promise<OdeResponse> => {
+  const response = await client.beta.messages.create({
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",
+    max_tokens: 16000,
+    messages: [{ content: `<topic>${topic}</topic>`, role: "user" }],
+    model: MODEL,
+    output_config: {
+      effort: "medium",
+      format: { schema: OUTPUT_SCHEMA, type: "json_schema" },
+    },
+    system: SYSTEM_PROMPT,
+  });
 
-    if (response.stop_reason === "refusal") {
-      return {
-        reason: REFUSAL_REASON,
-        status: "declined",
-        suggestions: STATIC_SUGGESTIONS,
-      };
-    }
+  if (response.stop_reason === "refusal") {
+    return {
+      reason: REFUSAL_REASON,
+      status: "declined",
+      suggestions: STATIC_SUGGESTIONS,
+    };
+  }
 
-    if (response.stop_reason !== "end_turn") {
-      throw new Error(`Unexpected stop reason: ${response.stop_reason}`);
-    }
+  if (response.stop_reason !== "end_turn") {
+    throw new Error(`Unexpected stop reason: ${response.stop_reason}`);
+  }
 
-    const text = response.content.find((block) => block.type === "text");
-    if (!text) {
-      throw new Error("Response had no text block");
-    }
+  const text = response.content.find((block) => block.type === "text");
+  if (!text) {
+    throw new Error("Response had no text block");
+  }
 
-    return toOdeResponse(parseOutput(text.text));
-  };
+  return toOdeResponse(parseOutput(text.text));
 };

@@ -16,24 +16,21 @@ type ClientOptions = {
 
 type ClientMode = {
   isPublicPath: IsPublicPath;
-  renderHtml: (file: string, url: string) => Promise<string>;
+  renderHtml: (url: string) => Promise<string>;
   serveStatic: (app: Express) => void;
 };
 
 const rootDir = process.cwd();
 const distDir = join(rootDir, "dist", "client");
 
-const htmlFileFor = (path: string) =>
-  path === "/login" ? "login.html" : "index.html";
-
 const createProdMode = async (): Promise<ClientMode> => {
   const manifestPath = join(distDir, ".vite", "manifest.json");
   const manifest: Manifest = JSON.parse(await readFile(manifestPath, "utf-8"));
-  const loginFiles = collectEntryFiles(manifest, "login.html");
+  const entryFiles = collectEntryFiles(manifest, "index.html");
 
   return {
-    isPublicPath: (path) => loginFiles.has(path),
-    renderHtml: (file) => readFile(join(distDir, file), "utf-8"),
+    isPublicPath: (path) => entryFiles.has(path),
+    renderHtml: () => readFile(join(distDir, "index.html"), "utf-8"),
     serveStatic: (app) => {
       app.use(express.static(distDir, { index: false }));
     },
@@ -49,10 +46,10 @@ const createDevMode = async (server: Server): Promise<ClientMode> => {
 
   return {
     isPublicPath: isDevPublicPath,
-    renderHtml: async (file, url) =>
+    renderHtml: async (url) =>
       vite.transformIndexHtml(
         url,
-        await readFile(join(rootDir, file), "utf-8"),
+        await readFile(join(rootDir, "index.html"), "utf-8"),
       ),
     serveStatic: (app) => {
       app.use(vite.middlewares);
@@ -77,10 +74,7 @@ export const createClient = async ({ isProduction, server }: ClientOptions) => {
         }
 
         try {
-          const html = await mode.renderHtml(
-            htmlFileFor(req.path),
-            req.originalUrl,
-          );
+          const html = await mode.renderHtml(req.originalUrl);
           res.type("html").send(html);
         } catch (error) {
           next(error);

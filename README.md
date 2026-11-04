@@ -13,3 +13,10 @@ Simple Ode builder.
 ## Hosting
 
 1. Will auto-deploy to Railway on merges to main.
+
+## Code Structure
+
+This is a simple web app with React/TypeScript on the front-end and Express for the server:
+
+- src/client - front-end components, etc.
+- src/server - 

@@ -1,9 +1,15 @@
 import type { SubmitEvent } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/client/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/client/components/ui/card";
+import { Input } from "@/client/components/ui/input";
+import { Label } from "@/client/components/ui/label";
 import { MAX_TOPIC_LENGTH } from "@/shared/ode";
 
 type OdeFormProps = {
@@ -21,6 +27,13 @@ const OdeForm = ({ error, onSubmit, onTopicChange, topic }: OdeFormProps) => {
 
   return (
     <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Welcome to Ode!</CardTitle>
+        <CardDescription>
+          Give us a word or phrase to celebrate and we'll generate odes
+          together... with Anthropic.
+        </CardDescription>
+      </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">

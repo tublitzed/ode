@@ -16,33 +16,34 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
-import type { GenerateOde } from "@/server/generateOde.ts";
+import { generateOde } from "@/server/generateOde.ts";
 import { MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
+vi.mock("@/server/generateOde.ts", () => ({ generateOde: vi.fn() }));
 
 const PASSWORD = "correct horse";
 const SECRET_DETAIL = "secret detail";
 
 const sessionCookie = `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(PASSWORD))}`;
 
-const buildApp = async () => {
-  const generateOde = vi.fn<GenerateOde>(async () => ({
-    ode: "O tomato,\nstar of earth",
-    status: "ode",
-  }));
-  const app = await createApp({
-    generateOde,
+const mockGenerateOde = vi.mocked(generateOde);
+
+const buildApp = () =>
+  createApp({
     isPublicPath: () => false,
     mountClient: () => {},
     password: PASSWORD,
     secureCookies: false,
   });
-  return { app, generateOde };
-};
 
 beforeEach(() => {
   vi.mocked(captureException).mockClear();
+  mockGenerateOde.mockReset();
+  mockGenerateOde.mockResolvedValue({
+    ode: "O tomato,\nstar of earth",
+    status: "ode",
+  });
 });
 
 describe("POST /api/odes failures", () => {
@@ -77,8 +78,8 @@ describe("POST /api/odes failures", () => {
   ])(
     "maps %s to a retryable status without reporting it",
     async (_label, error, status) => {
-      const { app, generateOde } = await buildApp();
-      generateOde.mockRejectedValueOnce(error);
+      const app = await buildApp();
+      mockGenerateOde.mockRejectedValueOnce(error);
 
       const res = await request(app)
         .post("/api/odes")
@@ -103,8 +104,8 @@ describe("POST /api/odes failures", () => {
     ],
     ["an unusable response", new Error(SECRET_DETAIL)],
   ])("reports %s and returns 500", async (_label, error) => {
-    const { app, generateOde } = await buildApp();
-    generateOde.mockRejectedValueOnce(error);
+    const app = await buildApp();
+    mockGenerateOde.mockRejectedValueOnce(error);
 
     const res = await request(app)
       .post("/api/odes")
@@ -120,7 +121,7 @@ describe("POST /api/odes failures", () => {
 
 describe("POST /api/odes", () => {
   it("returns the generated ode", async () => {
-    const { app, generateOde } = await buildApp();
+    const app = await buildApp();
 
     const res = await request(app)
       .post("/api/odes")
@@ -132,17 +133,17 @@ describe("POST /api/odes", () => {
       ode: "O tomato,\nstar of earth",
       status: "ode",
     });
-    expect(generateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
   });
 
   it("returns a decline with suggestions without reporting it", async () => {
-    const { app, generateOde } = await buildApp();
+    const app = await buildApp();
     const declined = {
       reason: "That's not a subject for an ode.",
       status: "declined" as const,
       suggestions: ["Tomatoes", "Rain", "My mug"],
     };
-    generateOde.mockResolvedValueOnce(declined);
+    mockGenerateOde.mockResolvedValueOnce(declined);
 
     const res = await request(app)
       .post("/api/odes")
@@ -155,18 +156,18 @@ describe("POST /api/odes", () => {
   });
 
   it("trims the topic before generating", async () => {
-    const { app, generateOde } = await buildApp();
+    const app = await buildApp();
 
     await request(app)
       .post("/api/odes")
       .set("Cookie", sessionCookie)
       .send({ topic: "  Tomatoes\n" });
 
-    expect(generateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
   });
 
   it("accepts a topic at the maximum length", async () => {
-    const { app } = await buildApp();
+    const app = await buildApp();
 
     const res = await request(app)
       .post("/api/odes")
@@ -177,14 +178,14 @@ describe("POST /api/odes", () => {
   });
 
   it("returns 401 without a session", async () => {
-    const { app, generateOde } = await buildApp();
+    const app = await buildApp();
 
     const res = await request(app)
       .post("/api/odes")
       .send({ topic: "Tomatoes" });
 
     expect(res.status).toBe(401);
-    expect(generateOde).not.toHaveBeenCalled();
+    expect(mockGenerateOde).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -194,7 +195,7 @@ describe("POST /api/odes", () => {
     ["a non-string topic", { topic: 123 }],
     ["a too-long topic", { topic: "a".repeat(MAX_TOPIC_LENGTH + 1) }],
   ])("returns 400 for %s", async (_label, body) => {
-    const { app, generateOde } = await buildApp();
+    const app = await buildApp();
 
     const res = await request(app)
       .post("/api/odes")
@@ -203,6 +204,6 @@ describe("POST /api/odes", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toContain(String(MAX_TOPIC_LENGTH));
-    expect(generateOde).not.toHaveBeenCalled();
+    expect(mockGenerateOde).not.toHaveBeenCalled();
   });
 });

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
+import { Button } from "@/client/components/ui/button";
+import { Card, CardContent } from "@/client/components/ui/card";
+import { Input } from "@/client/components/ui/input";
+import { Label } from "@/client/components/ui/label";
 import { safeNextPath } from "@/client/login/safeNextPath";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const LoginPage = () => {
   const [error, setError] = useState<string>();

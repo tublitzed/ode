@@ -1,2 +1,2 @@
 export { createAuthRouter } from "#/server/routes/authRouter.ts";
-export { createOdesRouter } from "#/server/routes/odesRouter.ts";
+export { odesRouter } from "#/server/routes/odesRouter.ts";

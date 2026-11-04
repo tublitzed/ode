@@ -7,3 +7,4 @@ node_modules/
 /tasks/**
 
 dist/
+storybook-static/
