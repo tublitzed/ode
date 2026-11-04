@@ -7,6 +7,7 @@ export const SESSION_COOKIE = "ode_session";
 export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const PUBLIC_PATHS = new Set(["/api/login", "/login"]);
+const SHARED_ODE_PATHS = [/^\/api\/shares\/[^/]+$/, /^\/o\/[^/]+$/];
 
 export type IsPublicPath = (path: string) => boolean;
 
@@ -69,6 +70,12 @@ const isPageRequest = (req: Request, path: string) => {
   );
 };
 
+// The raw path must match too, so a path that only looks public once normalized stays gated.
+const isSharedOdeRequest = (req: Request, path: string) =>
+  req.method === "GET" &&
+  req.path === path &&
+  SHARED_ODE_PATHS.some((sharedOdePath) => sharedOdePath.test(path));
+
 export const getAuthConfig = () => {
   const expectedPassword = process.env.APP_PASSWORD?.trim();
   if (!expectedPassword) {
@@ -90,6 +97,12 @@ export const createGate = (isPublicPath: IsPublicPath) => {
     const path = normalizePath(req.path);
     if (path === undefined) {
       res.sendStatus(400);
+      return;
+    }
+
+    if (isSharedOdeRequest(req, path)) {
+      res.set("X-Robots-Tag", "noindex");
+      next();
       return;
     }
 
