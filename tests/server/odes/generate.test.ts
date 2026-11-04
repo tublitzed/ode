@@ -6,7 +6,7 @@ const { create } = vi.hoisted(() => ({ create: vi.fn() }));
 
 vi.mock("@anthropic-ai/sdk", () => ({
   default: class {
-    beta = { messages: { create } };
+    messages = { create };
   },
 }));
 

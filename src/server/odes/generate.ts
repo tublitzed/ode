@@ -74,9 +74,7 @@ const toOdeResponse = ({
 const client = new Anthropic({ maxRetries: 1, timeout: REQUEST_TIMEOUT_MS });
 
 export const generateOde = async (topic: string): Promise<OdeResponse> => {
-  const response = await client.beta.messages.create({
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
+  const response = await client.messages.create({
     max_tokens: 16000,
     messages: [{ content: `<topic>${topic}</topic>`, role: "user" }],
     model: MODEL,
