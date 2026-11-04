@@ -2,13 +2,30 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
 
-import { createSharedOde } from "#/server/shares/store.ts";
+import { createSharedOde, getSharedOde } from "#/server/shares/store.ts";
 import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "#/shared/ode.ts";
 
 const trimmedString = (value: unknown) =>
   typeof value === "string" ? value.trim() : "";
 
 export const sharesRouter: Router = express.Router();
+
+sharesRouter.get("/api/shares/:id", async (req, res) => {
+  try {
+    const sharedOde = await getSharedOde(req.params.id);
+    if (!sharedOde) {
+      res.status(404).json({ error: "We couldn't find that ode." });
+      return;
+    }
+
+    res.json(sharedOde);
+  } catch (error) {
+    Sentry.captureException(error);
+    res
+      .status(500)
+      .json({ error: "Something went wrong loading this ode. Try again." });
+  }
+});
 
 sharesRouter.post("/api/shares", express.json(), async (req, res) => {
   const ode = trimmedString(req.body?.ode);

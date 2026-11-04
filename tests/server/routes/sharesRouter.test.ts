@@ -8,11 +8,14 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
-import { createSharedOde } from "@/server/shares/store.ts";
+import { createSharedOde, getSharedOde } from "@/server/shares/store.ts";
 import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
-vi.mock("@/server/shares/store.ts", () => ({ createSharedOde: vi.fn() }));
+vi.mock("@/server/shares/store.ts", () => ({
+  createSharedOde: vi.fn(),
+  getSharedOde: vi.fn(),
+}));
 
 const ODE = "O tomato,\nstar of earth";
 const PASSWORD = "correct horse";
@@ -23,6 +26,7 @@ const TOPIC = "Tomatoes";
 const sessionCookie = `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(PASSWORD))}`;
 
 const mockCreateSharedOde = vi.mocked(createSharedOde);
+const mockGetSharedOde = vi.mocked(getSharedOde);
 
 const buildApp = () =>
   createApp({
@@ -39,6 +43,48 @@ beforeEach(() => {
   vi.mocked(captureException).mockClear();
   mockCreateSharedOde.mockReset();
   mockCreateSharedOde.mockResolvedValue(SHARE_ID);
+  mockGetSharedOde.mockReset();
+});
+
+describe("GET /api/shares/:id", () => {
+  it("returns the shared ode", async () => {
+    const app = await buildApp();
+    mockGetSharedOde.mockResolvedValueOnce({ ode: ODE, topic: TOPIC });
+
+    const res = await request(app)
+      .get(`/api/shares/${SHARE_ID}`)
+      .set("Cookie", sessionCookie);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ode: ODE, topic: TOPIC });
+    expect(mockGetSharedOde).toHaveBeenCalledWith(SHARE_ID);
+  });
+
+  it("returns 404 for an unknown id", async () => {
+    const app = await buildApp();
+    mockGetSharedOde.mockResolvedValueOnce(undefined);
+
+    const res = await request(app)
+      .get("/api/shares/unknown")
+      .set("Cookie", sessionCookie);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toEqual(expect.any(String));
+  });
+
+  it("reports a store failure without leaking details", async () => {
+    const app = await buildApp();
+    const error = new Error(SECRET_DETAIL);
+    mockGetSharedOde.mockRejectedValueOnce(error);
+
+    const res = await request(app)
+      .get(`/api/shares/${SHARE_ID}`)
+      .set("Cookie", sessionCookie);
+
+    expect(res.status).toBe(500);
+    expect(res.text).not.toContain(SECRET_DETAIL);
+    expect(captureException).toHaveBeenCalledWith(error);
+  });
 });
 
 describe("POST /api/shares", () => {

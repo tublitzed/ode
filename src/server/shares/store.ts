@@ -2,13 +2,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { randomBytes } from "node:crypto";
 
 import { PrismaClient } from "#/generated/prisma/client.ts";
+import type { SharedOde } from "#/shared/ode.ts";
 
 const ID_BYTES = 9;
-
-type SharedOde = {
-  ode: string;
-  topic: string;
-};
 
 let client: PrismaClient | undefined;
 
