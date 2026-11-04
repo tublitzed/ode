@@ -1,16 +1,17 @@
 import { createServer } from "node:http";
 
-import { createApp } from "./app.ts";
-import { createClient } from "./client.ts";
+import { createApp } from "#/server/app.ts";
+import { createClientHost } from "#/server/clientHost.ts";
 
 const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT ?? 3000);
 const server = createServer();
 
+const clientHost = await createClientHost({ isProduction, server });
+
 const app = await createApp({
-  ...(await createClient({ isProduction, server })),
-  password: process.env.APP_PASSWORD,
-  secureCookies: isProduction,
+  isPublicPath: clientHost.isPublicPath,
+  mountClient: clientHost.mountClient,
 });
 
 server.on("request", app);

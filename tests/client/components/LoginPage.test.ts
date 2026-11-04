@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { safeNextPath } from "@/client/login/safeNextPath";
+import { safeNextPath } from "@/client/components/LoginPage";
 
 describe("safeNextPath", () => {
   it.each([

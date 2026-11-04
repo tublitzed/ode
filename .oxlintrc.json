@@ -8,12 +8,48 @@
   "rules": {
     "import/no-unassigned-import": [
       "warn",
-      { "allow": ["**/*.css", "@/client/instrument"] }
+      {
+        "allow": ["**/*.css", "@/client/instrument"]
+      }
     ],
-    "jsx-a11y/no-autofocus": ["error", { "ignoreNonDOM": true }],
+    "jsx-a11y/no-autofocus": [
+      "error",
+      {
+        "ignoreNonDOM": true
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["./**", "../**"],
+            "message": "Use an absolute import: @/ in client code and tests, #/ in server code."
+          }
+        ]
+      }
+    ],
     "no-unused-vars": "error",
     "oxc/no-async-endpoint-handlers": "off",
     "react/react-in-jsx-scope": "off"
   },
-  "ignorePatterns": ["dist", "node_modules"]
+  "ignorePatterns": ["dist", "node_modules", "storybook-static"],
+  "overrides": [
+    {
+      "files": ["src/server/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["./**", "../**", "@/**"],
+                "message": "Server code must use #/ imports: plain node cannot resolve @/, and relative imports are not allowed."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

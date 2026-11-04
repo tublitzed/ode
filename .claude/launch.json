@@ -6,6 +6,12 @@
       "runtimeExecutable": "env",
       "runtimeArgs": ["PORT=3123", "npm", "run", "dev"],
       "port": 3123
+    },
+    {
+      "name": "storybook",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "storybook", "--", "--ci", "--port", "6123"],
+      "port": 6123
     }
   ]
 }
