@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import { PrismaClient } from "#/generated/prisma/client.ts";
 import type { SharedOde } from "#/shared/ode.ts";
 
-const ID_BYTES = 9;
+const ID_BYTES = 8;
 
 let client: PrismaClient | undefined;
 
@@ -26,7 +26,7 @@ const getClient = () => {
 };
 
 export const createSharedOde = async ({ ode, topic }: SharedOde) => {
-  const id = randomBytes(ID_BYTES).toString("base64url");
+  const id = randomBytes(ID_BYTES).toString("hex");
 
   await getClient().sharedOde.create({ data: { id, ode, topic } });
 

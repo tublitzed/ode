@@ -1,3 +1,4 @@
+import ShareOde from "@/client/components/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import {
   Card,
@@ -19,9 +20,12 @@ const OdeResult = ({ ode, onWriteAnother, topic }: OdeResultProps) => (
     </CardHeader>
     <CardContent className="grid gap-6">
       <p className="whitespace-pre-line">{ode}</p>
-      <Button className="w-full" onClick={onWriteAnother}>
-        Write another ode
-      </Button>
+      <div className="grid gap-2">
+        <ShareOde ode={ode} topic={topic} />
+        <Button className="w-full" onClick={onWriteAnother}>
+          Write another ode
+        </Button>
+      </div>
     </CardContent>
   </Card>
 );

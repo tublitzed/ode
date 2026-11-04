@@ -61,6 +61,29 @@ const mockOdeRequest = (
   };
 };
 
+const mockShare = (
+  respond: () => Promise<Response> | Response,
+  writeText: () => Promise<void> = () => Promise.resolve(),
+) => {
+  const realFetch = window.fetch;
+
+  saveLastOde({ ode: SAMPLE_ODE, topic: "Tomatoes" });
+  window.fetch = async (input, init) =>
+    input === "/api/shares" ? respond() : realFetch(input, init);
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText },
+  });
+
+  return () => {
+    window.fetch = realFetch;
+    Reflect.deleteProperty(navigator, "clipboard");
+  };
+};
+
+const clickShare = ({ canvas, userEvent }: PlayContext) =>
+  userEvent.click(canvas.getByRole("button", { name: "Share this ode" }));
+
 const enterTopic = ({ canvas }: PlayContext, topic: string) => {
   fireEvent.change(canvas.getByRole("textbox"), { target: { value: topic } });
 };
@@ -114,6 +137,36 @@ export const SavedOdeLongTopic: Story = {
   beforeEach: () => {
     saveLastOde({ ode: SAMPLE_ODE, topic: LONG_TOPIC });
   },
+};
+
+export const ShareSharing: Story = {
+  beforeEach: () => mockShare(() => new Promise(() => {})),
+  play: clickShare,
+};
+
+export const ShareCopied: Story = {
+  beforeEach: () => mockShare(() => jsonResponse({ id: "x7Kq2mPa9LwR" }, 201)),
+  play: clickShare,
+};
+
+export const ShareClipboardBlocked: Story = {
+  beforeEach: () =>
+    mockShare(
+      () => jsonResponse({ id: "x7Kq2mPa9LwR" }, 201),
+      () => Promise.reject(new Error("Clipboard blocked")),
+    ),
+  play: clickShare,
+};
+
+export const ShareError: Story = {
+  beforeEach: () =>
+    mockShare(() =>
+      jsonResponse(
+        { error: "Something went wrong sharing your ode. Try again." },
+        500,
+      ),
+    ),
+  play: clickShare,
 };
 
 export const DeclinedUnusableTopic: Story = {
