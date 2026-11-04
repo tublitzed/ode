@@ -1,0 +1,19 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SharedOde {
+  id        String   @id
+  topic     String
+  ode       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("shared_odes")
+}

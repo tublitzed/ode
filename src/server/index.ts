@@ -2,6 +2,9 @@ import { createServer } from "node:http";
 
 import { createApp } from "#/server/app.ts";
 import { createClientHost } from "#/server/clientHost.ts";
+import { getDatabaseUrl } from "#/server/shares/store.ts";
+
+getDatabaseUrl();
 
 const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT ?? 3000);
