@@ -136,7 +136,11 @@ describe("POST /api/odes", () => {
       ode: "O tomato,\nstar of earth",
       status: "ode",
     });
-    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith(
+      "Tomatoes",
+      "irregular",
+      undefined,
+    );
   });
 
   it("returns a decline with suggestions without reporting it", async () => {
@@ -166,7 +170,11 @@ describe("POST /api/odes", () => {
       .set("Cookie", sessionCookie)
       .send({ topic: "  Tomatoes\n" });
 
-    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith(
+      "Tomatoes",
+      "irregular",
+      undefined,
+    );
   });
 
   it("accepts a topic at the maximum length", async () => {

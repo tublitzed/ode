@@ -1,13 +1,26 @@
+import { cn } from "cn";
 import { useState } from "react";
 
+import OdeComparison from "@/client/components/OdeComparison";
+import type { OdeColumn, OdeSlot } from "@/client/components/OdeComparison";
 import OdeDeclined from "@/client/components/OdeDeclined";
 import OdeForm from "@/client/components/OdeForm";
 import OdeProgress from "@/client/components/OdeProgress";
 import OdeResult from "@/client/components/OdeResult";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
+import type { HttpResult } from "@/client/utils/httpRequest";
 import { loadLastOde, saveLastOde } from "@/client/utils/localStorage";
-import type { OdeResponse } from "@/shared/ode";
+import { DEFAULT_ODE_TYPE } from "@/shared/ode";
+import type { OdeResponse, OdeType } from "@/shared/ode";
+
+const COMPARISON_TYPES: OdeType[] = ["pindaric", "horatian"];
+
+type OdeRequest = {
+  sourceOde?: string;
+  topic: string;
+  type: OdeType;
+};
 
 type View =
   | { reason: string; status: "declined"; suggestions: string[] }
@@ -29,20 +42,57 @@ const getInitialView = (): View => {
   return lastOde ? { ...lastOde, status: "ode" } : { status: "idle" };
 };
 
+const requestOde = async (body: OdeRequest) => {
+  const result = await httpRequest<OdeResponse>("/api/odes", {
+    body,
+    method: "POST",
+  });
+
+  if (!result.ok && result.status === 401) {
+    window.location.assign("/login?next=%2F");
+    return undefined;
+  }
+
+  return result;
+};
+
+const toOdeSlot = (result: HttpResult<OdeResponse>): OdeSlot => {
+  if (!result.ok) {
+    return { message: result.message, status: "failed" };
+  }
+
+  if (result.data.status === "declined") {
+    return { message: result.data.reason, status: "failed" };
+  }
+
+  return { ode: result.data.ode, status: "ode" };
+};
+
+const writeComparisonColumn = async (
+  sourceOde: string,
+  sourceTopic: string,
+  type: OdeType,
+) => {
+  const result = await requestOde({ sourceOde, topic: sourceTopic, type });
+  return result && { slot: toOdeSlot(result), type };
+};
+
 const App = () => {
+  const [columns, setColumns] = useState<OdeColumn[]>([]);
   const [topic, setTopic] = useState("");
   const [view, setView] = useState<View>(getInitialView);
+
+  const isComparing = columns.length > 0;
 
   const generate = async (nextTopic: string) => {
     setView({ status: "generating", topic: nextTopic });
 
-    const result = await httpRequest<OdeResponse>("/api/odes", {
-      body: { topic: nextTopic },
-      method: "POST",
+    const result = await requestOde({
+      topic: nextTopic,
+      type: DEFAULT_ODE_TYPE,
     });
 
-    if (!result.ok && result.status === 401) {
-      window.location.assign("/login?next=%2F");
+    if (!result) {
       return;
     }
 
@@ -84,7 +134,25 @@ const App = () => {
     setView({ status: "idle" });
   };
 
+  const handleCompare = async (sourceOde: string, sourceTopic: string) => {
+    setColumns(
+      COMPARISON_TYPES.map((type) => ({
+        slot: { status: "generating" },
+        type,
+      })),
+    );
+
+    const written = await Promise.all(
+      COMPARISON_TYPES.map((type) =>
+        writeComparisonColumn(sourceOde, sourceTopic, type),
+      ),
+    );
+
+    setColumns(written.filter((column) => column !== undefined));
+  };
+
   const startOver = () => {
+    setColumns([]);
     setTopic("");
     setView({ status: "idle" });
   };
@@ -106,9 +174,26 @@ const App = () => {
     }
 
     if (view.status === "ode") {
+      if (isComparing) {
+        return (
+          <OdeComparison
+            columns={[
+              {
+                slot: { ode: view.ode, status: "ode" },
+                type: DEFAULT_ODE_TYPE,
+              },
+              ...columns,
+            ]}
+            onWriteAnother={startOver}
+            topic={view.topic}
+          />
+        );
+      }
+
       return (
         <OdeResult
           ode={view.ode}
+          onCompare={() => handleCompare(view.ode, view.topic)}
           onWriteAnother={startOver}
           topic={view.topic}
         />
@@ -126,12 +211,23 @@ const App = () => {
   };
 
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-md flex-col items-center justify-center gap-4 p-4">
-      {renderView()}
-      <Button onClick={logOut} variant="ghost">
+    <div className="relative">
+      <main
+        className={cn(
+          "mx-auto flex min-h-svh w-full flex-col items-center justify-center gap-4 p-4 pb-16",
+          isComparing ? "max-w-7xl" : "max-w-md",
+        )}
+      >
+        {renderView()}
+      </main>
+      <Button
+        className="absolute right-4 bottom-4"
+        onClick={logOut}
+        variant="ghost"
+      >
         Log out
       </Button>
-    </main>
+    </div>
   );
 };
 
