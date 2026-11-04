@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/react";
 
-import { getSharedOdeId } from "@/client/utils/sharedOdePath";
+import { getSharedOdeId } from "@/shared/sharedOdePath";
 
 // Readers of shared odes never agreed to session recording.
 const isSharedOdePage = Boolean(getSharedOdeId(window.location.pathname));

@@ -8,7 +8,7 @@ import "@/client/index.css";
 
 import LoginPage from "@/client/components/LoginPage";
 import SharedOdePage from "@/client/components/SharedOdePage";
-import { getSharedOdeId } from "@/client/utils/sharedOdePath";
+import { getSharedOdeId } from "@/shared/sharedOdePath";
 
 // Load the app bundle only after logged in.
 const App = lazy(() => import("@/client/components/App"));
