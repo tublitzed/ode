@@ -20,7 +20,7 @@ Sentry.init({
 
 const initLogRocket = () => {
   const appId = import.meta.env.VITE_LOGROCKET_APP_ID;
-  if (!appId) {
+  if (!appId || isSharedOdePage) {
     return;
   }
 
