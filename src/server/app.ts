@@ -1,31 +1,22 @@
 import express from "express";
 import type { Express } from "express";
 
-import { createAuth } from "#/server/auth.ts";
+import { createGate } from "#/server/auth.ts";
 import type { IsPublicPath } from "#/server/auth.ts";
-import { createAuthRouter, odesRouter } from "#/server/routes/routes.ts";
+import { authRouter, odesRouter } from "#/server/routes/routes.ts";
 
 type AppOptions = {
   isPublicPath: IsPublicPath;
   mountClient: (app: Express) => Promise<void> | void;
-  password: string | undefined;
-  secureCookies: boolean;
 };
 
-export const createApp = async ({
-  isPublicPath,
-  mountClient,
-  password,
-  secureCookies,
-}: AppOptions) => {
-  const { expectedPassword, gate, key } = createAuth({
-    isPublicPath,
-    password,
-  });
+export const createApp = async ({ isPublicPath, mountClient }: AppOptions) => {
+  // Entire app is gated behind auth.
+  const gate = createGate(isPublicPath);
 
   const app = express();
 
-  app.use(createAuthRouter({ expectedPassword, key, secureCookies }));
+  app.use(authRouter);
   app.use(gate);
   app.use(odesRouter);
 

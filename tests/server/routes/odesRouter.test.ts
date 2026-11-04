@@ -8,7 +8,7 @@ import {
 } from "@anthropic-ai/sdk";
 import { captureException } from "@sentry/node";
 import request from "supertest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/server/app.ts";
 import {
@@ -16,11 +16,11 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
-import { generateOde } from "@/server/generateOde.ts";
+import { generateOde } from "@/server/odes/generate.ts";
 import { MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
-vi.mock("@/server/generateOde.ts", () => ({ generateOde: vi.fn() }));
+vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
 
 const PASSWORD = "correct horse";
 const SECRET_DETAIL = "secret detail";
@@ -33,11 +33,14 @@ const buildApp = () =>
   createApp({
     isPublicPath: () => false,
     mountClient: () => {},
-    password: PASSWORD,
-    secureCookies: false,
   });
 
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 beforeEach(() => {
+  vi.stubEnv("APP_PASSWORD", PASSWORD);
   vi.mocked(captureException).mockClear();
   mockGenerateOde.mockReset();
   mockGenerateOde.mockResolvedValue({

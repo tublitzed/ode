@@ -7,7 +7,7 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
 
-import { generateOde } from "#/server/generateOde.ts";
+import { generateOde } from "#/server/odes/generate.ts";
 import { MAX_TOPIC_LENGTH } from "#/shared/ode.ts";
 
 const BUSY = {

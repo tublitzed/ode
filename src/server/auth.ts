@@ -8,12 +8,7 @@ export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 const PUBLIC_PATHS = new Set(["/api/login", "/login"]);
 
-type AuthOptions = {
-  isPublicPath: (path: string) => boolean;
-  password: string | undefined;
-};
-
-export type IsPublicPath = AuthOptions["isPublicPath"];
+export type IsPublicPath = (path: string) => boolean;
 
 const sha256 = (value: string) => createHash("sha256").update(value).digest();
 
@@ -74,13 +69,17 @@ const isPageRequest = (req: Request, path: string) => {
   );
 };
 
-export const createAuth = ({ isPublicPath, password }: AuthOptions) => {
-  const expectedPassword = password?.trim();
+export const getAuthConfig = () => {
+  const expectedPassword = process.env.APP_PASSWORD?.trim();
   if (!expectedPassword) {
     throw new Error("APP_PASSWORD must be set to a non-blank value.");
   }
 
-  const key = deriveSessionKey(expectedPassword);
+  return { expectedPassword, key: deriveSessionKey(expectedPassword) };
+};
+
+export const createGate = (isPublicPath: IsPublicPath) => {
+  const { key } = getAuthConfig();
 
   const hasValidSession = (req: Request) => {
     const token = parseCookie(req.headers.cookie ?? "")[SESSION_COOKIE];
@@ -107,5 +106,5 @@ export const createAuth = ({ isPublicPath, password }: AuthOptions) => {
     res.sendStatus(401);
   };
 
-  return { expectedPassword, gate, key };
+  return gate;
 };

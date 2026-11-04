@@ -6,10 +6,10 @@ import { createRoot } from "react-dom/client";
 
 import "@/client/index.css";
 
-import LoginPage from "@/client/login/LoginPage";
+import LoginPage from "@/client/components/LoginPage";
 
 // Load the app bundle only after logged in.
-const App = lazy(() => import("@/client/app/App"));
+const App = lazy(() => import("@/client/components/App"));
 
 const root = document.getElementById("root");
 

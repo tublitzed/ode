@@ -9,7 +9,7 @@ import type { IsPublicPath } from "#/server/auth.ts";
 import { collectEntryFiles } from "#/server/manifest.ts";
 import type { Manifest } from "#/server/manifest.ts";
 
-type ClientOptions = {
+type ClientHostOptions = {
   isProduction: boolean;
   server: Server;
 };
@@ -37,6 +37,7 @@ const createProdMode = async (): Promise<ClientMode> => {
   };
 };
 
+// Dev mode to support hot reloading.
 const createDevMode = async (server: Server): Promise<ClientMode> => {
   const { createServer } = await import("vite");
   const vite = await createServer({
@@ -57,7 +58,10 @@ const createDevMode = async (server: Server): Promise<ClientMode> => {
   };
 };
 
-export const createClient = async ({ isProduction, server }: ClientOptions) => {
+export const createClientHost = async ({
+  isProduction,
+  server,
+}: ClientHostOptions) => {
   const mode = isProduction
     ? await createProdMode()
     : await createDevMode(server);

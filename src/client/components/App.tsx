@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import OdeDeclined from "@/client/app/OdeDeclined";
-import OdeForm from "@/client/app/OdeForm";
-import OdeProgress from "@/client/app/OdeProgress";
-import OdeResult from "@/client/app/OdeResult";
+import OdeDeclined from "@/client/components/OdeDeclined";
+import OdeForm from "@/client/components/OdeForm";
+import OdeProgress from "@/client/components/OdeProgress";
+import OdeResult from "@/client/components/OdeResult";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
 import { loadLastOde, saveLastOde } from "@/client/utils/localStorage";

@@ -18,5 +18,6 @@ Simple Ode builder.
 
 This is a simple web app with React/TypeScript on the front-end and Express for the server:
 
-- src/client - front-end components, etc.
-- src/server - 
+- src/client - Uses [Shadcdn](https://ui.shadcn.com/docs/components) for UI components, and some Ode state components. Writes a few things to localStorage.
+- src/server - Routes, simple auth logic (gated by a single env var), ode generator.
+- src/shared - used by client and server.
