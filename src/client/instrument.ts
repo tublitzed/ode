@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/react";
+import LogRocket from "logrocket";
 
 import { getSharedOdeId } from "@/shared/sharedOdePath";
 
@@ -16,3 +17,36 @@ Sentry.init({
   replaysSessionSampleRate: 1.0,
   tracesSampleRate: 1.0,
 });
+
+const initLogRocket = () => {
+  const appId = import.meta.env.VITE_LOGROCKET_APP_ID;
+  if (!appId) {
+    return;
+  }
+
+  LogRocket.init(appId);
+};
+
+function gtag() {
+  window.dataLayer.push(arguments);
+}
+
+const initGoogleAnalytics = () => {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  if (!measurementId) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  document.head.appendChild(script);
+
+  window.dataLayer = window.dataLayer ?? [];
+  window.gtag = gtag;
+  window.gtag("js", new Date());
+  window.gtag("config", measurementId);
+};
+
+initLogRocket();
+initGoogleAnalytics();
