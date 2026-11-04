@@ -1,12 +1,27 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/client/components/ui/button";
+import { Card, CardContent } from "@/client/components/ui/card";
+import { Input } from "@/client/components/ui/input";
+import { Label } from "@/client/components/ui/label";
 
-import { safeNextPath } from "./safeNextPath";
+const FALLBACK_PATH = "/";
+const PARSE_BASE = "http://same-origin.invalid";
+
+// Only allow next path if same domain.
+export const safeNextPath = (next: string | null) => {
+  if (!next?.startsWith("/")) {
+    return FALLBACK_PATH;
+  }
+
+  const url = new URL(next, PARSE_BASE);
+  if (url.origin !== PARSE_BASE || url.pathname === "/login") {
+    return FALLBACK_PATH;
+  }
+
+  return `${url.pathname}${url.search}${url.hash}`;
+};
 
 const LoginPage = () => {
   const [error, setError] = useState<string>();
