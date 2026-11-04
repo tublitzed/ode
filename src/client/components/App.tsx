@@ -151,6 +151,26 @@ const App = () => {
     setColumns(written.filter((column) => column !== undefined));
   };
 
+  const handleRetry = async (
+    sourceOde: string,
+    sourceTopic: string,
+    type: OdeType,
+  ) => {
+    const replaceColumn = (next: OdeColumn) => {
+      setColumns((current) =>
+        current.map((column) => (column.type === type ? next : column)),
+      );
+    };
+
+    replaceColumn({ slot: { status: "generating" }, type });
+
+    const written = await writeComparisonColumn(sourceOde, sourceTopic, type);
+
+    if (written) {
+      replaceColumn(written);
+    }
+  };
+
   const startOver = () => {
     setColumns([]);
     setTopic("");
@@ -184,6 +204,7 @@ const App = () => {
               },
               ...columns,
             ]}
+            onRetry={(type) => handleRetry(view.ode, view.topic, type)}
             onWriteAnother={startOver}
             topic={view.topic}
           />

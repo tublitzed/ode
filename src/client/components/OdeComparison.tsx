@@ -39,12 +39,14 @@ export type OdeColumn = {
 
 type OdeComparisonProps = {
   columns: OdeColumn[];
+  onRetry: (type: OdeType) => void;
   onWriteAnother: () => void;
   topic: string;
 };
 
 const OdeComparison = ({
   columns,
+  onRetry,
   onWriteAnother,
   topic,
 }: OdeComparisonProps) => {
@@ -98,9 +100,14 @@ const OdeComparison = ({
               </CardHeader>
               <CardContent>
                 {slot.status === "failed" ? (
-                  <p className="text-destructive text-sm" role="alert">
-                    {slot.message}
-                  </p>
+                  <div className="grid justify-items-start gap-4">
+                    <p className="text-destructive text-sm" role="alert">
+                      {slot.message}
+                    </p>
+                    <Button onClick={() => onRetry(type)} variant="outline">
+                      Try again
+                    </Button>
+                  </div>
                 ) : (
                   <OdeVerse ode={slot.ode} />
                 )}

@@ -83,6 +83,7 @@ type Story = StoryObj<typeof App>;
 type PlayContext = Parameters<NonNullable<Story["play"]>>[0];
 
 const LONG_TOPIC = "a".repeat(100);
+const RETRY_DELAY_MS = 3000;
 
 const ODE_RESPONSE: OdeResponse = { ode: SAMPLE_ODE, status: "ode" };
 
@@ -119,6 +120,29 @@ const mockOdeRequest = (
     window.fetch = realFetch;
   };
 };
+
+const failFirstAttempt = (failingTypes: OdeType[], failure: () => Response) => {
+  const attempted = new Set<OdeType>();
+
+  return async (_topic: string, type: OdeType) => {
+    if (failingTypes.includes(type) && !attempted.has(type)) {
+      attempted.add(type);
+      return failure();
+    }
+
+    if (attempted.has(type)) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    }
+
+    return sampleOdeResponse(type);
+  };
+};
+
+const busyResponse = () =>
+  jsonResponse(
+    { error: "Ode is very busy right now. Try again in a moment." },
+    503,
+  );
 
 const saveSampleOde = () => {
   saveLastOde({ ode: SAMPLE_ODE, topic: "Tomatoes" });
@@ -211,6 +235,40 @@ export const ComparisonSectionTooltip: Story = {
       await context.canvas.findByRole("button", { name: "Strophe" }),
     );
   },
+};
+
+export const ComparisonOneFailed: Story = {
+  beforeEach: () => {
+    saveSampleOde();
+    return mockOdeRequest(failFirstAttempt(["pindaric"], busyResponse));
+  },
+  play: startComparison,
+};
+
+export const ComparisonOneDeclined: Story = {
+  beforeEach: () => {
+    saveSampleOde();
+    return mockOdeRequest(
+      failFirstAttempt(["horatian"], () =>
+        jsonResponse({
+          reason: "That's not a subject we can write an ode about.",
+          status: "declined",
+          suggestions: ["Tomatoes", "A rainy morning", "My favorite mug"],
+        }),
+      ),
+    );
+  },
+  play: startComparison,
+};
+
+export const ComparisonBothFailed: Story = {
+  beforeEach: () => {
+    saveSampleOde();
+    return mockOdeRequest(
+      failFirstAttempt(["horatian", "pindaric"], busyResponse),
+    );
+  },
+  play: startComparison,
 };
 
 export const DeclinedUnusableTopic: Story = {
