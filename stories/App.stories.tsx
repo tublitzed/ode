@@ -271,6 +271,30 @@ export const ComparisonBothFailed: Story = {
   play: startComparison,
 };
 
+export const ComparisonSaved: Story = {
+  beforeEach: () => {
+    saveLastOde({
+      comparison: {
+        horatian: SAMPLE_HORATIAN_ODE,
+        pindaric: SAMPLE_PINDARIC_ODE,
+      },
+      ode: SAMPLE_ODE,
+      topic: "Tomatoes",
+    });
+  },
+};
+
+export const ComparisonSavedOneMissing: Story = {
+  beforeEach: () => {
+    saveLastOde({
+      comparison: { pindaric: SAMPLE_PINDARIC_ODE },
+      ode: SAMPLE_ODE,
+      topic: "Tomatoes",
+    });
+    return mockOdeRequest((_topic, type) => sampleOdeResponse(type));
+  },
+};
+
 export const DeclinedUnusableTopic: Story = {
   beforeEach: () =>
     mockOdeRequest(

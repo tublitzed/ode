@@ -10,11 +10,16 @@ import OdeResult from "@/client/components/OdeResult";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
 import type { HttpResult } from "@/client/utils/httpRequest";
-import { loadLastOde, saveLastOde } from "@/client/utils/localStorage";
+import {
+  loadLastOde,
+  saveComparisonOde,
+  saveLastOde,
+} from "@/client/utils/localStorage";
 import { DEFAULT_ODE_TYPE } from "@/shared/ode";
 import type { OdeResponse, OdeType } from "@/shared/ode";
 
 const COMPARISON_TYPES: OdeType[] = ["pindaric", "horatian"];
+const UNSAVED_ODE_MESSAGE = "This ode didn't finish. Try writing it again.";
 
 type OdeRequest = {
   sourceOde?: string;
@@ -39,7 +44,31 @@ const logOut = async () => {
 
 const getInitialView = (): View => {
   const lastOde = loadLastOde();
-  return lastOde ? { ...lastOde, status: "ode" } : { status: "idle" };
+
+  if (!lastOde) {
+    return { status: "idle" };
+  }
+
+  return { ode: lastOde.ode, status: "ode", topic: lastOde.topic };
+};
+
+const getInitialColumns = (): OdeColumn[] => {
+  const comparison = loadLastOde()?.comparison ?? {};
+
+  if (Object.keys(comparison).length === 0) {
+    return [];
+  }
+
+  return COMPARISON_TYPES.map((type) => {
+    const ode = comparison[type];
+
+    return {
+      slot: ode
+        ? { ode, status: "ode" }
+        : { message: UNSAVED_ODE_MESSAGE, status: "failed" },
+      type,
+    };
+  });
 };
 
 const requestOde = async (body: OdeRequest) => {
@@ -74,11 +103,22 @@ const writeComparisonColumn = async (
   type: OdeType,
 ) => {
   const result = await requestOde({ sourceOde, topic: sourceTopic, type });
-  return result && { slot: toOdeSlot(result), type };
+
+  if (!result) {
+    return undefined;
+  }
+
+  const slot = toOdeSlot(result);
+
+  if (slot.status === "ode") {
+    saveComparisonOde(type, slot.ode);
+  }
+
+  return { slot, type };
 };
 
 const App = () => {
-  const [columns, setColumns] = useState<OdeColumn[]>([]);
+  const [columns, setColumns] = useState<OdeColumn[]>(getInitialColumns);
   const [topic, setTopic] = useState("");
   const [view, setView] = useState<View>(getInitialView);
 
