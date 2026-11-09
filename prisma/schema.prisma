@@ -10,11 +10,11 @@ datasource db {
 }
 
 model SharedOde {
-  id        String   @id
-  topic     String
+  id         String   @id @default(cuid(2))
+  topic      String
   ode        String
   comparison Json?
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt  DateTime @default(now()) @map("created_at")
 
   @@map("shared_odes")
 }
