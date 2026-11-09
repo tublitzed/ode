@@ -19,4 +19,4 @@ The user chose, in order: Roman floor mosaics, the Exhibit layout (one framed pa
 ## Accepted deviations from the comp
 
 - The pending comparison column keeps the top rule, so its heading lines up with the finished column.
-- The rotating loading phrases and the footer come from the product, not the comp.
+- The rotating loading phrases come from the product, not the comp.

@@ -1,4 +1,4 @@
-import { isOdeType, isTesseraColor } from "@/shared/ode";
+import { isOdeType, parseMosaic } from "@/shared/ode";
 import type { MosaicShape, OdeType } from "@/shared/ode";
 
 const STORAGE_KEY = "ode:lastOde";
@@ -19,17 +19,6 @@ const readComparison = (value: unknown): SavedComparison =>
       ([type, ode]) => isOdeType(type) && typeof ode === "string",
     ),
   );
-
-const isMosaicShape = (value: unknown): value is MosaicShape =>
-  typeof value === "object" &&
-  value !== null &&
-  "d" in value &&
-  "fill" in value &&
-  typeof value.d === "string" &&
-  isTesseraColor(value.fill);
-
-const readMosaic = (value: unknown) =>
-  Array.isArray(value) && value.every(isMosaicShape) ? value : undefined;
 
 const readShareIds = (value: unknown) => {
   if (typeof value !== "object" || value === null) {
@@ -58,7 +47,7 @@ export const loadLastOde = (): LastOde | undefined => {
 
     return {
       comparison: readComparison(comparison),
-      mosaic: readMosaic(mosaic),
+      mosaic: parseMosaic(mosaic),
       ode,
       shareIds: readShareIds(shareIds),
       topic,

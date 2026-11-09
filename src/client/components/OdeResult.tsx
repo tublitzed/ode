@@ -54,7 +54,7 @@ const OdeResult = ({
               <Button onClick={onCompare} variant="outline">
                 Compare Pindaric and Horatian odes
               </Button>
-              <ShareOde ode={ode} topic={topic} />
+              <ShareOde mosaic={mosaic} ode={ode} topic={topic} />
               <Button onClick={onWriteAnother}>Write another ode</Button>
             </div>
           </div>

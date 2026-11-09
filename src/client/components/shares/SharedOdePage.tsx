@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import MosaicPanel from "@/client/components/MosaicPanel";
 import OdeComparison from "@/client/components/OdeComparison";
 import type { OdeColumn } from "@/client/components/OdeComparison";
 import OdeTitle from "@/client/components/OdeTitle";
@@ -68,14 +69,27 @@ const renderView = (view: View) => {
     return (
       <OdeComparison
         columns={toColumns(view.sharedOde)}
+        mosaic={view.sharedOde.mosaic}
         topic={view.sharedOde.topic}
       />
     );
   }
 
+  const { mosaic, topic } = view.sharedOde;
+
   return (
     <>
-      <OdeTitle>Ode to {view.sharedOde.topic}</OdeTitle>
+      {mosaic && (
+        <MosaicPanel
+          className="max-w-100"
+          label={`A mosaic for the ode to ${topic}`}
+          shapes={mosaic}
+          state="laid"
+        />
+      )}
+      <OdeTitle className={mosaic ? "mt-10" : undefined}>
+        Ode to {topic}
+      </OdeTitle>
       <p className="text-muted-foreground mt-3 max-w-[44ch] leading-normal text-balance">
         <span className="text-foreground font-semibold">{label}.</span>{" "}
         {description}

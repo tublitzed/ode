@@ -287,6 +287,7 @@ const App = ({ forceView }: AppProps) => {
                     <ShareOde
                       comparison={sharedComparison}
                       key={JSON.stringify(sharedComparison)}
+                      mosaic={view.mosaic}
                       ode={view.ode}
                       topic={view.topic}
                     />
@@ -348,10 +349,6 @@ const App = ({ forceView }: AppProps) => {
       <main className="flex w-full flex-1 flex-col items-center px-4 pb-20 text-center">
         {renderView()}
       </main>
-      <footer className="text-muted-foreground px-4 pb-8 text-center text-sm">
-        Odes and mosaics by Claude, for Ode with Anthropic. An unofficial
-        homage.
-      </footer>
     </div>
   );
 };

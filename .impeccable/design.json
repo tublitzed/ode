@@ -701,7 +701,7 @@
       },
       "small": {
         "displayName": "Small",
-        "purpose": "The footer and column descriptions."
+        "purpose": "Column descriptions."
       },
       "caption": {
         "displayName": "Caption",

@@ -50,6 +50,27 @@ export type MosaicShape = { d: string; fill: TesseraColor };
 export const isTesseraColor = (value: unknown): value is TesseraColor =>
   TESSERA_COLORS.includes(value as TesseraColor);
 
+export const MAX_MOSAIC_SHAPES = 60;
+const MAX_PATH_LENGTH = 4000;
+const PATH_DATA = /^[MmLlHhVvCcSsQqTtAaZz0-9eE\s,.+-]+$/;
+
+export const isMosaicShape = (value: unknown): value is MosaicShape =>
+  typeof value === "object" &&
+  value !== null &&
+  "d" in value &&
+  "fill" in value &&
+  typeof value.d === "string" &&
+  value.d.length <= MAX_PATH_LENGTH &&
+  PATH_DATA.test(value.d) &&
+  isTesseraColor(value.fill);
+
+export const parseMosaic = (value: unknown): MosaicShape[] | undefined =>
+  Array.isArray(value) &&
+  value.length <= MAX_MOSAIC_SHAPES &&
+  value.every(isMosaicShape)
+    ? value
+    : undefined;
+
 export type Comparison = Partial<Record<OdeType, string>>;
 
 const isComparisonOde = ([type, ode]: [string, unknown]) =>
@@ -68,6 +89,7 @@ export const toComparison = (value: unknown): Comparison => {
 
 export type SharedOde = {
   comparison?: Comparison;
+  mosaic?: MosaicShape[];
   ode: string;
   topic: string;
 };

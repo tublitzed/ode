@@ -242,7 +242,7 @@ The materials of the floor itself.
 - **Plaster Line** (#cfc6b8): The global default border color. No shipped surface draws a default border today.
 - **Ink** (#221e1b): Text, field rules and the 2px comparison column rules (12.6:1 on plaster).
 - **Umber** (#2b2420): The primary button and tooltips. **Umber Lifted** (#4a3e36) is the primary button's hover.
-- **Soft Umber** (#5b5148): Secondary text, ledes, the footer, ghost button labels and status phrases (5.89:1 on plaster).
+- **Soft Umber** (#5b5148): Secondary text, ledes, ghost button labels and status phrases (5.89:1 on plaster).
 - **Limewash** (#f6f2ea): Text on umber and on oxblood selection.
 
 ### Named Rules
@@ -271,7 +271,7 @@ The materials of the floor itself.
 - **Status** (Newsreader 400, 1.125rem, 1.5): Rotating progress phrases, 40ch at most.
 - **Lede** (Figtree 400, 1.125rem, 1.5): The form hint and the declined reason, soft umber, balanced, 40 to 44ch. **Body** (1rem, 1.5) carries the ode type line.
 - **Button** (500, 1rem) and **Input** (400, 1.125rem): Controls.
-- **Label** (500, 0.875rem, 1) names a field. **Small** (400, 0.875rem) is the footer and column descriptions. **Caption** (400, 0.75rem) is tooltip text.
+- **Label** (500, 0.875rem, 1) names a field. **Small** (400, 0.875rem) is column descriptions. **Caption** (400, 0.75rem) is tooltip text.
 
 ### Named Rules
 
@@ -281,7 +281,7 @@ The materials of the floor itself.
 
 ## Layout
 
-The layout is "Exhibit": one column on the center axis, with one framed panel above the text. The page has a slim header (wordmark left, Log out right), a main column that centers everything, and a one-line footer. Header padding is 1rem and widens to 1.5rem by 3rem at 48rem; main has a 1rem gutter and 5rem of bottom padding.
+The layout is "Exhibit": one column on the center axis, with one framed panel above the text. The page has a slim header (wordmark left, Log out right) and a main column that centers everything. Header padding is 1rem and widens to 1.5rem by 3rem at 48rem; main has a 1rem gutter and 5rem of bottom padding.
 
 The panel is square, 100% wide up to 25rem, and stays the same size through form, progress, declined and result, so the wall does not rearrange as the ode is made. The title sits 2.5rem below it. On the result, the type line, verse and actions follow on that axis, with the verse block left-aligned inside its centered 34rem measure and the actions 2.75rem below it, wrapping with 0.75rem gaps.
 

@@ -6,11 +6,12 @@ import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";
 import { httpRequest } from "@/client/utils/httpRequest";
 import { loadShareId, saveShareId } from "@/client/utils/localStorage";
-import type { Comparison } from "@/shared/ode";
+import type { Comparison, MosaicShape } from "@/shared/ode";
 
 type ShareOdeProps = {
   comparison?: Comparison;
   forceView?: View; // Storybook only
+  mosaic?: MosaicShape[];
   ode: string;
   topic: string;
 };
@@ -45,14 +46,20 @@ const renderLabel = (view: View) => {
 
 const toLink = (id: string) => `${window.location.origin}/o/${id}`;
 
-const ShareOde = ({ comparison, forceView, ode, topic }: ShareOdeProps) => {
+const ShareOde = ({
+  comparison,
+  forceView,
+  mosaic,
+  ode,
+  topic,
+}: ShareOdeProps) => {
   const [shareId, setShareId] = useState(() => loadShareId(comparison));
   const [view, setView] = useState<View>(forceView ?? { status: "idle" });
   const linkInputId = useId();
 
   const createShare = async () => {
     const result = await httpRequest<ShareResponse>("/api/shares", {
-      body: { comparison, ode, topic },
+      body: { comparison, mosaic, ode, topic },
       method: "POST",
     });
 
