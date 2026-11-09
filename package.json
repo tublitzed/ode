@@ -18,6 +18,8 @@
     "format:check": "prettier --check .",
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:reset:dev": "prisma migrate reset",
     "prepare": "husky",
     "start": "prisma migrate deploy && NODE_ENV=production node --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
     "storybook": "storybook dev",
@@ -72,5 +74,11 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.10.1": true,
+    "prisma@7.10.1": true,
+    "esbuild": false,
+    "fsevents": false
   }
 }
