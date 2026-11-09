@@ -1,4 +1,4 @@
-import ShareOde from "@/client/components/ShareOde";
+import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import {
   Card,

@@ -7,7 +7,7 @@ import OdeDeclined from "@/client/components/OdeDeclined";
 import OdeForm from "@/client/components/OdeForm";
 import OdeProgress from "@/client/components/OdeProgress";
 import OdeResult from "@/client/components/OdeResult";
-import ShareOde from "@/client/components/ShareOde";
+import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
 import type { HttpResult } from "@/client/utils/httpRequest";

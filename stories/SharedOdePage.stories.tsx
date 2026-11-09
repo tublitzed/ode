@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import SharedOdePage from "@/client/components/SharedOdePage";
+import SharedOdePage from "@/client/components/shares/SharedOdePage";
 
 const SAMPLE_ODE = `O tomato,
 warm

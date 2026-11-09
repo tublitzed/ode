@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import "@/client/index.css";
 
 import LoginPage from "@/client/components/LoginPage";
-import SharedOdePage from "@/client/components/SharedOdePage";
+import SharedOdePage from "@/client/components/shares/SharedOdePage";
 import { getSharedOdeId } from "@/shared/sharedOdePath";
 
 // Load the app bundle only after logged in.
