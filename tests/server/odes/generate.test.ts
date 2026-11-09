@@ -32,7 +32,7 @@ describe("generateOde", () => {
       }),
     );
 
-    await expect(generateOde("Tomatoes")).resolves.toEqual({
+    await expect(generateOde("Tomatoes", "irregular")).resolves.toEqual({
       ode: "O tomato,\nstar of earth",
       status: "ode",
     });
@@ -43,7 +43,7 @@ describe("generateOde", () => {
       modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
     );
 
-    await generateOde("Tomatoes");
+    await generateOde("Tomatoes", "irregular");
 
     expect(create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -62,7 +62,7 @@ describe("generateOde", () => {
       }),
     );
 
-    await expect(generateOde("asdfghjkl")).resolves.toEqual({
+    await expect(generateOde("asdfghjkl", "irregular")).resolves.toEqual({
       reason: "That looks like random letters.",
       status: "declined",
       suggestions: ["Morning coffee", "Rain", "Old books"],
@@ -79,7 +79,7 @@ describe("generateOde", () => {
       }),
     );
 
-    await expect(generateOde("asdfghjkl")).resolves.toEqual({
+    await expect(generateOde("asdfghjkl", "irregular")).resolves.toEqual({
       reason: "That looks like random letters.",
       status: "declined",
       suggestions: REFUSAL_SUGGESTIONS,
@@ -89,17 +89,64 @@ describe("generateOde", () => {
   it("turns a refusal into a decline", async () => {
     create.mockResolvedValueOnce({ content: [], stop_reason: "refusal" });
 
-    await expect(generateOde("anything")).resolves.toEqual({
+    await expect(generateOde("anything", "irregular")).resolves.toEqual({
       reason: "That's not a subject we can write an ode about.",
       status: "declined",
       suggestions: REFUSAL_SUGGESTIONS,
     });
   });
 
+  it.each([
+    ["horatian", "Horatian ode", ["Pindaric ode", "Cowleyan"]],
+    ["irregular", "irregular (Cowleyan) ode", ["Horatian ode", "Pindaric ode"]],
+    ["pindaric", "Pindaric ode", ["Horatian ode", "Cowleyan"]],
+  ] as const)(
+    "asks for a %s ode and no other form",
+    async (type, expected, otherForms) => {
+      create.mockResolvedValueOnce(
+        modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+      );
+
+      await generateOde("Tomatoes", type);
+
+      const { system } = create.mock.calls[0][0];
+      expect(system).toContain(expected);
+      otherForms.forEach((form) => expect(system).not.toContain(form));
+    },
+  );
+
+  it("leaves source ode instructions out without a source ode", async () => {
+    create.mockResolvedValueOnce(
+      modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+    );
+
+    await generateOde("Tomatoes", "pindaric");
+
+    expect(create.mock.calls[0][0].system).not.toContain("<source_ode>");
+  });
+
+  it("sends the source ode in its own tags with instructions", async () => {
+    create.mockResolvedValueOnce(
+      modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+    );
+
+    await generateOde("Tomatoes", "pindaric", "O tomato,\nstar of earth");
+
+    const request = create.mock.calls[0][0];
+    expect(request.messages).toEqual([
+      {
+        content:
+          "<topic>Tomatoes</topic>\n<source_ode>O tomato,\nstar of earth</source_ode>",
+        role: "user",
+      },
+    ]);
+    expect(request.system).toContain("<source_ode>");
+  });
+
   it("throws on an unexpected stop reason", async () => {
     create.mockResolvedValueOnce({ content: [], stop_reason: "max_tokens" });
 
-    await expect(generateOde("Tomatoes")).rejects.toThrow(
+    await expect(generateOde("Tomatoes", "irregular")).rejects.toThrow(
       "Unexpected stop reason: max_tokens",
     );
   });
@@ -107,7 +154,7 @@ describe("generateOde", () => {
   it("throws when the response has no text block", async () => {
     create.mockResolvedValueOnce({ content: [], stop_reason: "end_turn" });
 
-    await expect(generateOde("Tomatoes")).rejects.toThrow(
+    await expect(generateOde("Tomatoes", "irregular")).rejects.toThrow(
       "Response had no text block",
     );
   });
@@ -118,7 +165,7 @@ describe("generateOde", () => {
       stop_reason: "end_turn",
     });
 
-    await expect(generateOde("Tomatoes")).rejects.toThrow(
+    await expect(generateOde("Tomatoes", "irregular")).rejects.toThrow(
       /^Response was not valid JSON$/,
     );
   });
@@ -127,6 +174,6 @@ describe("generateOde", () => {
     const error = new Error("API failure");
     create.mockRejectedValueOnce(error);
 
-    await expect(generateOde("Tomatoes")).rejects.toBe(error);
+    await expect(generateOde("Tomatoes", "irregular")).rejects.toBe(error);
   });
 });

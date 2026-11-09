@@ -43,6 +43,27 @@ export const Found: Story = {
   ),
 };
 
+export const WithComparison: Story = {
+  beforeEach: mockShareRequest(() =>
+    jsonResponse({
+      comparison: {
+        horatian: `A lantern red hangs low upon the vine,
+And summer gathers in its quiet skin.`,
+        pindaric: `Strophe
+Sing, chorus, of the tomato's flame!
+
+Antistrophe
+Sing back, chorus, of its humble name!
+
+Epode
+Praise it, and be still.`,
+      },
+      ode: SAMPLE_ODE,
+      topic: "Tomatoes",
+    }),
+  ),
+};
+
 export const LongTopic: Story = {
   beforeEach: mockShareRequest(() =>
     jsonResponse({ ode: SAMPLE_ODE, topic: "a".repeat(100) }),

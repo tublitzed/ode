@@ -1,5 +1,8 @@
+import { cn } from "cn";
 import { useEffect, useState } from "react";
 
+import OdeComparison from "@/client/components/OdeComparison";
+import type { OdeColumn } from "@/client/components/OdeComparison";
 import {
   Card,
   CardContent,
@@ -8,6 +11,11 @@ import {
   CardTitle,
 } from "@/client/components/ui/card";
 import { httpRequest } from "@/client/utils/httpRequest";
+import {
+  COMPARISON_TYPES,
+  DEFAULT_ODE_TYPE,
+  ODE_TYPE_DETAILS,
+} from "@/shared/ode";
 import type { SharedOde } from "@/shared/ode";
 
 type SharedOdePageProps = {
@@ -19,6 +27,22 @@ type View =
   | { sharedOde: SharedOde; status: "found" }
   | { status: "loading" }
   | { status: "notFound" };
+
+const { description, label } = ODE_TYPE_DETAILS[DEFAULT_ODE_TYPE];
+
+const toColumns = ({ comparison = {}, ode }: SharedOde): OdeColumn[] => [
+  { slot: { ode, status: "ode" }, type: DEFAULT_ODE_TYPE },
+  ...COMPARISON_TYPES.flatMap((type): OdeColumn[] => {
+    const comparisonOde = comparison[type];
+    return comparisonOde
+      ? [{ slot: { ode: comparisonOde, status: "ode" }, type }]
+      : [];
+  }),
+];
+
+const hasComparison = (view: View) =>
+  view.status === "found" &&
+  Object.keys(view.sharedOde.comparison ?? {}).length > 0;
 
 const renderView = (view: View) => {
   if (view.status === "loading") {
@@ -49,12 +73,24 @@ const renderView = (view: View) => {
     );
   }
 
+  if (hasComparison(view)) {
+    return (
+      <OdeComparison
+        columns={toColumns(view.sharedOde)}
+        topic={view.sharedOde.topic}
+      />
+    );
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="wrap-anywhere">
           Ode to {view.sharedOde.topic}
         </CardTitle>
+        <CardDescription>
+          <span className="font-medium">{label}.</span> {description}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <p className="whitespace-pre-line">{view.sharedOde.ode}</p>
@@ -99,7 +135,12 @@ const SharedOdePage = ({ id }: SharedOdePageProps) => {
   }, [id]);
 
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-md flex-col items-center justify-center gap-4 p-4">
+    <main
+      className={cn(
+        "mx-auto flex min-h-svh w-full flex-col items-center justify-center gap-4 p-4",
+        hasComparison(view) ? "max-w-7xl" : "max-w-md",
+      )}
+    >
       {renderView(view)}
     </main>
   );

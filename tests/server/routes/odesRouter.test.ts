@@ -17,7 +17,7 @@ import {
   SESSION_COOKIE,
 } from "@/server/auth.ts";
 import { generateOde } from "@/server/odes/generate.ts";
-import { MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
+import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
 vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
@@ -136,7 +136,11 @@ describe("POST /api/odes", () => {
       ode: "O tomato,\nstar of earth",
       status: "ode",
     });
-    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith(
+      "Tomatoes",
+      "irregular",
+      undefined,
+    );
   });
 
   it("returns a decline with suggestions without reporting it", async () => {
@@ -166,7 +170,11 @@ describe("POST /api/odes", () => {
       .set("Cookie", sessionCookie)
       .send({ topic: "  Tomatoes\n" });
 
-    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes");
+    expect(mockGenerateOde).toHaveBeenCalledWith(
+      "Tomatoes",
+      "irregular",
+      undefined,
+    );
   });
 
   it("accepts a topic at the maximum length", async () => {
@@ -176,6 +184,56 @@ describe("POST /api/odes", () => {
       .post("/api/odes")
       .set("Cookie", sessionCookie)
       .send({ topic: "a".repeat(MAX_TOPIC_LENGTH) });
+
+    expect(res.status).toBe(200);
+  });
+
+  it("passes the requested type and source ode to the generator", async () => {
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({ sourceOde: "O tomato", topic: "Tomatoes", type: "horatian" });
+
+    expect(res.status).toBe(200);
+    expect(mockGenerateOde).toHaveBeenCalledWith(
+      "Tomatoes",
+      "horatian",
+      "O tomato",
+    );
+  });
+
+  it.each([
+    ["an unknown type", { type: "sonnet" }],
+    ["a non-string type", { type: 42 }],
+    ["a non-string source ode", { sourceOde: 42 }],
+    ["a whitespace-only source ode", { sourceOde: "   " }],
+    ["a too-long source ode", { sourceOde: "a".repeat(MAX_ODE_LENGTH + 1) }],
+  ])("returns 400 for %s", async (_label, body) => {
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({ topic: "Tomatoes", ...body });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toEqual(expect.any(String));
+    expect(mockGenerateOde).not.toHaveBeenCalled();
+  });
+
+  it("accepts a source ode at the maximum length", async () => {
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({
+        sourceOde: "a".repeat(MAX_ODE_LENGTH),
+        topic: "Tomatoes",
+        type: "pindaric",
+      });
 
     expect(res.status).toBe(200);
   });

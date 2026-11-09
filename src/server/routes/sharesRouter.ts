@@ -3,10 +3,20 @@ import express from "express";
 import type { Router } from "express";
 
 import { createSharedOde, getSharedOde } from "#/server/shares/store.ts";
-import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "#/shared/ode.ts";
+import {
+  MAX_ODE_LENGTH,
+  MAX_TOPIC_LENGTH,
+  toComparison,
+} from "#/shared/ode.ts";
 
 const trimmedString = (value: unknown) =>
   typeof value === "string" ? value.trim() : "";
+
+const isValidComparison = (value: unknown) =>
+  value === undefined ||
+  (typeof value === "object" &&
+    value !== null &&
+    Object.keys(value).length === Object.keys(toComparison(value)).length);
 
 export const sharesRouter: Router = express.Router();
 
@@ -28,6 +38,7 @@ sharesRouter.get("/api/shares/:id", async (req, res) => {
 });
 
 sharesRouter.post("/api/shares", express.json(), async (req, res) => {
+  const comparison: unknown = req.body?.comparison;
   const ode = trimmedString(req.body?.ode);
   const topic = trimmedString(req.body?.topic);
 
@@ -35,14 +46,19 @@ sharesRouter.post("/api/shares", express.json(), async (req, res) => {
     !ode ||
     !topic ||
     ode.length > MAX_ODE_LENGTH ||
-    topic.length > MAX_TOPIC_LENGTH
+    topic.length > MAX_TOPIC_LENGTH ||
+    !isValidComparison(comparison)
   ) {
     res.status(400).json({ error: "That ode can't be shared." });
     return;
   }
 
   try {
-    const id = await createSharedOde({ ode, topic });
+    const id = await createSharedOde({
+      comparison: toComparison(comparison),
+      ode,
+      topic,
+    });
     res.status(201).json({ id });
   } catch (error) {
     Sentry.captureException(error);

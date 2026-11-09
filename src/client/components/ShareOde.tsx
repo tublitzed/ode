@@ -4,8 +4,10 @@ import { Button } from "@/client/components/ui/button";
 import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";
 import { httpRequest } from "@/client/utils/httpRequest";
+import type { Comparison } from "@/shared/ode";
 
 type ShareOdeProps = {
+  comparison?: Comparison;
   ode: string;
   topic: string;
 };
@@ -21,14 +23,14 @@ type View =
   | { status: "idle" }
   | { status: "sharing" };
 
-const ShareOde = ({ ode, topic }: ShareOdeProps) => {
+const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
   const [link, setLink] = useState<string>();
   const [view, setView] = useState<View>({ status: "idle" });
   const linkInputId = useId();
 
   const createLink = async () => {
     const result = await httpRequest<ShareResponse>("/api/shares", {
-      body: { ode, topic },
+      body: { comparison, ode, topic },
       method: "POST",
     });
 
