@@ -4,6 +4,9 @@ import { reactErrorHandler } from "@sentry/react";
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 
+import "@fontsource-variable/figtree/index.css";
+import "@fontsource-variable/newsreader/index.css";
+import "@fontsource/young-serif/index.css";
 import "@/client/index.css";
 
 import LoginPage from "@/client/components/LoginPage";

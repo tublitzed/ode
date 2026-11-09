@@ -20,6 +20,9 @@ import { generateOde } from "@/server/odes/generate.ts";
 import { MAX_SOURCE_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
+vi.mock("@/server/odes/drawMosaic.ts", () => ({
+  drawMosaic: vi.fn().mockResolvedValue(undefined),
+}));
 vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
 
 const PASSWORD = "correct horse";

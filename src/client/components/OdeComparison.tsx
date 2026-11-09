@@ -1,17 +1,12 @@
 import { cn } from "cn";
 
+import MosaicPanel from "@/client/components/MosaicPanel";
 import OdeProgressStatus from "@/client/components/OdeProgressStatus";
+import OdeTitle from "@/client/components/OdeTitle";
 import OdeVerse from "@/client/components/OdeVerse";
 import { Button } from "@/client/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/client/components/ui/card";
 import { ODE_TYPE_DETAILS } from "@/shared/ode";
-import type { OdeType } from "@/shared/ode";
+import type { MosaicShape, OdeType } from "@/shared/ode";
 
 const LOADER_INTERVAL_MS = 5000;
 
@@ -39,13 +34,17 @@ export type OdeColumn = {
 
 type OdeComparisonProps = {
   columns: OdeColumn[];
+  mosaic?: MosaicShape[];
   onRetry: (type: OdeType) => void;
   onWriteAnother: () => void;
   topic: string;
 };
 
+const COLUMN_CLASS = "border-rule border-t-2 pt-5";
+
 const OdeComparison = ({
   columns,
+  mosaic,
   onRetry,
   onWriteAnother,
   topic,
@@ -57,65 +56,70 @@ const OdeComparison = ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between gap-4">
-        <h1 className="min-w-0 text-lg font-semibold wrap-anywhere">
-          Ode to {topic}
-        </h1>
-        <Button
-          className="shrink-0"
-          disabled={pending.length > 0}
-          onClick={onWriteAnother}
-        >
-          Write another ode
-        </Button>
-      </div>
-      <div className="grid w-full gap-4 xl:grid-cols-3">
+      <MosaicPanel
+        className="starting:max-w-100 max-w-70 transition-[max-width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
+        label={`A mosaic for the ode to ${topic}`}
+        shapes={mosaic}
+        state="laid"
+      />
+      <OdeTitle className="mt-10">Ode to {topic}</OdeTitle>
+      <div className="mt-11 grid w-full max-w-136 gap-10 text-left min-[1101px]:max-w-310 min-[1101px]:grid-cols-3 min-[1101px]:gap-14">
         {columns.map(({ slot, type }) => {
           if (slot.status === "generating") {
             return type === pending[0].type ? (
-              <Card
-                className={cn(pending.length > 1 && "xl:col-span-2")}
+              <section
+                className={cn(
+                  COLUMN_CLASS,
+                  pending.length > 1 && "min-[1101px]:col-span-2",
+                )}
                 key={type}
               >
-                <CardHeader>
-                  <CardTitle>{pendingLabel}</CardTitle>
-                </CardHeader>
-                <CardContent>
+                <h2 className="font-display text-[1.625rem]">{pendingLabel}</h2>
+                <div className="mt-6">
                   <OdeProgressStatus
+                    align="start"
                     intervalMs={LOADER_INTERVAL_MS}
                     phrases={LOADER_PHRASES}
                   />
-                </CardContent>
-              </Card>
+                </div>
+              </section>
             ) : null;
           }
 
           return (
-            <Card key={type}>
-              <CardHeader>
-                <CardTitle>{ODE_TYPE_DETAILS[type].label}</CardTitle>
-                <CardDescription>
-                  {ODE_TYPE_DETAILS[type].description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {slot.status === "failed" ? (
-                  <div className="grid justify-items-start gap-4">
-                    <p className="text-destructive text-sm" role="alert">
-                      {slot.message}
-                    </p>
-                    <Button onClick={() => onRetry(type)} variant="outline">
-                      Try again
-                    </Button>
-                  </div>
-                ) : (
-                  <OdeVerse ode={slot.ode} />
-                )}
-              </CardContent>
-            </Card>
+            <section className={COLUMN_CLASS} key={type}>
+              <h2 className="font-display text-[1.625rem]">
+                {ODE_TYPE_DETAILS[type].label}
+              </h2>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-snug min-[1101px]:min-h-[2.9em]">
+                {ODE_TYPE_DETAILS[type].description}
+              </p>
+              {slot.status === "failed" ? (
+                <div className="mt-6 grid justify-items-start gap-4">
+                  <p className="text-destructive font-medium" role="alert">
+                    {slot.message}
+                  </p>
+                  <Button onClick={() => onRetry(type)} variant="outline">
+                    Try again
+                  </Button>
+                </div>
+              ) : (
+                <OdeVerse
+                  className="animate-rise mt-6 text-lg motion-reduce:animate-none"
+                  ode={slot.ode}
+                />
+              )}
+            </section>
           );
         })}
       </div>
+      <Button
+        className="mt-12"
+        disabled={pending.length > 0}
+        onClick={onWriteAnother}
+      >
+        Write another ode
+      </Button>
     </>
   );
 };

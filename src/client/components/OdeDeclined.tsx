@@ -1,11 +1,6 @@
+import MosaicPanel from "@/client/components/MosaicPanel";
+import OdeTitle from "@/client/components/OdeTitle";
 import { Button } from "@/client/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/client/components/ui/card";
 
 type OdeDeclinedProps = {
   onEnterDifferentTopic: () => void;
@@ -20,16 +15,21 @@ const OdeDeclined = ({
   reason,
   suggestions,
 }: OdeDeclinedProps) => (
-  <Card className="w-full">
-    <CardHeader>
-      <CardTitle>We can't write that ode</CardTitle>
-      <CardDescription>{reason}</CardDescription>
-    </CardHeader>
-    <CardContent className="grid gap-2">
-      <p className="text-sm font-medium">How about one of these?</p>
+  <>
+    <MosaicPanel
+      className="max-w-100"
+      label="An empty mosaic"
+      state="waiting"
+    />
+    <OdeTitle className="mt-10">We can’t write that ode</OdeTitle>
+    <p className="text-muted-foreground mt-3 max-w-[44ch] text-lg leading-normal text-balance">
+      {reason}
+    </p>
+    <p className="mt-8 font-semibold">How about one of these?</p>
+    <div className="mt-3 flex flex-wrap justify-center gap-3">
       {suggestions.map((suggestion) => (
         <Button
-          className="h-auto w-full whitespace-normal"
+          className="h-auto whitespace-normal"
           key={suggestion}
           onClick={() => onSelectSuggestion(suggestion)}
           variant="outline"
@@ -37,15 +37,11 @@ const OdeDeclined = ({
           {suggestion}
         </Button>
       ))}
-      <Button
-        className="w-full"
-        onClick={onEnterDifferentTopic}
-        variant="ghost"
-      >
-        Enter a different topic
-      </Button>
-    </CardContent>
-  </Card>
+    </div>
+    <Button className="mt-4" onClick={onEnterDifferentTopic} variant="ghost">
+      Enter a different topic
+    </Button>
+  </>
 );
 
 export default OdeDeclined;

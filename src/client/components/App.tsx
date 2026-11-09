@@ -1,11 +1,9 @@
-import { cn } from "cn";
 import { useState } from "react";
 
 import OdeComparison from "@/client/components/OdeComparison";
 import type { OdeColumn, OdeSlot } from "@/client/components/OdeComparison";
 import OdeDeclined from "@/client/components/OdeDeclined";
 import OdeForm from "@/client/components/OdeForm";
-import OdeProgress from "@/client/components/OdeProgress";
 import OdeResult from "@/client/components/OdeResult";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
@@ -17,7 +15,7 @@ import {
 } from "@/client/utils/localStorage";
 import type { SavedComparison } from "@/client/utils/localStorage";
 import { DEFAULT_ODE_TYPE } from "@/shared/ode";
-import type { OdeResponse, OdeType } from "@/shared/ode";
+import type { MosaicShape, OdeResponse, OdeType } from "@/shared/ode";
 
 const COMPARISON_TYPES: OdeType[] = ["pindaric", "horatian"];
 const UNSAVED_ODE_MESSAGE = "This ode didn't finish. Try writing it again.";
@@ -33,7 +31,13 @@ type View =
   | { message: string; status: "error" }
   | { status: "generating"; topic: string }
   | { status: "idle" }
-  | { ode: string; status: "ode"; topic: string };
+  | {
+      isFresh: boolean;
+      mosaic?: MosaicShape[];
+      ode: string;
+      status: "ode";
+      topic: string;
+    };
 
 const logOut = async () => {
   try {
@@ -50,7 +54,13 @@ const getInitialView = (): View => {
     return { status: "idle" };
   }
 
-  return { ode: lastOde.ode, status: "ode", topic: lastOde.topic };
+  return {
+    isFresh: false,
+    mosaic: lastOde.mosaic,
+    ode: lastOde.ode,
+    status: "ode",
+    topic: lastOde.topic,
+  };
 };
 
 export const toComparisonColumns = (
@@ -154,9 +164,13 @@ const App = () => {
       return;
     }
 
-    const lastOde = { ode: result.data.ode, topic: nextTopic };
+    const lastOde = {
+      mosaic: result.data.mosaic,
+      ode: result.data.ode,
+      topic: nextTopic,
+    };
     saveLastOde(lastOde);
-    setView({ ...lastOde, status: "ode" });
+    setView({ ...lastOde, isFresh: true, status: "ode" });
   };
 
   const handleSubmit = () => {
@@ -223,7 +237,7 @@ const App = () => {
 
   const renderView = () => {
     if (view.status === "generating") {
-      return <OdeProgress topic={view.topic} />;
+      return <OdeForm isWriting topic={view.topic} />;
     }
 
     if (view.status === "declined") {
@@ -248,6 +262,7 @@ const App = () => {
               },
               ...columns,
             ]}
+            mosaic={view.mosaic}
             onRetry={(type) => handleRetry(view.ode, view.topic, type)}
             onWriteAnother={startOver}
             topic={view.topic}
@@ -257,6 +272,8 @@ const App = () => {
 
       return (
         <OdeResult
+          isFresh={view.isFresh}
+          mosaic={view.mosaic}
           ode={view.ode}
           onCompare={() => handleCompare(view.ode, view.topic)}
           onWriteAnother={startOver}
@@ -276,22 +293,24 @@ const App = () => {
   };
 
   return (
-    <div className="relative">
-      <main
-        className={cn(
-          "mx-auto flex min-h-svh w-full flex-col items-center justify-center gap-4 p-4 pb-16",
-          isComparing ? "max-w-7xl" : "max-w-md",
-        )}
-      >
+    <div className="flex min-h-svh flex-col">
+      <header className="flex items-center justify-between px-4 py-5 md:px-12 md:py-7">
+        <span className="font-display text-2xl">Ode</span>
+        <Button
+          className="text-muted-foreground min-h-0 px-0 py-1 text-sm"
+          onClick={logOut}
+          variant="link"
+        >
+          Log out
+        </Button>
+      </header>
+      <main className="flex w-full flex-1 flex-col items-center px-4 pb-20 text-center">
         {renderView()}
       </main>
-      <Button
-        className="absolute right-4 bottom-4"
-        onClick={logOut}
-        variant="ghost"
-      >
-        Log out
-      </Button>
+      <footer className="text-muted-foreground px-4 pb-8 text-center text-sm">
+        Odes and mosaics by Claude, for Ode with Anthropic. An unofficial
+        homage.
+      </footer>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
@@ -7,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/client/components/ui/tooltip";
 
-const SECTION_LINE = /^(Antistrophe|Epode|Strophe)$/m;
+const STANZA_BREAK = /\n\s*\n/;
 
 const SECTION_MEANINGS: Record<string, string> = {
   Antistrophe:
@@ -33,7 +34,7 @@ const OdeSectionLabel = ({ name }: OdeSectionLabelProps) => {
   return (
     <Tooltip onOpenChange={setIsOpen} open={isOpen}>
       <TooltipTrigger
-        className="text-muted-foreground cursor-help text-xs font-semibold tracking-wide uppercase underline decoration-dotted underline-offset-4"
+        className="text-muted-foreground mb-1 cursor-help rounded-sm font-sans text-xs font-semibold tracking-[0.08em] uppercase underline decoration-dotted underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-3"
         onClick={handleClick}
       >
         {name}
@@ -43,22 +44,34 @@ const OdeSectionLabel = ({ name }: OdeSectionLabelProps) => {
   );
 };
 
+const toStanzas = (ode: string) =>
+  ode.split(STANZA_BREAK).map((stanza) => {
+    const lines = stanza.split("\n");
+    const firstLine = lines[0].trim();
+
+    return SECTION_MEANINGS[firstLine]
+      ? { lines: lines.slice(1), section: firstLine }
+      : { lines, section: undefined };
+  });
+
 type OdeVerseProps = {
+  className?: string;
   ode: string;
 };
 
-const OdeVerse = ({ ode }: OdeVerseProps) => (
-  <p className="text-sm whitespace-pre-line">
-    {ode
-      .split(SECTION_LINE)
-      .map((part) =>
-        SECTION_MEANINGS[part] ? (
-          <OdeSectionLabel key={part} name={part} />
-        ) : (
-          part
-        ),
-      )}
-  </p>
+const OdeVerse = ({ className, ode }: OdeVerseProps) => (
+  <div className={cn("font-verse text-xl leading-[1.55]", className)}>
+    {toStanzas(ode).map(({ lines, section }, stanzaIndex) => (
+      <p className="mt-[1.1em] first:mt-0" key={`${stanzaIndex}-${lines[0]}`}>
+        {section && <OdeSectionLabel name={section} />}
+        {lines.map((line, lineIndex) => (
+          <span className="block pl-6 -indent-6" key={`${lineIndex}-${line}`}>
+            {line}
+          </span>
+        ))}
+      </p>
+    ))}
+  </div>
 );
 
 export default OdeVerse;

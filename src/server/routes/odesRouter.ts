@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
 
+import { drawMosaic } from "#/server/odes/drawMosaic.ts";
 import { generateOde } from "#/server/odes/generate.ts";
 import {
   DEFAULT_ODE_TYPE,
@@ -46,6 +47,15 @@ const toFailure = (error: unknown) => {
   return UNEXPECTED;
 };
 
+const drawMosaicSafely = async (topic: string) => {
+  try {
+    return await drawMosaic(topic);
+  } catch (error) {
+    Sentry.captureException(error);
+    return undefined;
+  }
+};
+
 const isUsableSourceOde = (value: unknown): value is string =>
   typeof value === "string" &&
   value.trim().length > 0 &&
@@ -80,8 +90,19 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
     return;
   }
 
+  const pendingMosaic =
+    sourceOde === undefined ? drawMosaicSafely(topic) : undefined;
+
   try {
-    res.json(await generateOde(topic, type, sourceOde));
+    const ode = await generateOde(topic, type, sourceOde);
+
+    if (ode.status !== "ode" || !pendingMosaic) {
+      res.json(ode);
+      return;
+    }
+
+    const mosaic = await pendingMosaic;
+    res.json(mosaic ? { ...ode, mosaic } : ode);
   } catch (error) {
     const failure = toFailure(error);
 

@@ -1,5 +1,5 @@
-import { isOdeType } from "@/shared/ode";
-import type { OdeType } from "@/shared/ode";
+import { isOdeType, isTesseraColor } from "@/shared/ode";
+import type { MosaicShape, OdeType } from "@/shared/ode";
 
 const STORAGE_KEY = "ode:lastOde";
 
@@ -7,6 +7,7 @@ export type SavedComparison = Partial<Record<OdeType, string>>;
 
 export type LastOde = {
   comparison?: SavedComparison;
+  mosaic?: MosaicShape[];
   ode: string;
   topic: string;
 };
@@ -18,6 +19,17 @@ const readComparison = (value: unknown): SavedComparison =>
     ),
   );
 
+const isMosaicShape = (value: unknown): value is MosaicShape =>
+  typeof value === "object" &&
+  value !== null &&
+  "d" in value &&
+  "fill" in value &&
+  typeof value.d === "string" &&
+  isTesseraColor(value.fill);
+
+const readMosaic = (value: unknown) =>
+  Array.isArray(value) && value.every(isMosaicShape) ? value : undefined;
+
 export const loadLastOde = (): LastOde | undefined => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -25,12 +37,17 @@ export const loadLastOde = (): LastOde | undefined => {
       return undefined;
     }
 
-    const { comparison, ode, topic } = JSON.parse(stored);
+    const { comparison, mosaic, ode, topic } = JSON.parse(stored);
     if (typeof ode !== "string" || typeof topic !== "string") {
       return undefined;
     }
 
-    return { comparison: readComparison(comparison), ode, topic };
+    return {
+      comparison: readComparison(comparison),
+      mosaic: readMosaic(mosaic),
+      ode,
+      topic,
+    };
   } catch {
     return undefined;
   }

@@ -29,6 +29,25 @@ export const ODE_TYPE_DETAILS: Record<
 export const isOdeType = (value: unknown): value is OdeType =>
   ODE_TYPES.includes(value as OdeType);
 
+const TESSERA_HUES = ["b", "g", "k", "n", "o", "r", "y"] as const;
+const TESSERA_TONES = [1, 2, 3, 4] as const;
+
+export const TESSERA_COLORS = [
+  ...TESSERA_HUES.flatMap((hue) =>
+    TESSERA_TONES.map((tone) => `${hue}${tone}` as const),
+  ),
+  "C",
+  "K",
+  "W",
+] as const;
+
+export type TesseraColor = (typeof TESSERA_COLORS)[number];
+
+export type MosaicShape = { d: string; fill: TesseraColor };
+
+export const isTesseraColor = (value: unknown): value is TesseraColor =>
+  TESSERA_COLORS.includes(value as TesseraColor);
+
 export type OdeResponse =
-  | { ode: string; status: "ode" }
+  | { mosaic?: MosaicShape[]; ode: string; status: "ode" }
   | { reason: string; status: "declined"; suggestions: string[] };
