@@ -21,7 +21,7 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:reset:dev": "prisma migrate reset",
     "prepare": "husky",
-    "start": "prisma migrate deploy && NODE_ENV=production node --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
+    "start": "NODE_ENV=production node --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
     "storybook": "storybook dev",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

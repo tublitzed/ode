@@ -12,9 +12,11 @@ Simple Ode builder.
 5. Use the sample app password in `.env` to access the app
 
 
-## Hosting
+## Infra
 
-1. Will auto-deploy to Railway on merges to main.
+- Will auto-deploy to Railway on merges to main.
+
+Migrations are run via a pre-deploy step which is set to `npx prisma migrate deploy`.
 
 ## Code Structure
 
