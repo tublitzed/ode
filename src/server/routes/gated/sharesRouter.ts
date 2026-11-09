@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
 
-import { createSharedOde, getSharedOde } from "#/server/shares/store.ts";
+import { createSharedOde } from "#/server/shares/store.ts";
 import {
   MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
@@ -19,23 +19,6 @@ const isValidComparison = (value: unknown) =>
     Object.keys(value).length === Object.keys(toComparison(value)).length);
 
 export const sharesRouter: Router = express.Router();
-
-sharesRouter.get("/api/shares/:id", async (req, res) => {
-  try {
-    const sharedOde = await getSharedOde(req.context.db, req.params.id);
-    if (!sharedOde) {
-      res.status(404).json({ error: "We couldn't find that ode." });
-      return;
-    }
-
-    res.json(sharedOde);
-  } catch (error) {
-    Sentry.captureException(error);
-    res
-      .status(500)
-      .json({ error: "Something went wrong loading this ode. Try again." });
-  }
-});
 
 sharesRouter.post("/api/shares", express.json(), async (req, res) => {
   const comparison: unknown = req.body?.comparison;

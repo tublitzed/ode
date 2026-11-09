@@ -107,7 +107,7 @@ const SharedOdePage = ({ id }: SharedOdePageProps) => {
 
     const load = async () => {
       const result = await httpRequest<SharedOde>(
-        `/api/shares/${encodeURIComponent(id)}`,
+        `/api/public/shares/${encodeURIComponent(id)}`,
       );
       if (!isCurrent) {
         return;
