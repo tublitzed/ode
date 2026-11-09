@@ -1,13 +1,18 @@
+import * as Sentry from "@sentry/node";
 import express from "express";
-import type { Express } from "express";
+import type { Express, RequestHandler } from "express";
 import { readFile } from "node:fs/promises";
 import type { Server } from "node:http";
 import { extname, join } from "node:path";
 
 import { isDevPublicPath } from "#/server/auth.ts";
 import type { IsPublicPath } from "#/server/auth.ts";
+import type { Db } from "#/server/db.ts";
 import { collectEntryFiles } from "#/server/manifest.ts";
 import type { Manifest } from "#/server/manifest.ts";
+import { renderPreview } from "#/server/shares/renderPreview.ts";
+import { getSharedOde } from "#/server/shares/store.ts";
+import { getSharedOdeId } from "#/shared/sharedOdePath.ts";
 
 type ClientHostOptions = {
   isProduction: boolean;
@@ -58,6 +63,47 @@ const createDevMode = async (server: Server): Promise<ClientMode> => {
   };
 };
 
+const loadSharedOde = async (db: Db, id: string) => {
+  try {
+    const sharedOde = await getSharedOde(db, id);
+    return { found: sharedOde !== undefined, sharedOde };
+  } catch (error) {
+    Sentry.captureException(error);
+    return { found: true, sharedOde: undefined };
+  }
+};
+
+export const createPageHandler =
+  (renderHtml: ClientMode["renderHtml"]): RequestHandler =>
+  async (req, res, next) => {
+    if (req.method !== "GET" || extname(req.path) !== "") {
+      next();
+      return;
+    }
+
+    try {
+      const html = await renderHtml(req.originalUrl);
+      const sharedOdeId = getSharedOdeId(req.path);
+
+      if (!sharedOdeId) {
+        res.type("html").send(html);
+        return;
+      }
+
+      const { found, sharedOde } = await loadSharedOde(
+        req.context.db,
+        sharedOdeId,
+      );
+
+      res
+        .status(found ? 200 : 404)
+        .type("html")
+        .send(sharedOde ? renderPreview(html, sharedOde) : html);
+    } catch (error) {
+      next(error);
+    }
+  };
+
 export const createClientHost = async ({
   isProduction,
   server,
@@ -71,19 +117,7 @@ export const createClientHost = async ({
     mountClient: (app: Express) => {
       mode.serveStatic(app);
 
-      app.use(async (req, res, next) => {
-        if (req.method !== "GET" || extname(req.path) !== "") {
-          next();
-          return;
-        }
-
-        try {
-          const html = await mode.renderHtml(req.originalUrl);
-          res.type("html").send(html);
-        } catch (error) {
-          next(error);
-        }
-      });
+      app.use(createPageHandler(mode.renderHtml));
     },
   };
 };

@@ -1,3 +1,4 @@
+import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import {
   Card,
@@ -36,6 +37,7 @@ const OdeResult = ({
         <Button className="w-full" onClick={onCompare} variant="outline">
           Compare Pindaric and Horatian odes
         </Button>
+        <ShareOde ode={ode} topic={topic} />
         <Button className="w-full" onClick={onWriteAnother}>
           Write another ode
         </Button>

@@ -1,4 +1,5 @@
 import { cn } from "cn";
+import type { ReactNode } from "react";
 
 import OdeProgressStatus from "@/client/components/OdeProgressStatus";
 import OdeVerse from "@/client/components/OdeVerse";
@@ -38,16 +39,16 @@ export type OdeColumn = {
 };
 
 type OdeComparisonProps = {
+  actions?: ReactNode;
   columns: OdeColumn[];
-  onRetry: (type: OdeType) => void;
-  onWriteAnother: () => void;
+  onRetry?: (type: OdeType) => void;
   topic: string;
 };
 
 const OdeComparison = ({
+  actions,
   columns,
   onRetry,
-  onWriteAnother,
   topic,
 }: OdeComparisonProps) => {
   const pending = columns.filter(({ slot }) => slot.status === "generating");
@@ -57,17 +58,11 @@ const OdeComparison = ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between gap-4">
+      <div className="flex w-full flex-wrap items-start justify-between gap-4">
         <h1 className="min-w-0 text-lg font-semibold wrap-anywhere">
           Ode to {topic}
         </h1>
-        <Button
-          className="shrink-0"
-          disabled={pending.length > 0}
-          onClick={onWriteAnother}
-        >
-          Write another ode
-        </Button>
+        {actions}
       </div>
       <div className="grid w-full gap-4 xl:grid-cols-3">
         {columns.map(({ slot, type }) => {
@@ -104,9 +99,11 @@ const OdeComparison = ({
                     <p className="text-destructive text-sm" role="alert">
                       {slot.message}
                     </p>
-                    <Button onClick={() => onRetry(type)} variant="outline">
-                      Try again
-                    </Button>
+                    {onRetry && (
+                      <Button onClick={() => onRetry(type)} variant="outline">
+                        Try again
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <OdeVerse ode={slot.ode} />

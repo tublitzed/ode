@@ -7,19 +7,20 @@ import OdeDeclined from "@/client/components/OdeDeclined";
 import OdeForm from "@/client/components/OdeForm";
 import OdeProgress from "@/client/components/OdeProgress";
 import OdeResult from "@/client/components/OdeResult";
+import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
 import type { HttpResult } from "@/client/utils/httpRequest";
 import {
+  clearLastOde,
   loadLastOde,
   saveComparisonOde,
   saveLastOde,
 } from "@/client/utils/localStorage";
 import type { SavedComparison } from "@/client/utils/localStorage";
-import { DEFAULT_ODE_TYPE } from "@/shared/ode";
-import type { OdeResponse, OdeType } from "@/shared/ode";
+import { COMPARISON_TYPES, DEFAULT_ODE_TYPE } from "@/shared/ode";
+import type { Comparison, OdeResponse, OdeType } from "@/shared/ode";
 
-const COMPARISON_TYPES: OdeType[] = ["pindaric", "horatian"];
 const UNSAVED_ODE_MESSAGE = "This ode didn't finish. Try writing it again.";
 
 type OdeRequest = {
@@ -34,6 +35,10 @@ type View =
   | { status: "generating"; topic: string }
   | { status: "idle" }
   | { ode: string; status: "ode"; topic: string };
+
+type AppProps = {
+  forceView?: View & { columns?: OdeColumn[] }; // Storybook only
+};
 
 const logOut = async () => {
   try {
@@ -71,6 +76,13 @@ export const toComparisonColumns = (
     };
   });
 };
+
+const toSharedComparison = (columns: OdeColumn[]): Comparison =>
+  Object.fromEntries(
+    columns.flatMap(({ slot, type }) =>
+      slot.status === "ode" ? [[type, slot.ode]] : [],
+    ),
+  );
 
 const getInitialColumns = () =>
   toComparisonColumns(loadLastOde()?.comparison ?? {});
@@ -121,10 +133,12 @@ const writeComparisonColumn = async (
   return { slot, type };
 };
 
-const App = () => {
-  const [columns, setColumns] = useState<OdeColumn[]>(getInitialColumns);
+const App = ({ forceView }: AppProps) => {
+  const [columns, setColumns] = useState<OdeColumn[]>(
+    () => forceView?.columns ?? getInitialColumns(),
+  );
   const [topic, setTopic] = useState("");
-  const [view, setView] = useState<View>(getInitialView);
+  const [view, setView] = useState<View>(() => forceView ?? getInitialView());
 
   const isComparing = columns.length > 0;
 
@@ -216,6 +230,7 @@ const App = () => {
   };
 
   const startOver = () => {
+    clearLastOde();
     setColumns([]);
     setTopic("");
     setView({ status: "idle" });
@@ -239,8 +254,30 @@ const App = () => {
 
     if (view.status === "ode") {
       if (isComparing) {
+        const isWriting = columns.some(
+          ({ slot }) => slot.status === "generating",
+        );
+        const sharedComparison = toSharedComparison(columns);
+
         return (
           <OdeComparison
+            actions={
+              <div className="flex shrink-0 items-start gap-2">
+                {!isWriting && (
+                  <div className="w-56">
+                    <ShareOde
+                      comparison={sharedComparison}
+                      key={JSON.stringify(sharedComparison)}
+                      ode={view.ode}
+                      topic={view.topic}
+                    />
+                  </div>
+                )}
+                <Button disabled={isWriting} onClick={startOver}>
+                  Write another ode
+                </Button>
+              </div>
+            }
             columns={[
               {
                 slot: { ode: view.ode, status: "ode" },
@@ -249,7 +286,6 @@ const App = () => {
               ...columns,
             ]}
             onRetry={(type) => handleRetry(view.ode, view.topic, type)}
-            onWriteAnother={startOver}
             topic={view.topic}
           />
         );

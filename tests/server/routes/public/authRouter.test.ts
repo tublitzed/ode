@@ -3,13 +3,17 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createApp } from "@/server/app.ts";
 import { SESSION_COOKIE, SESSION_MAX_AGE_MS } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
 
 const PASSWORD = "correct horse";
+
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
 
 const buildApp = (password = PASSWORD) => {
   vi.stubEnv("APP_PASSWORD", password);
 
   return createApp({
+    context: testContext,
     isPublicPath: () => false,
     mountClient: () => {},
   });

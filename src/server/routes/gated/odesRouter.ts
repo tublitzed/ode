@@ -11,7 +11,7 @@ import { generateOde } from "#/server/odes/generate.ts";
 import {
   DEFAULT_ODE_TYPE,
   isOdeType,
-  MAX_SOURCE_ODE_LENGTH,
+  MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
 } from "#/shared/ode.ts";
 
@@ -28,8 +28,6 @@ const UNREACHABLE = {
   status: 502,
 };
 
-const OVERLOADED_STATUS = 529;
-
 const toFailure = (error: unknown) => {
   if (error instanceof APIConnectionError) {
     return UNREACHABLE;
@@ -40,7 +38,7 @@ const toFailure = (error: unknown) => {
   }
 
   if (error instanceof InternalServerError) {
-    return error.status === OVERLOADED_STATUS ? BUSY : UNREACHABLE;
+    return error.status === 529 ? BUSY : UNREACHABLE;
   }
 
   return UNEXPECTED;
@@ -49,7 +47,7 @@ const toFailure = (error: unknown) => {
 const isUsableSourceOde = (value: unknown): value is string =>
   typeof value === "string" &&
   value.trim().length > 0 &&
-  value.length <= MAX_SOURCE_ODE_LENGTH;
+  value.length <= MAX_ODE_LENGTH;
 
 export const odesRouter: Router = express.Router();
 
