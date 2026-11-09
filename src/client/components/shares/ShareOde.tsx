@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { useId, useState } from "react";
 
 import { Button } from "@/client/components/ui/button";
@@ -22,6 +23,23 @@ type View =
   | { message: string; status: "error" }
   | { status: "idle" }
   | { status: "sharing" };
+
+const renderLabel = (view: View) => {
+  if (view.status === "sharing") {
+    return "Sharing…";
+  }
+
+  if (view.status === "copied") {
+    return (
+      <>
+        <Check aria-hidden="true" />
+        Link copied
+      </>
+    );
+  }
+
+  return "Share this ode";
+};
 
 const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
   const [link, setLink] = useState<string>();
@@ -80,26 +98,22 @@ const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
         onClick={share}
         variant="outline"
       >
-        {view.status === "sharing" ? "Sharing…" : "Share this ode"}
+        {renderLabel(view)}
       </Button>
-      <div aria-live="polite">
-        {view.status === "copied" && (
-          <p className="text-center text-sm text-muted-foreground">
-            Link copied
-          </p>
-        )}
-        {view.status === "clipboardBlocked" && (
-          <div className="grid gap-2">
-            <Label htmlFor={linkInputId}>Copy this link to share</Label>
-            <Input
-              id={linkInputId}
-              onFocus={(event) => event.target.select()}
-              readOnly
-              value={view.link}
-            />
-          </div>
-        )}
-      </div>
+      <span aria-live="polite" className="sr-only">
+        {view.status === "copied" ? "Link copied" : ""}
+      </span>
+      {view.status === "clipboardBlocked" && (
+        <div className="grid gap-2">
+          <Label htmlFor={linkInputId}>Copy this link to share</Label>
+          <Input
+            id={linkInputId}
+            onFocus={(event) => event.target.select()}
+            readOnly
+            value={view.link}
+          />
+        </div>
+      )}
       {view.status === "error" && (
         <p className="text-sm text-destructive" role="alert">
           {view.message}
