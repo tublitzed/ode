@@ -9,6 +9,7 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE_MS,
 } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
 import { getSharedOde } from "@/server/shares/store.ts";
 
 vi.mock("@/server/shares/store.ts", () => ({
@@ -18,12 +19,15 @@ vi.mock("@/server/shares/store.ts", () => ({
 
 const PASSWORD = "correct horse";
 
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
+
 const isTestPublicPath = (path: string) => path.startsWith("/public/");
 
 const buildApp = (password = PASSWORD) => {
   vi.stubEnv("APP_PASSWORD", password);
 
   return createApp({
+    context: testContext,
     isPublicPath: isTestPublicPath,
     mountClient: (app) => {
       app.use((_req, res) => {
@@ -56,6 +60,7 @@ describe("createApp", () => {
 
     await expect(
       createApp({
+        context: testContext,
         isPublicPath: isTestPublicPath,
         mountClient: () => {},
       }),

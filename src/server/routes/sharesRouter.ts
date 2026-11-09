@@ -22,7 +22,7 @@ export const sharesRouter: Router = express.Router();
 
 sharesRouter.get("/api/shares/:id", async (req, res) => {
   try {
-    const sharedOde = await getSharedOde(req.params.id);
+    const sharedOde = await getSharedOde(req.context.db, req.params.id);
     if (!sharedOde) {
       res.status(404).json({ error: "We couldn't find that ode." });
       return;
@@ -54,7 +54,7 @@ sharesRouter.post("/api/shares", express.json(), async (req, res) => {
   }
 
   try {
-    const id = await createSharedOde({
+    const id = await createSharedOde(req.context.db, {
       comparison: toComparison(comparison),
       ode,
       topic,

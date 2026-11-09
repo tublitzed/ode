@@ -16,6 +16,7 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
 import { generateOde } from "@/server/odes/generate.ts";
 import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
@@ -25,12 +26,15 @@ vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
 const PASSWORD = "correct horse";
 const SECRET_DETAIL = "secret detail";
 
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
+
 const sessionCookie = `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(PASSWORD))}`;
 
 const mockGenerateOde = vi.mocked(generateOde);
 
 const buildApp = () =>
   createApp({
+    context: testContext,
     isPublicPath: () => false,
     mountClient: () => {},
   });

@@ -7,6 +7,7 @@ import { extname, join } from "node:path";
 
 import { isDevPublicPath } from "#/server/auth.ts";
 import type { IsPublicPath } from "#/server/auth.ts";
+import type { Db } from "#/server/db.ts";
 import { collectEntryFiles } from "#/server/manifest.ts";
 import type { Manifest } from "#/server/manifest.ts";
 import { renderPreview } from "#/server/shares/renderPreview.ts";
@@ -62,9 +63,9 @@ const createDevMode = async (server: Server): Promise<ClientMode> => {
   };
 };
 
-const loadSharedOde = async (id: string) => {
+const loadSharedOde = async (db: Db, id: string) => {
   try {
-    const sharedOde = await getSharedOde(id);
+    const sharedOde = await getSharedOde(db, id);
     return { found: sharedOde !== undefined, sharedOde };
   } catch (error) {
     Sentry.captureException(error);
@@ -89,7 +90,10 @@ export const createPageHandler =
         return;
       }
 
-      const { found, sharedOde } = await loadSharedOde(sharedOdeId);
+      const { found, sharedOde } = await loadSharedOde(
+        req.context.db,
+        sharedOdeId,
+      );
 
       res
         .status(found ? 200 : 404)

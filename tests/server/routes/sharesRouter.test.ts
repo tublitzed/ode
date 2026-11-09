@@ -8,6 +8,7 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
 import { createSharedOde, getSharedOde } from "@/server/shares/store.ts";
 import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
@@ -23,6 +24,8 @@ const SECRET_DETAIL = "secret detail";
 const SHARE_ID = "x7Kq2mPa9LwR";
 const TOPIC = "Tomatoes";
 
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
+
 const sessionCookie = `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(PASSWORD))}`;
 
 const mockCreateSharedOde = vi.mocked(createSharedOde);
@@ -30,6 +33,7 @@ const mockGetSharedOde = vi.mocked(getSharedOde);
 
 const buildApp = () =>
   createApp({
+    context: testContext,
     isPublicPath: () => false,
     mountClient: () => {},
   });
@@ -57,7 +61,7 @@ describe("GET /api/shares/:id", () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ode: ODE, topic: TOPIC });
-    expect(mockGetSharedOde).toHaveBeenCalledWith(SHARE_ID);
+    expect(mockGetSharedOde).toHaveBeenCalledWith(testContext.db, SHARE_ID);
   });
 
   it("returns 404 for an unknown id", async () => {
@@ -98,7 +102,7 @@ describe("POST /api/shares", () => {
 
     expect(res.status).toBe(201);
     expect(res.body).toEqual({ id: SHARE_ID });
-    expect(mockCreateSharedOde).toHaveBeenCalledWith({
+    expect(mockCreateSharedOde).toHaveBeenCalledWith(testContext.db, {
       comparison: {},
       ode: ODE,
       topic: TOPIC,
@@ -115,7 +119,7 @@ describe("POST /api/shares", () => {
       .send({ comparison, ode: ODE, topic: TOPIC });
 
     expect(res.status).toBe(201);
-    expect(mockCreateSharedOde).toHaveBeenCalledWith({
+    expect(mockCreateSharedOde).toHaveBeenCalledWith(testContext.db, {
       comparison,
       ode: ODE,
       topic: TOPIC,

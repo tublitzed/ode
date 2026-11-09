@@ -4,6 +4,8 @@ import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createPageHandler } from "@/server/clientHost.ts";
+import { createContextMiddleware } from "@/server/context.ts";
+import type { ServerContext } from "@/server/context.ts";
 import { getSharedOde } from "@/server/shares/store.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
@@ -12,10 +14,13 @@ vi.mock("@/server/shares/store.ts", () => ({ getSharedOde: vi.fn() }));
 const HTML = "<html><head><title>ode</title></head><body>client</body></html>";
 const SHARE_PATH = "/o/fc04fd725e865a95";
 
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
+
 const mockGetSharedOde = vi.mocked(getSharedOde);
 
 const buildApp = () => {
   const app = express();
+  app.use(createContextMiddleware(testContext));
   app.use(createPageHandler(async () => HTML));
   return app;
 };
