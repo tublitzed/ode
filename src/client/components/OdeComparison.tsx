@@ -1,4 +1,5 @@
 import { cn } from "cn";
+import type { ReactNode } from "react";
 
 import MosaicPanel from "@/client/components/MosaicPanel";
 import OdeProgressStatus from "@/client/components/OdeProgressStatus";
@@ -33,20 +34,20 @@ export type OdeColumn = {
 };
 
 type OdeComparisonProps = {
+  actions?: ReactNode;
   columns: OdeColumn[];
   mosaic?: MosaicShape[];
-  onRetry: (type: OdeType) => void;
-  onWriteAnother: () => void;
+  onRetry?: (type: OdeType) => void;
   topic: string;
 };
 
 const COLUMN_CLASS = "border-rule border-t-2 pt-5";
 
 const OdeComparison = ({
+  actions,
   columns,
   mosaic,
   onRetry,
-  onWriteAnother,
   topic,
 }: OdeComparisonProps) => {
   const pending = columns.filter(({ slot }) => slot.status === "generating");
@@ -56,12 +57,14 @@ const OdeComparison = ({
 
   return (
     <>
-      <MosaicPanel
-        className="starting:max-w-100 max-w-70 transition-[max-width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
-        label={`A mosaic for the ode to ${topic}`}
-        shapes={mosaic}
-        state="laid"
-      />
+      {mosaic && (
+        <MosaicPanel
+          className="starting:max-w-100 max-w-70 transition-[max-width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
+          label={`A mosaic for the ode to ${topic}`}
+          shapes={mosaic}
+          state="laid"
+        />
+      )}
       <OdeTitle className="mt-10">Ode to {topic}</OdeTitle>
       <div className="mt-11 grid w-full max-w-136 gap-10 text-left min-[1101px]:max-w-310 min-[1101px]:grid-cols-3 min-[1101px]:gap-14">
         {columns.map(({ slot, type }) => {
@@ -99,9 +102,11 @@ const OdeComparison = ({
                   <p className="text-destructive font-medium" role="alert">
                     {slot.message}
                   </p>
-                  <Button onClick={() => onRetry(type)} variant="outline">
-                    Try again
-                  </Button>
+                  {onRetry && (
+                    <Button onClick={() => onRetry(type)} variant="outline">
+                      Try again
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <OdeVerse
@@ -113,13 +118,7 @@ const OdeComparison = ({
           );
         })}
       </div>
-      <Button
-        className="mt-12"
-        disabled={pending.length > 0}
-        onClick={onWriteAnother}
-      >
-        Write another ode
-      </Button>
+      {actions && <div className="mt-12">{actions}</div>}
     </>
   );
 };

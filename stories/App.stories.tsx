@@ -3,7 +3,6 @@ import { fireEvent } from "storybook/test";
 
 import App from "@/client/components/App";
 import { saveLastOde } from "@/client/utils/localStorage";
-import type { OdeResponse, OdeType } from "@/shared/ode";
 
 const SAMPLE_ODE = `O tomato, red lantern on the tangled vine,
 warm as a cheek that the noon has kissed,
@@ -73,95 +72,35 @@ each vine a quiet promise in the dark;
 I think of how a single seed can fill
 a summer with its small and crimson spark.`;
 
-const SAMPLE_ODES: Record<OdeType, string> = {
-  horatian: SAMPLE_HORATIAN_ODE,
-  irregular: SAMPLE_ODE,
-  pindaric: SAMPLE_PINDARIC_ODE,
-};
-
 type Story = StoryObj<typeof App>;
 type PlayContext = Parameters<NonNullable<Story["play"]>>[0];
+type ForceView = NonNullable<NonNullable<Story["args"]>["forceView"]>;
+type Column = NonNullable<ForceView["columns"]>[number];
+type ColumnSlot = Column["slot"];
 
+const BUSY_MESSAGE = "Ode is very busy right now. Try again in a moment.";
 const LONG_TOPIC = "a".repeat(100);
-const RETRY_DELAY_MS = 3000;
 
-const ODE_RESPONSE: OdeResponse = { ode: SAMPLE_ODE, status: "ode" };
+const GENERATING_SLOT: ColumnSlot = { status: "generating" };
+const HORATIAN_SLOT: ColumnSlot = { ode: SAMPLE_HORATIAN_ODE, status: "ode" };
+const PINDARIC_SLOT: ColumnSlot = { ode: SAMPLE_PINDARIC_ODE, status: "ode" };
 
-const jsonResponse = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status });
-
-const declinedResponse = (reason: string, suggestions: string[]) => {
-  const declined: OdeResponse = { reason, status: "declined", suggestions };
-
-  return (topic: string) =>
-    suggestions.includes(topic)
-      ? jsonResponse(ODE_RESPONSE)
-      : jsonResponse(declined);
-};
-
-const sampleOdeResponse = (type: OdeType) =>
-  jsonResponse({ ode: SAMPLE_ODES[type], status: "ode" });
-
-const mockOdeRequest = (
-  respond: (topic: string, type: OdeType) => Promise<Response> | Response,
-) => {
-  const realFetch = window.fetch;
-
-  window.fetch = async (input, init) => {
-    if (input !== "/api/odes") {
-      return realFetch(input, init);
-    }
-
-    const { topic, type } = JSON.parse(String(init?.body));
-    return respond(topic, type);
-  };
-
-  return () => {
-    window.fetch = realFetch;
-  };
-};
-
-const failFirstAttempt = (failingTypes: OdeType[], failure: () => Response) => {
-  const attempted = new Set<OdeType>();
-
-  return async (_topic: string, type: OdeType) => {
-    if (failingTypes.includes(type) && !attempted.has(type)) {
-      attempted.add(type);
-      return failure();
-    }
-
-    if (attempted.has(type)) {
-      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
-    }
-
-    return sampleOdeResponse(type);
-  };
-};
-
-const busyResponse = () =>
-  jsonResponse(
-    { error: "Ode is very busy right now. Try again in a moment." },
-    503,
-  );
-
-const saveSampleOde = () => {
-  saveLastOde({ ode: SAMPLE_ODE, topic: "Tomatoes" });
-};
-
-const startComparison = ({ canvas, userEvent }: PlayContext) =>
-  userEvent.click(
-    canvas.getByRole("button", { name: "Compare Pindaric and Horatian odes" }),
-  );
+const comparisonView = (
+  pindaric: ColumnSlot,
+  horatian: ColumnSlot,
+): ForceView => ({
+  columns: [
+    { slot: pindaric, type: "pindaric" },
+    { slot: horatian, type: "horatian" },
+  ],
+  isFresh: false,
+  ode: SAMPLE_ODE,
+  status: "ode",
+  topic: "Tomatoes",
+});
 
 const enterTopic = ({ canvas }: PlayContext, topic: string) => {
   fireEvent.change(canvas.getByRole("textbox"), { target: { value: topic } });
-};
-
-const submitTopic = async (context: PlayContext, topic = "Tomatoes") => {
-  enterTopic(context, topic);
-  await context.userEvent.click(
-    context.canvas.getByRole("button", { name: "Write my ode" }),
-  );
 };
 
 const meta: Meta<typeof App> = {
@@ -182,18 +121,22 @@ export const TopicEntered: Story = {
 };
 
 export const Generating: Story = {
-  beforeEach: () => mockOdeRequest(() => new Promise(() => {})),
-  play: (context) => submitTopic(context),
+  args: { forceView: { status: "generating", topic: "Tomatoes" } },
 };
 
 export const GeneratingLongTopic: Story = {
-  beforeEach: () => mockOdeRequest(() => new Promise(() => {})),
-  play: (context) => submitTopic(context, LONG_TOPIC),
+  args: { forceView: { status: "generating", topic: LONG_TOPIC } },
 };
 
 export const Ode: Story = {
-  beforeEach: () => mockOdeRequest(() => jsonResponse(ODE_RESPONSE)),
-  play: (context) => submitTopic(context),
+  args: {
+    forceView: {
+      isFresh: false,
+      ode: SAMPLE_ODE,
+      status: "ode",
+      topic: "Tomatoes",
+    },
+  },
 };
 
 export const SavedOdeOnReload: Story = {
@@ -209,66 +152,47 @@ export const SavedOdeLongTopic: Story = {
 };
 
 export const ComparisonGenerating: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest(() => new Promise(() => {}));
-  },
-  play: startComparison,
+  args: { forceView: comparisonView(GENERATING_SLOT, GENERATING_SLOT) },
 };
 
 export const ComparisonComplete: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest((_topic, type) => sampleOdeResponse(type));
-  },
-  play: startComparison,
+  args: { forceView: comparisonView(PINDARIC_SLOT, HORATIAN_SLOT) },
 };
 
 export const ComparisonSectionTooltip: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest((_topic, type) => sampleOdeResponse(type));
-  },
-  play: async (context) => {
-    await startComparison(context);
-    await context.userEvent.hover(
-      await context.canvas.findByRole("button", { name: "Strophe" }),
+  args: { forceView: comparisonView(PINDARIC_SLOT, HORATIAN_SLOT) },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.hover(
+      await canvas.findByRole("button", { name: "Strophe" }),
     );
   },
 };
 
 export const ComparisonOneFailed: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest(failFirstAttempt(["pindaric"], busyResponse));
+  args: {
+    forceView: comparisonView(
+      { message: BUSY_MESSAGE, status: "failed" },
+      HORATIAN_SLOT,
+    ),
   },
-  play: startComparison,
 };
 
 export const ComparisonOneDeclined: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest(
-      failFirstAttempt(["horatian"], () =>
-        jsonResponse({
-          reason: "That's not a subject we can write an ode about.",
-          status: "declined",
-          suggestions: ["Tomatoes", "A rainy morning", "My favorite mug"],
-        }),
-      ),
-    );
+  args: {
+    forceView: comparisonView(PINDARIC_SLOT, {
+      message: "That's not a subject we can write an ode about.",
+      status: "failed",
+    }),
   },
-  play: startComparison,
 };
 
 export const ComparisonBothFailed: Story = {
-  beforeEach: () => {
-    saveSampleOde();
-    return mockOdeRequest(
-      failFirstAttempt(["horatian", "pindaric"], busyResponse),
-    );
+  args: {
+    forceView: comparisonView(
+      { message: BUSY_MESSAGE, status: "failed" },
+      { message: BUSY_MESSAGE, status: "failed" },
+    ),
   },
-  play: startComparison,
 };
 
 export const ComparisonSaved: Story = {
@@ -291,87 +215,80 @@ export const ComparisonSavedOneMissing: Story = {
       ode: SAMPLE_ODE,
       topic: "Tomatoes",
     });
-    return mockOdeRequest((_topic, type) => sampleOdeResponse(type));
   },
 };
 
 export const DeclinedUnusableTopic: Story = {
-  beforeEach: () =>
-    mockOdeRequest(
-      declinedResponse(
+  args: {
+    forceView: {
+      reason:
         "That looks like random keyboard letters rather than a subject I can celebrate.",
-        ["Morning coffee", "Rainy day umbrellas", "Old library books"],
-      ),
-    ),
-  play: (context) => submitTopic(context, "asdfghjkl"),
+      status: "declined",
+      suggestions: [
+        "Morning coffee",
+        "Rainy day umbrellas",
+        "Old library books",
+      ],
+    },
+  },
 };
 
 export const DeclinedUnsafeTopic: Story = {
-  beforeEach: () =>
-    mockOdeRequest(
-      declinedResponse(
-        "I keep my odes all-ages, so I can't write sexual content.",
-        ["Morning coffee", "A well-worn quilt", "Rain on rooftops"],
-      ),
-    ),
-  play: (context) => submitTopic(context, "An unsafe topic"),
+  args: {
+    forceView: {
+      reason: "I keep my odes all-ages, so I can't write sexual content.",
+      status: "declined",
+      suggestions: ["Morning coffee", "A well-worn quilt", "Rain on rooftops"],
+    },
+  },
 };
 
 export const DeclinedModelRefusal: Story = {
-  beforeEach: () =>
-    mockOdeRequest(
-      declinedResponse("That's not a subject we can write an ode about.", [
-        "Tomatoes",
-        "A rainy morning",
-        "My favorite mug",
-      ]),
-    ),
-  play: (context) => submitTopic(context, "A refused topic"),
+  args: {
+    forceView: {
+      reason: "That's not a subject we can write an ode about.",
+      status: "declined",
+      suggestions: ["Tomatoes", "A rainy morning", "My favorite mug"],
+    },
+  },
 };
 
 export const ErrorBusy: Story = {
-  beforeEach: () =>
-    mockOdeRequest(() =>
-      jsonResponse(
-        { error: "Ode is very busy right now. Try again in a moment." },
-        503,
-      ),
-    ),
-  play: (context) => submitTopic(context),
+  args: { forceView: { message: BUSY_MESSAGE, status: "error" } },
 };
 
 export const ErrorUnreachable: Story = {
-  beforeEach: () =>
-    mockOdeRequest(() =>
-      jsonResponse(
-        { error: "We couldn't reach our poet. Try again in a moment." },
-        502,
-      ),
-    ),
-  play: (context) => submitTopic(context),
+  args: {
+    forceView: {
+      message: "We couldn't reach our poet. Try again in a moment.",
+      status: "error",
+    },
+  },
 };
 
 export const ErrorUnexpected: Story = {
-  beforeEach: () =>
-    mockOdeRequest(() =>
-      jsonResponse(
-        { error: "Something went wrong writing your ode. Try again." },
-        500,
-      ),
-    ),
-  play: (context) => submitTopic(context),
+  args: {
+    forceView: {
+      message: "Something went wrong writing your ode. Try again.",
+      status: "error",
+    },
+  },
 };
 
 export const ErrorBadGateway: Story = {
-  beforeEach: () =>
-    mockOdeRequest(
-      () => new Response("<html>Bad Gateway</html>", { status: 502 }),
-    ),
-  play: (context) => submitTopic(context),
+  args: {
+    forceView: {
+      message: "Something went wrong. Try again.",
+      status: "error",
+    },
+  },
 };
 
 export const ErrorOffline: Story = {
-  beforeEach: () =>
-    mockOdeRequest(() => Promise.reject(new TypeError("Failed to fetch"))),
-  play: (context) => submitTopic(context),
+  args: {
+    forceView: {
+      message: "We couldn't reach Ode. Check your connection and try again.",
+      status: "error",
+    },
+  },
 };

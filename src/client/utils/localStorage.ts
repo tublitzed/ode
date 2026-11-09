@@ -9,6 +9,7 @@ export type LastOde = {
   comparison?: SavedComparison;
   mosaic?: MosaicShape[];
   ode: string;
+  shareIds?: Record<string, string>;
   topic: string;
 };
 
@@ -30,6 +31,19 @@ const isMosaicShape = (value: unknown): value is MosaicShape =>
 const readMosaic = (value: unknown) =>
   Array.isArray(value) && value.every(isMosaicShape) ? value : undefined;
 
+const readShareIds = (value: unknown) => {
+  if (typeof value !== "object" || value === null) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).filter(([, id]) => typeof id === "string"),
+  );
+};
+
+const toShareKey = (comparison: SavedComparison = {}) =>
+  JSON.stringify(comparison);
+
 export const loadLastOde = (): LastOde | undefined => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -37,7 +51,7 @@ export const loadLastOde = (): LastOde | undefined => {
       return undefined;
     }
 
-    const { comparison, mosaic, ode, topic } = JSON.parse(stored);
+    const { comparison, mosaic, ode, shareIds, topic } = JSON.parse(stored);
     if (typeof ode !== "string" || typeof topic !== "string") {
       return undefined;
     }
@@ -46,6 +60,7 @@ export const loadLastOde = (): LastOde | undefined => {
       comparison: readComparison(comparison),
       mosaic: readMosaic(mosaic),
       ode,
+      shareIds: readShareIds(shareIds),
       topic,
     };
   } catch {
@@ -59,6 +74,32 @@ export const saveLastOde = (lastOde: LastOde) => {
   } catch {
     return;
   }
+};
+
+export const clearLastOde = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    return;
+  }
+};
+
+export const loadShareId = (comparison?: SavedComparison) =>
+  loadLastOde()?.shareIds?.[toShareKey(comparison)];
+
+export const saveShareId = (
+  comparison: SavedComparison | undefined,
+  id: string,
+) => {
+  const lastOde = loadLastOde();
+  if (!lastOde) {
+    return;
+  }
+
+  saveLastOde({
+    ...lastOde,
+    shareIds: { ...lastOde.shareIds, [toShareKey(comparison)]: id },
+  });
 };
 
 export const saveComparisonOde = (type: OdeType, ode: string) => {

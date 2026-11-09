@@ -2,6 +2,9 @@ import { createServer } from "node:http";
 
 import { createApp } from "#/server/app.ts";
 import { createClientHost } from "#/server/clientHost.ts";
+import { createDb } from "#/server/db.ts";
+
+const context = { db: createDb() };
 
 const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT ?? 3000);
@@ -10,6 +13,7 @@ const server = createServer();
 const clientHost = await createClientHost({ isProduction, server });
 
 const app = await createApp({
+  context,
   isPublicPath: clientHost.isPublicPath,
   mountClient: clientHost.mountClient,
 });

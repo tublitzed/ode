@@ -16,8 +16,9 @@ import {
   deriveSessionKey,
   SESSION_COOKIE,
 } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
 import { generateOde } from "@/server/odes/generate.ts";
-import { MAX_SOURCE_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
+import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
 vi.mock("@/server/odes/drawMosaic.ts", () => ({
@@ -28,12 +29,15 @@ vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
 const PASSWORD = "correct horse";
 const SECRET_DETAIL = "secret detail";
 
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
+
 const sessionCookie = `${SESSION_COOKIE}=${createSessionToken(deriveSessionKey(PASSWORD))}`;
 
 const mockGenerateOde = vi.mocked(generateOde);
 
 const buildApp = () =>
   createApp({
+    context: testContext,
     isPublicPath: () => false,
     mountClient: () => {},
   });
@@ -212,10 +216,7 @@ describe("POST /api/odes", () => {
     ["a non-string type", { type: 42 }],
     ["a non-string source ode", { sourceOde: 42 }],
     ["a whitespace-only source ode", { sourceOde: "   " }],
-    [
-      "a too-long source ode",
-      { sourceOde: "a".repeat(MAX_SOURCE_ODE_LENGTH + 1) },
-    ],
+    ["a too-long source ode", { sourceOde: "a".repeat(MAX_ODE_LENGTH + 1) }],
   ])("returns 400 for %s", async (_label, body) => {
     const app = await buildApp();
 
@@ -236,7 +237,7 @@ describe("POST /api/odes", () => {
       .post("/api/odes")
       .set("Cookie", sessionCookie)
       .send({
-        sourceOde: "a".repeat(MAX_SOURCE_ODE_LENGTH),
+        sourceOde: "a".repeat(MAX_ODE_LENGTH),
         topic: "Tomatoes",
         type: "pindaric",
       });

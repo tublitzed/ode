@@ -44,6 +44,7 @@ See @package.json for all available commands for this project.
 - Do not run the app against the default PORT, use a different port to avoid conflicting with other developers. When you are done running the app, release the port.
 - Be sure to run linters and fix issues when you're done making a series of code changes.
 - Be sure to typecheck when you're done making a series of code changes.
+- Run `npx prisma format` when making schema changes.
 
 ## Using Git Worktrees
 - If you need to run the app within a worktree, run `npm run worktree` to sync required files.

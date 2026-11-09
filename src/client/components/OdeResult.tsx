@@ -4,6 +4,7 @@ import MosaicPanel from "@/client/components/MosaicPanel";
 import OdeTitle from "@/client/components/OdeTitle";
 import OdeTopicFields from "@/client/components/OdeTopicFields";
 import OdeVerse from "@/client/components/OdeVerse";
+import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import { DEFAULT_ODE_TYPE, ODE_TYPE_DETAILS } from "@/shared/ode";
 import type { MosaicShape } from "@/shared/ode";
@@ -53,6 +54,7 @@ const OdeResult = ({
               <Button onClick={onCompare} variant="outline">
                 Compare Pindaric and Horatian odes
               </Button>
+              <ShareOde ode={ode} topic={topic} />
               <Button onClick={onWriteAnother}>Write another ode</Button>
             </div>
           </div>

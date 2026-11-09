@@ -33,7 +33,12 @@
     "oxc/no-async-endpoint-handlers": "off",
     "react/react-in-jsx-scope": "off"
   },
-  "ignorePatterns": ["dist", "node_modules", "storybook-static"],
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "src/generated",
+    "storybook-static"
+  ],
   "overrides": [
     {
       "files": ["src/server/**"],

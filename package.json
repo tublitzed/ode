@@ -11,13 +11,15 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "prisma generate && vite build",
     "build-storybook": "storybook build",
     "dev": "tsx watch --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:reset:dev": "prisma migrate reset",
     "prepare": "husky",
     "start": "NODE_ENV=production node --env-file-if-exists=.env --import ./src/server/instrument.ts src/server/index.ts",
     "storybook": "storybook dev",
@@ -37,6 +39,8 @@
     "@fontsource-variable/figtree": "^5.3.0",
     "@fontsource-variable/newsreader": "^5.3.0",
     "@fontsource/young-serif": "^5.3.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
     "@sentry/node": "^11.10.0",
     "@sentry/react": "^11.10.0",
     "class-variance-authority": "^0.7.1",
@@ -45,6 +49,7 @@
     "express": "^5.3.0",
     "logrocket": "^12.4.0",
     "lucide-react": "^1.66.0",
+    "prisma": "7.10.1",
     "radix-ui": "^1.8.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
@@ -72,5 +77,11 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.10.1": true,
+    "prisma@7.10.1": true,
+    "esbuild": false,
+    "fsevents": false
   }
 }

@@ -9,8 +9,17 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE_MS,
 } from "@/server/auth.ts";
+import type { ServerContext } from "@/server/context.ts";
+import { getSharedOde } from "@/server/shares/store.ts";
+
+vi.mock("@/server/shares/store.ts", () => ({
+  createSharedOde: vi.fn(),
+  getSharedOde: vi.fn(),
+}));
 
 const PASSWORD = "correct horse";
+
+const testContext: ServerContext = { db: {} as ServerContext["db"] };
 
 const isTestPublicPath = (path: string) => path.startsWith("/public/");
 
@@ -18,6 +27,7 @@ const buildApp = (password = PASSWORD) => {
   vi.stubEnv("APP_PASSWORD", password);
 
   return createApp({
+    context: testContext,
     isPublicPath: isTestPublicPath,
     mountClient: (app) => {
       app.use((_req, res) => {
@@ -50,6 +60,7 @@ describe("createApp", () => {
 
     await expect(
       createApp({
+        context: testContext,
         isPublicPath: isTestPublicPath,
         mountClient: () => {},
       }),
@@ -136,6 +147,80 @@ describe("public paths", () => {
     const res = await request(app).get("/public/login.js");
 
     expect(res.status).toBe(200);
+  });
+});
+
+describe("shared odes without a session", () => {
+  it("serves the share page with a noindex header", async () => {
+    const app = await buildApp();
+
+    const res = await request(app).get("/o/x7Kq2mPa9LwR");
+
+    expect(res.status).toBe(200);
+    expect(res.text).toBe("client");
+    expect(res.headers["x-robots-tag"]).toBe("noindex");
+  });
+
+  it("serves the public share API with a noindex header", async () => {
+    const app = await buildApp();
+    const sharedOde = { ode: "O tomato", topic: "Tomatoes" };
+    vi.mocked(getSharedOde).mockResolvedValueOnce(sharedOde);
+
+    const res = await request(app).get("/api/public/shares/x7Kq2mPa9LwR");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(sharedOde);
+    expect(res.headers["x-robots-tag"]).toBe("noindex");
+  });
+
+  it("doesn't add the noindex header to other pages", async () => {
+    const app = await buildApp();
+
+    const res = await request(app).get("/login");
+
+    expect(res.headers["x-robots-tag"]).toBeUndefined();
+  });
+
+  it.each([
+    ["creating a share", "post", "/api/shares"],
+    ["listing shares", "get", "/api/shares"],
+    ["reading a share outside the public API", "get", "/api/shares/abc123"],
+    ["listing public shares", "get", "/api/public/shares"],
+    ["a nested public share path", "get", "/api/public/shares/a/b"],
+    ["an unknown public API path", "get", "/api/public/anything"],
+    ["creating a public share", "post", "/api/public/shares/abc123"],
+    ["deleting a public share", "delete", "/api/public/shares/abc123"],
+    ["updating a public share", "put", "/api/public/shares/abc123"],
+    ["posting to a share page", "post", "/o/x7Kq2mPa9LwR"],
+    [
+      "traversal from the public API to another API",
+      "get",
+      "/api/public/shares/%2E%2E/%2E%2E/odes",
+    ],
+  ] as const)("returns 401 for %s", async (_label, method, path) => {
+    const app = await buildApp();
+
+    const res = await request(app)[method](path);
+
+    expect(res.status).toBe(401);
+  });
+
+  it.each([
+    ["the share page root", "/o/"],
+    ["the share page root without a slash", "/o"],
+    ["a nested share page", "/o/a/b"],
+    ["an encoded nested share page", "/o/a%2Fb"],
+    ["a trailing slash", "/o/x7Kq2mPa9LwR/"],
+    ["traversal out of the share page", "/o/%2E%2E/"],
+    ["traversal into the share page", "/private/%2E%2E/o/x7Kq2mPa9LwR"],
+    ["traversal between share pages", "/o/x/%2E%2E/y"],
+  ])("redirects %s to login", async (_label, path) => {
+    const app = await buildApp();
+
+    const res = await request(app).get(path);
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toMatch(/^\/login\?next=/);
   });
 });
 
