@@ -15,6 +15,7 @@ import {
   saveComparisonOde,
   saveLastOde,
 } from "@/client/utils/localStorage";
+import type { SavedComparison } from "@/client/utils/localStorage";
 import { DEFAULT_ODE_TYPE } from "@/shared/ode";
 import type { OdeResponse, OdeType } from "@/shared/ode";
 
@@ -52,9 +53,9 @@ const getInitialView = (): View => {
   return { ode: lastOde.ode, status: "ode", topic: lastOde.topic };
 };
 
-const getInitialColumns = (): OdeColumn[] => {
-  const comparison = loadLastOde()?.comparison ?? {};
-
+export const toComparisonColumns = (
+  comparison: SavedComparison,
+): OdeColumn[] => {
   if (Object.keys(comparison).length === 0) {
     return [];
   }
@@ -70,6 +71,9 @@ const getInitialColumns = (): OdeColumn[] => {
     };
   });
 };
+
+const getInitialColumns = () =>
+  toComparisonColumns(loadLastOde()?.comparison ?? {});
 
 const requestOde = async (body: OdeRequest) => {
   const result = await httpRequest<OdeResponse>("/api/odes", {
