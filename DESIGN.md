@@ -48,7 +48,7 @@ colors:
 typography:
   display:
     fontFamily: "Young Serif, Georgia, serif"
-    fontSize: "clamp(4.5rem, 12vw, 6rem)"
+    fontSize: "clamp(3.5rem, 8vw, 4.5rem)"
     fontWeight: 400
     lineHeight: 1
     letterSpacing: "-0.02em"
@@ -263,7 +263,7 @@ The materials of the floor itself.
 
 ### Hierarchy
 
-- **Display** (400, clamp(4.5rem, 12vw, 6rem), 1, -0.02em): "Ode" on the login page.
+- **Display** (400, clamp(3.5rem, 8vw, 4.5rem), 1, -0.02em): "Ode" on the login page.
 - **Headline** (400, clamp(2.5rem, 5vw, 3.75rem), 1.05, -0.02em): "Ode to {topic}" and other page titles, balanced and allowed to break anywhere so a long topic cannot overflow. The form sets "Ode to" at this size with the input inline, at 1.25 line height so the field fits.
 - **Title** (400, 1.625rem, 1.5): Ode type names heading comparison columns.
 - **Wordmark** (400, 1.5rem, 1.33): "Ode" in the logged-in header.
@@ -287,7 +287,7 @@ The panel is square, 100% wide up to 25rem, and stays the same size through form
 
 Comparison shrinks the panel to 17.5rem to give the poems room. Columns stack at up to 34rem and become three at 80rem, within 77.5rem and 3.5rem apart. Each column is headed by a 2px ink rule with 1.25rem above its title. Text aligns left there, because parallel poems need a shared edge.
 
-Login is the one screen without a panel: the Ode wordmark at display size, centered on the full viewport, over a 24rem form.
+Login is centered on the full viewport: an 18rem panel laying the brand nightingale, the Ode wordmark at display size, then a 24rem form. The nightingale is hand-drawn in `src/client/utils/nightingale.ts`, with a rust tail, pale tan breast and raised, open beak. The favicon is the same bird as a cream silhouette on Oxblood, with no tiles, so it holds at 16px.
 
 ### Named Rules
 

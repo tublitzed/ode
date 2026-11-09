@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
+import MosaicPanel from "@/client/components/MosaicPanel";
 import { Button } from "@/client/components/ui/button";
 import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";
+import { NIGHTINGALE } from "@/client/utils/nightingale";
 
 const FALLBACK_PATH = "/";
 const PARSE_BASE = "http://same-origin.invalid";
@@ -59,13 +61,16 @@ const LoginPage = () => {
 
   return (
     <main className="flex min-h-svh flex-col items-center justify-center px-4 py-16">
-      <h1 className="font-display text-[clamp(4.5rem,12vw,6rem)] leading-none tracking-[-0.02em]">
+      <MosaicPanel
+        className="max-w-72"
+        label="A mosaic of a nightingale singing on a branch"
+        shapes={NIGHTINGALE}
+        state="laying"
+      />
+      <h1 className="font-display mt-8 text-[clamp(3.5rem,8vw,4.5rem)] leading-none tracking-[-0.02em]">
         Ode
       </h1>
-      <form
-        className="mt-12 grid w-full max-w-sm gap-6"
-        onSubmit={handleSubmit}
-      >
+      <form className="mt-8 grid w-full max-w-sm gap-6" onSubmit={handleSubmit}>
         <div className="grid gap-1">
           <Label className="text-muted-foreground" htmlFor="password">
             Enter the password to continue:
