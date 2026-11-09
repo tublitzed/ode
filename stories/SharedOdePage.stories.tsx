@@ -15,20 +15,6 @@ holding its breath.`;
 
 type Story = StoryObj<typeof SharedOdePage>;
 
-const jsonResponse = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status });
-
-const mockShareRequest =
-  (respond: () => Promise<Response> | Response) => () => {
-    const realFetch = window.fetch;
-
-    window.fetch = async () => respond();
-
-    return () => {
-      window.fetch = realFetch;
-    };
-  };
-
 const meta: Meta<typeof SharedOdePage> = {
   args: { id: "x7Kq2mPa9LwR" },
   component: SharedOdePage,
@@ -38,18 +24,22 @@ const meta: Meta<typeof SharedOdePage> = {
 export default meta;
 
 export const Found: Story = {
-  beforeEach: mockShareRequest(() =>
-    jsonResponse({ ode: SAMPLE_ODE, topic: "Tomatoes" }),
-  ),
+  args: {
+    forceView: {
+      sharedOde: { ode: SAMPLE_ODE, topic: "Tomatoes" },
+      status: "found",
+    },
+  },
 };
 
 export const WithComparison: Story = {
-  beforeEach: mockShareRequest(() =>
-    jsonResponse({
-      comparison: {
-        horatian: `A lantern red hangs low upon the vine,
+  args: {
+    forceView: {
+      sharedOde: {
+        comparison: {
+          horatian: `A lantern red hangs low upon the vine,
 And summer gathers in its quiet skin.`,
-        pindaric: `Strophe
+          pindaric: `Strophe
 Sing, chorus, of the tomato's flame!
 
 Antistrophe
@@ -57,34 +47,37 @@ Sing back, chorus, of its humble name!
 
 Epode
 Praise it, and be still.`,
+        },
+        ode: SAMPLE_ODE,
+        topic: "Tomatoes",
       },
-      ode: SAMPLE_ODE,
-      topic: "Tomatoes",
-    }),
-  ),
+      status: "found",
+    },
+  },
 };
 
 export const LongTopic: Story = {
-  beforeEach: mockShareRequest(() =>
-    jsonResponse({ ode: SAMPLE_ODE, topic: "a".repeat(100) }),
-  ),
+  args: {
+    forceView: {
+      sharedOde: { ode: SAMPLE_ODE, topic: "a".repeat(100) },
+      status: "found",
+    },
+  },
 };
 
 export const Loading: Story = {
-  beforeEach: mockShareRequest(() => new Promise<Response>(() => {})),
+  args: { forceView: { status: "loading" } },
 };
 
 export const NotFound: Story = {
-  beforeEach: mockShareRequest(() =>
-    jsonResponse({ error: "We couldn't find that ode." }, 404),
-  ),
+  args: { forceView: { status: "notFound" } },
 };
 
 export const LoadError: Story = {
-  beforeEach: mockShareRequest(() =>
-    jsonResponse(
-      { error: "Something went wrong loading this ode. Try again." },
-      500,
-    ),
-  ),
+  args: {
+    forceView: {
+      message: "Something went wrong loading this ode. Try again.",
+      status: "error",
+    },
+  },
 };

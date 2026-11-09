@@ -36,6 +36,10 @@ type View =
   | { status: "idle" }
   | { ode: string; status: "ode"; topic: string };
 
+type AppProps = {
+  forceView?: View & { columns?: OdeColumn[] }; // Storybook only
+};
+
 const logOut = async () => {
   try {
     await fetch("/api/logout", { method: "POST" });
@@ -129,10 +133,12 @@ const writeComparisonColumn = async (
   return { slot, type };
 };
 
-const App = () => {
-  const [columns, setColumns] = useState<OdeColumn[]>(getInitialColumns);
+const App = ({ forceView }: AppProps) => {
+  const [columns, setColumns] = useState<OdeColumn[]>(
+    () => forceView?.columns ?? getInitialColumns(),
+  );
   const [topic, setTopic] = useState("");
-  const [view, setView] = useState<View>(getInitialView);
+  const [view, setView] = useState<View>(() => forceView ?? getInitialView());
 
   const isComparing = columns.length > 0;
 

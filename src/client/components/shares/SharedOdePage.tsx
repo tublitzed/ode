@@ -18,15 +18,16 @@ import {
 } from "@/shared/ode";
 import type { SharedOde } from "@/shared/ode";
 
-type SharedOdePageProps = {
-  id: string;
-};
-
 type View =
   | { message: string; status: "error" }
   | { sharedOde: SharedOde; status: "found" }
   | { status: "loading" }
   | { status: "notFound" };
+
+type SharedOdePageProps = {
+  forceView?: View; // Storybook only
+  id: string;
+};
 
 const { description, label } = ODE_TYPE_DETAILS[DEFAULT_ODE_TYPE];
 
@@ -99,10 +100,14 @@ const renderView = (view: View) => {
   );
 };
 
-const SharedOdePage = ({ id }: SharedOdePageProps) => {
-  const [view, setView] = useState<View>({ status: "loading" });
+const SharedOdePage = ({ forceView, id }: SharedOdePageProps) => {
+  const [view, setView] = useState<View>(forceView ?? { status: "loading" });
 
   useEffect(() => {
+    if (forceView) {
+      return undefined;
+    }
+
     let isCurrent = true;
 
     const load = async () => {
@@ -132,7 +137,7 @@ const SharedOdePage = ({ id }: SharedOdePageProps) => {
     return () => {
       isCurrent = false;
     };
-  }, [id]);
+  }, [forceView, id]);
 
   return (
     <main

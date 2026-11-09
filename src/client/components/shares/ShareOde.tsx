@@ -10,6 +10,7 @@ import type { Comparison } from "@/shared/ode";
 
 type ShareOdeProps = {
   comparison?: Comparison;
+  forceView?: View; // Storybook only
   ode: string;
   topic: string;
 };
@@ -44,9 +45,9 @@ const renderLabel = (view: View) => {
 
 const toLink = (id: string) => `${window.location.origin}/o/${id}`;
 
-const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
+const ShareOde = ({ comparison, forceView, ode, topic }: ShareOdeProps) => {
   const [shareId, setShareId] = useState(() => loadShareId(comparison));
-  const [view, setView] = useState<View>({ status: "idle" });
+  const [view, setView] = useState<View>(forceView ?? { status: "idle" });
   const linkInputId = useId();
 
   const createShare = async () => {
