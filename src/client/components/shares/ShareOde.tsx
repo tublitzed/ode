@@ -5,6 +5,7 @@ import { Button } from "@/client/components/ui/button";
 import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";
 import { httpRequest } from "@/client/utils/httpRequest";
+import { loadShareId, saveShareId } from "@/client/utils/localStorage";
 import type { Comparison } from "@/shared/ode";
 
 type ShareOdeProps = {
@@ -41,12 +42,14 @@ const renderLabel = (view: View) => {
   return "Share this ode";
 };
 
+const toLink = (id: string) => `${window.location.origin}/o/${id}`;
+
 const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
-  const [link, setLink] = useState<string>();
+  const [shareId, setShareId] = useState(() => loadShareId(comparison));
   const [view, setView] = useState<View>({ status: "idle" });
   const linkInputId = useId();
 
-  const createLink = async () => {
+  const createShare = async () => {
     const result = await httpRequest<ShareResponse>("/api/shares", {
       body: { comparison, ode, topic },
       method: "POST",
@@ -62,31 +65,33 @@ const ShareOde = ({ comparison, ode, topic }: ShareOdeProps) => {
       return undefined;
     }
 
-    const nextLink = `${window.location.origin}/o/${result.data.id}`;
-    setLink(nextLink);
-    return nextLink;
+    saveShareId(comparison, result.data.id);
+    setShareId(result.data.id);
+    return result.data.id;
   };
 
-  const copyLink = async (linkToCopy: string) => {
+  const copyLink = async (id: string) => {
+    const link = toLink(id);
+
     try {
-      await navigator.clipboard.writeText(linkToCopy);
-      setView({ link: linkToCopy, status: "copied" });
+      await navigator.clipboard.writeText(link);
+      setView({ link, status: "copied" });
     } catch {
-      setView({ link: linkToCopy, status: "clipboardBlocked" });
+      setView({ link, status: "clipboardBlocked" });
     }
   };
 
   const share = async () => {
-    if (link) {
-      await copyLink(link);
+    if (shareId) {
+      await copyLink(shareId);
       return;
     }
 
     setView({ status: "sharing" });
 
-    const nextLink = await createLink();
-    if (nextLink) {
-      await copyLink(nextLink);
+    const nextShareId = await createShare();
+    if (nextShareId) {
+      await copyLink(nextShareId);
     }
   };
 
