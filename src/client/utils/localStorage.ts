@@ -44,6 +44,14 @@ export const saveLastOde = (lastOde: LastOde) => {
   }
 };
 
+export const clearLastOde = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    return;
+  }
+};
+
 export const saveComparisonOde = (type: OdeType, ode: string) => {
   const lastOde = loadLastOde();
   if (!lastOde) {

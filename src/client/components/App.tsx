@@ -12,6 +12,7 @@ import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";
 import type { HttpResult } from "@/client/utils/httpRequest";
 import {
+  clearLastOde,
   loadLastOde,
   saveComparisonOde,
   saveLastOde,
@@ -223,6 +224,7 @@ const App = () => {
   };
 
   const startOver = () => {
+    clearLastOde();
     setColumns([]);
     setTopic("");
     setView({ status: "idle" });
