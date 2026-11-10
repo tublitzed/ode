@@ -42,7 +42,9 @@ sharesRouter.post("/api/shares", parseBody, async (req, res) => {
     !isValidComparison(comparison) ||
     !isValidMosaic(mosaic)
   ) {
-    res.status(400).json({ error: "That ode can't be shared." });
+    res.status(400).json({
+      error: "That ode can’t be framed for sharing. Try writing it again.",
+    });
     return;
   }
 
@@ -58,6 +60,6 @@ sharesRouter.post("/api/shares", parseBody, async (req, res) => {
     Sentry.captureException(error);
     res
       .status(500)
-      .json({ error: "Something went wrong sharing your ode. Try again." });
+      .json({ error: "The ode slipped as we framed it. Try sharing again." });
   }
 });

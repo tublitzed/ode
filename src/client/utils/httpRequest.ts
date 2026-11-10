@@ -1,6 +1,6 @@
-const GENERIC_ERROR = "Something went wrong. Try again.";
+const GENERIC_ERROR = "The muse lost the thread. Try again.";
 const NETWORK_ERROR =
-  "We couldn't reach Ode. Check your connection and try again.";
+  "Ode is out of earshot. Check your connection and try again.";
 
 type HttpRequestOptions = {
   body?: unknown;

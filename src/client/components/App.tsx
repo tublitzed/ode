@@ -24,7 +24,8 @@ import type {
   OdeType,
 } from "@/shared/ode";
 
-const UNSAVED_ODE_MESSAGE = "This ode didn't finish. Try writing it again.";
+const UNSAVED_ODE_MESSAGE =
+  "This one trailed off mid-verse. Try writing it again.";
 
 type OdeRequest = {
   sourceOde?: string;

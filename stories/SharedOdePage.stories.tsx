@@ -76,7 +76,7 @@ export const NotFound: Story = {
 export const LoadError: Story = {
   args: {
     forceView: {
-      message: "Something went wrong loading this ode. Try again.",
+      message: "We couldn’t hear this ode just now. Try again in a moment.",
       status: "error",
     },
   },

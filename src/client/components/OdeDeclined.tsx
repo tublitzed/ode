@@ -21,7 +21,7 @@ const OdeDeclined = ({
       label="An empty mosaic"
       state="waiting"
     />
-    <OdeTitle className="mt-10">We can’t write that ode</OdeTitle>
+    <OdeTitle className="mt-10">Our muse politely declines</OdeTitle>
     <p className="text-muted-foreground mt-3 max-w-[44ch] text-lg leading-normal text-balance">
       {reason}
     </p>

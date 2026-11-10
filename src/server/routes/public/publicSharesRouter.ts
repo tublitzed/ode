@@ -10,15 +10,15 @@ publicSharesRouter.get("/shares/:id", async (req, res) => {
   try {
     const sharedOde = await getSharedOde(req.context.db, req.params.id);
     if (!sharedOde) {
-      res.status(404).json({ error: "We couldn't find that ode." });
+      res.status(404).json({ error: "This ode has flown the nest." });
       return;
     }
 
     res.json(sharedOde);
   } catch (error) {
     Sentry.captureException(error);
-    res
-      .status(500)
-      .json({ error: "Something went wrong loading this ode. Try again." });
+    res.status(500).json({
+      error: "We couldn’t hear this ode just now. Try again in a moment.",
+    });
   }
 });

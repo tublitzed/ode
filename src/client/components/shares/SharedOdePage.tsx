@@ -56,13 +56,13 @@ const renderView = (view: View) => {
 
   if (view.status === "notFound") {
     return renderMessage(
-      "We couldn’t find that ode",
-      "The link may be incomplete, or the ode may have been removed.",
+      "This ode has flown the nest",
+      "The link may be incomplete, or the ode may have been taken down.",
     );
   }
 
   if (view.status === "error") {
-    return renderMessage("We couldn’t load that ode", view.message);
+    return renderMessage("This ode has lost its voice", view.message);
   }
 
   if (hasComparison(view)) {

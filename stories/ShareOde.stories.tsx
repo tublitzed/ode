@@ -47,7 +47,7 @@ export const ClipboardBlockedInComparisonHeader: Story = {
 export const Failed: Story = {
   args: {
     forceView: {
-      message: "Something went wrong sharing your ode. Try again.",
+      message: "The ode slipped as we framed it. Try sharing again.",
       status: "error",
     },
   },

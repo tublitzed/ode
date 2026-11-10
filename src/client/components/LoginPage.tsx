@@ -49,11 +49,11 @@ const LoginPage = () => {
 
       setError(
         res.status === 401
-          ? "Incorrect password."
-          : "Something went wrong. Try again.",
+          ? "Close, but no laurel wreath. That’s not the password."
+          : "The muse lost the thread. Try again.",
       );
     } catch {
-      setError("Something went wrong. Try again.");
+      setError("The muse lost the thread. Try again.");
     }
 
     setIsSubmitting(false);

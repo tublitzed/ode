@@ -78,7 +78,8 @@ type ForceView = NonNullable<NonNullable<Story["args"]>["forceView"]>;
 type Column = NonNullable<ForceView["columns"]>[number];
 type ColumnSlot = Column["slot"];
 
-const BUSY_MESSAGE = "Ode is very busy right now. Try again in a moment.";
+const BUSY_MESSAGE =
+  "Every poet is mid-verse right now. Try again in a moment.";
 const LONG_TOPIC = "a".repeat(100);
 
 const GENERATING_SLOT: ColumnSlot = { status: "generating" };
@@ -180,7 +181,7 @@ export const ComparisonOneFailed: Story = {
 export const ComparisonOneDeclined: Story = {
   args: {
     forceView: comparisonView(PINDARIC_SLOT, {
-      message: "That's not a subject we can write an ode about.",
+      message: "That subject isn’t in our songbook. Try another one.",
       status: "failed",
     }),
   },
@@ -246,7 +247,7 @@ export const DeclinedUnsafeTopic: Story = {
 export const DeclinedModelRefusal: Story = {
   args: {
     forceView: {
-      reason: "That's not a subject we can write an ode about.",
+      reason: "That subject isn’t in our songbook. Try another one.",
       status: "declined",
       suggestions: ["Tomatoes", "A rainy morning", "My favorite mug"],
     },
@@ -260,7 +261,8 @@ export const ErrorBusy: Story = {
 export const ErrorUnreachable: Story = {
   args: {
     forceView: {
-      message: "We couldn't reach our poet. Try again in a moment.",
+      message:
+        "Our poet wandered off in search of inspiration. Try again in a moment.",
       status: "error",
     },
   },
@@ -269,7 +271,7 @@ export const ErrorUnreachable: Story = {
 export const ErrorUnexpected: Story = {
   args: {
     forceView: {
-      message: "Something went wrong writing your ode. Try again.",
+      message: "Our poet dropped the quill. Try again.",
       status: "error",
     },
   },
@@ -278,7 +280,7 @@ export const ErrorUnexpected: Story = {
 export const ErrorBadGateway: Story = {
   args: {
     forceView: {
-      message: "Something went wrong. Try again.",
+      message: "The muse lost the thread. Try again.",
       status: "error",
     },
   },
@@ -287,7 +289,7 @@ export const ErrorBadGateway: Story = {
 export const ErrorOffline: Story = {
   args: {
     forceView: {
-      message: "We couldn't reach Ode. Check your connection and try again.",
+      message: "Ode is out of earshot. Check your connection and try again.",
       status: "error",
     },
   },
