@@ -283,7 +283,9 @@ The materials of the floor itself.
 
 The layout is "Exhibit": one column on the center axis, with one framed panel above the text. The page has a slim header (wordmark left, Log out right) and a main column that centers everything. Header padding is 1rem and widens to 1.5rem by 3rem at 48rem; main has a 1rem gutter and 5rem of bottom padding.
 
-The panel is square, 100% wide up to 25rem, and stays the same size through form, progress, declined and result, so the wall does not rearrange as the ode is made. The title sits 2.5rem below it. On the result, the type line, verse and actions follow on that axis, with the verse block left-aligned inside its centered 34rem measure and the actions 2.75rem below it, wrapping with 0.75rem gaps.
+The panel is square, min(25rem, 72vw) wide, and stays the same size through form, progress, declined and result, so the wall does not rearrange as the ode is made and a phone still shows the form's button on the first screen. The title sits 2.5rem below it. On the result, the type line and verse follow on that axis, with the verse block left-aligned inside its centered 34rem measure. The verse is 1.125rem on phones and 1.25rem from 40rem up.
+
+The ode's actions live in a bar pinned to the bottom of the viewport while the poem scrolls beneath it, which then rests at the end of the page: solid plaster, a 1px rule above, and safe-area padding below. On phones it is a two-column grid of 44px buttons, with the long Compare action across both columns. From 40rem up the buttons sit in one centered row at full size. The comparison uses the same bar.
 
 Comparison shrinks the panel to 17.5rem to give the poems room. Columns stack at up to 34rem and become three at 80rem, within 77.5rem and 3.5rem apart. Each column is headed by a 2px ink rule with 1.25rem above its title. Text aligns left there, because parallel poems need a shared edge.
 
@@ -333,7 +335,7 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 ### Inputs / Fields
 
 - **Style:** No box. Transparent, square, with a 2px ink rule beneath and an oxblood caret. Height 3rem.
-- **Title field:** The topic field is set inside the headline, following the words "Ode to", with a 3px rule. It sizes to its content between 5ch and min(16ch, 80vw), and falls back to 9ch where content sizing is unsupported.
+- **Title field:** The topic field is set inside the headline, following the words "Ode to", with a 3px rule. It is a one-row text area that sizes to its content from 8ch up to the full column, then wraps onto more lines, centered, so a long topic reads as a title instead of scrolling out of view. Enter submits and line breaks become spaces. Where content sizing is unsupported, it spans the column and grows in height as you type.
 - **Focus:** The rule turns oxblood; the password field's rule also thickens to 3px.
 - **Error / Disabled:** Oxblood text at weight 500 beneath the field, announced as an alert; the password field's rule also turns oxblood. Disabled fields drop to 60% opacity.
 

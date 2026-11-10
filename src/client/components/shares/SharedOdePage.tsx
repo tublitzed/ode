@@ -81,7 +81,7 @@ const renderView = (view: View) => {
     <>
       {mosaic && (
         <MosaicPanel
-          className="max-w-100"
+          className="max-w-[min(25rem,72vw)]"
           label={`A mosaic for the ode to ${topic}`}
           shapes={mosaic}
           state="laid"

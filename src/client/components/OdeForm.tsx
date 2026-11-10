@@ -6,7 +6,7 @@ import OdeTopicFields from "@/client/components/OdeTopicFields";
 const OdeForm = (props: ComponentProps<typeof OdeTopicFields>) => (
   <>
     <MosaicPanel
-      className="max-w-100"
+      className="max-w-[min(25rem,72vw)]"
       label="An empty mosaic, waiting for its picture"
       state="waiting"
     />

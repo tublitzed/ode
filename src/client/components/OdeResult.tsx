@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import MosaicPanel from "@/client/components/MosaicPanel";
+import OdeActions from "@/client/components/OdeActions";
 import OdeTitle from "@/client/components/OdeTitle";
 import OdeTopicFields from "@/client/components/OdeTopicFields";
 import OdeVerse from "@/client/components/OdeVerse";
@@ -35,7 +36,7 @@ const OdeResult = ({
   return (
     <>
       <MosaicPanel
-        className="max-w-100"
+        className="max-w-[min(25rem,72vw)]"
         label={`A mosaic for the ode to ${topic}`}
         onLaid={() => setIsLaid(true)}
         shapes={mosaic}
@@ -48,16 +49,24 @@ const OdeResult = ({
             <span className="text-foreground font-semibold">{label}.</span>{" "}
             {description}
           </p>
-          <div className="animate-rise flex flex-col items-center motion-reduce:animate-none">
-            <OdeVerse className="mt-9 max-w-136 text-left" ode={ode} />
-            <div className="mt-11 flex flex-wrap justify-center gap-3">
-              <Button onClick={onCompare} variant="outline">
-                Compare Pindaric and Horatian odes
-              </Button>
-              <ShareOde mosaic={mosaic} ode={ode} topic={topic} />
-              <Button onClick={onWriteAnother}>Write another ode</Button>
-            </div>
-          </div>
+          <OdeVerse
+            className="animate-rise mt-9 max-w-136 text-left motion-reduce:animate-none"
+            ode={ode}
+          />
+          <OdeActions>
+            <Button
+              className="col-span-2"
+              onClick={onCompare}
+              size="compact"
+              variant="outline"
+            >
+              Compare Pindaric and Horatian odes
+            </Button>
+            <ShareOde mosaic={mosaic} ode={ode} size="compact" topic={topic} />
+            <Button onClick={onWriteAnother} size="compact">
+              Write another ode
+            </Button>
+          </OdeActions>
         </>
       ) : (
         <OdeTopicFields isWriting phrases={LAYING_PHRASES} topic={topic} />

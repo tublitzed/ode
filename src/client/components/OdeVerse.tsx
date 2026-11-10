@@ -60,7 +60,9 @@ type OdeVerseProps = {
 };
 
 const OdeVerse = ({ className, ode }: OdeVerseProps) => (
-  <div className={cn("font-verse text-xl leading-[1.55]", className)}>
+  <div
+    className={cn("font-verse text-lg leading-[1.55] sm:text-xl", className)}
+  >
     {toStanzas(ode).map(({ lines, section }, stanzaIndex) => (
       <p className="mt-[1.1em] first:mt-0" key={`${stanzaIndex}-${lines[0]}`}>
         {section && <OdeSectionLabel name={section} />}

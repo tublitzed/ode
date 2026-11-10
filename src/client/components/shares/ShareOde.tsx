@@ -1,7 +1,9 @@
 import { Check } from "lucide-react";
 import { useId, useState } from "react";
+import type { VariantProps } from "class-variance-authority";
 
 import { Button } from "@/client/components/ui/button";
+import type { buttonVariants } from "@/client/components/ui/button";
 import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";
 import { httpRequest } from "@/client/utils/httpRequest";
@@ -13,6 +15,7 @@ type ShareOdeProps = {
   forceView?: View; // Storybook only
   mosaic?: MosaicShape[];
   ode: string;
+  size?: VariantProps<typeof buttonVariants>["size"];
   topic: string;
 };
 
@@ -51,6 +54,7 @@ const ShareOde = ({
   forceView,
   mosaic,
   ode,
+  size,
   topic,
 }: ShareOdeProps) => {
   const [shareId, setShareId] = useState(() => loadShareId(comparison));
@@ -109,6 +113,7 @@ const ShareOde = ({
         className="w-full"
         disabled={view.status === "sharing"}
         onClick={share}
+        size={size}
         variant="outline"
       >
         {renderLabel(view)}

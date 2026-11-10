@@ -2,6 +2,7 @@ import { cn } from "cn";
 import type { ReactNode } from "react";
 
 import MosaicPanel from "@/client/components/MosaicPanel";
+import OdeActions from "@/client/components/OdeActions";
 import OdeProgressStatus from "@/client/components/OdeProgressStatus";
 import OdeTitle from "@/client/components/OdeTitle";
 import OdeVerse from "@/client/components/OdeVerse";
@@ -118,7 +119,7 @@ const OdeComparison = ({
           );
         })}
       </div>
-      {actions && <div className="mt-12">{actions}</div>}
+      {actions && <OdeActions>{actions}</OdeActions>}
     </>
   );
 };

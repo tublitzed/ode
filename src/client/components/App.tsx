@@ -281,22 +281,26 @@ const App = ({ forceView }: AppProps) => {
         return (
           <OdeComparison
             actions={
-              <div className="flex flex-wrap items-start justify-center gap-3">
+              <>
                 {!isWriting && (
-                  <div className="w-56">
-                    <ShareOde
-                      comparison={sharedComparison}
-                      key={JSON.stringify(sharedComparison)}
-                      mosaic={view.mosaic}
-                      ode={view.ode}
-                      topic={view.topic}
-                    />
-                  </div>
+                  <ShareOde
+                    comparison={sharedComparison}
+                    key={JSON.stringify(sharedComparison)}
+                    mosaic={view.mosaic}
+                    ode={view.ode}
+                    size="compact"
+                    topic={view.topic}
+                  />
                 )}
-                <Button disabled={isWriting} onClick={startOver}>
+                <Button
+                  className={isWriting ? "col-span-2" : undefined}
+                  disabled={isWriting}
+                  onClick={startOver}
+                  size="compact"
+                >
                   Write another ode
                 </Button>
-              </div>
+              </>
             }
             columns={[
               {

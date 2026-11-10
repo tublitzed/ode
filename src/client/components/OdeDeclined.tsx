@@ -17,7 +17,7 @@ const OdeDeclined = ({
 }: OdeDeclinedProps) => (
   <>
     <MosaicPanel
-      className="max-w-100"
+      className="max-w-[min(25rem,72vw)]"
       label="An empty mosaic"
       state="waiting"
     />
