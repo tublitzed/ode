@@ -11,6 +11,7 @@ import "@/client/index.css";
 
 import LoginPage from "@/client/components/LoginPage";
 import SharedOdePage from "@/client/components/shares/SharedOdePage";
+import { logNightingale } from "@/client/utils/consoleNightingale";
 import { getSharedOdeId } from "@/shared/sharedOdePath";
 
 // Load the app bundle only after logged in.
@@ -45,6 +46,8 @@ const renderPage = () => {
     </Suspense>
   );
 };
+
+logNightingale();
 
 createRoot(root, {
   onCaughtError: reactErrorHandler(),
