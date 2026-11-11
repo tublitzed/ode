@@ -15,10 +15,14 @@ type Story = StoryObj<typeof OdeResult>;
 
 const meta: Meta<typeof OdeResult> = {
   args: {
+    changeRequest: "",
     isFresh: false,
+    isRevising: false,
     mosaic: SAMPLE_MOSAIC,
     ode: SAMPLE_ODE,
+    onChangeRequestChange: fn(),
     onCompare: fn(),
+    onRevise: fn(),
     onWriteAnother: fn(),
     topic: SAMPLE_TOPIC,
   },

@@ -45,6 +45,7 @@ export const Generating: Story = {
 export const Ode: Story = {
   args: {
     forceView: {
+      changeRequests: [],
       isFresh: false,
       mosaic: SAMPLE_MOSAIC,
       ode: SAMPLE_ODE,
@@ -57,6 +58,7 @@ export const Ode: Story = {
 export const Comparison: Story = {
   args: {
     forceView: {
+      changeRequests: [],
       columns: comparisonColumns(PINDARIC_SLOT, HORATIAN_SLOT),
       isFresh: false,
       mosaic: SAMPLE_MOSAIC,

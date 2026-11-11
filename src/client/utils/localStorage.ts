@@ -6,6 +6,7 @@ const STORAGE_KEY = "ode:lastOde";
 export type SavedComparison = Partial<Record<OdeType, string>>;
 
 export type LastOde = {
+  changeRequests?: string[];
   comparison?: SavedComparison;
   mosaic?: MosaicShape[];
   ode: string;
@@ -19,6 +20,14 @@ const readComparison = (value: unknown): SavedComparison =>
       ([type, ode]) => isOdeType(type) && typeof ode === "string",
     ),
   );
+
+const readChangeRequests = (value: unknown) => {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  return value.filter((changeRequest) => typeof changeRequest === "string");
+};
 
 const readShareIds = (value: unknown) => {
   if (typeof value !== "object" || value === null) {
@@ -40,12 +49,14 @@ export const loadLastOde = (): LastOde | undefined => {
       return undefined;
     }
 
-    const { comparison, mosaic, ode, shareIds, topic } = JSON.parse(stored);
+    const { changeRequests, comparison, mosaic, ode, shareIds, topic } =
+      JSON.parse(stored);
     if (typeof ode !== "string" || typeof topic !== "string") {
       return undefined;
     }
 
     return {
+      changeRequests: readChangeRequests(changeRequests),
       comparison: readComparison(comparison),
       mosaic: parseMosaic(mosaic),
       ode,
