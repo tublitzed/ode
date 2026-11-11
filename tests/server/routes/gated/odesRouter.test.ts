@@ -26,6 +26,9 @@ import {
 } from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
+vi.mock("@/server/odes/drawMosaic.ts", () => ({
+  drawMosaic: vi.fn().mockResolvedValue(undefined),
+}));
 vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
 
 const PASSWORD = "correct horse";

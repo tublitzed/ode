@@ -90,7 +90,7 @@ describe("generateOde", () => {
     create.mockResolvedValueOnce({ content: [], stop_reason: "refusal" });
 
     await expect(generateOde("anything", "irregular")).resolves.toEqual({
-      reason: "That's not a subject we can write an ode about.",
+      reason: "That subject isn’t in our songbook. Try another one.",
       status: "declined",
       suggestions: REFUSAL_SUGGESTIONS,
     });

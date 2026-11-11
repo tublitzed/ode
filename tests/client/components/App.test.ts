@@ -21,7 +21,7 @@ describe("toComparisonColumns", () => {
       { slot: { ode: "Hail", status: "ode" }, type: "pindaric" },
       {
         slot: {
-          message: "This ode didn't finish. Try writing it again.",
+          message: "This one trailed off mid-verse. Try writing it again.",
           status: "failed",
         },
         type: "horatian",

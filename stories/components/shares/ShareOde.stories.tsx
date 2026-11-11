@@ -6,7 +6,7 @@ type Story = StoryObj<typeof ShareOde>;
 
 const SHARE_LINK = "http://localhost:3000/o/petxenaoyswtczm54pcssnr9";
 
-const withComparisonHeaderWidth: Decorator = (StoryComponent) => (
+const withNarrowWidth: Decorator = (StoryComponent) => (
   <div className="w-56">
     <StoryComponent />
   </div>
@@ -15,7 +15,6 @@ const withComparisonHeaderWidth: Decorator = (StoryComponent) => (
 const meta: Meta<typeof ShareOde> = {
   args: { ode: "O tomato", topic: "Tomatoes" },
   component: ShareOde,
-  title: "ShareOde",
 };
 
 export default meta;
@@ -30,24 +29,24 @@ export const Copied: Story = {
   args: { forceView: { link: SHARE_LINK, status: "copied" } },
 };
 
-export const CopiedInComparisonHeader: Story = {
+export const CopiedNarrow: Story = {
   args: { forceView: { link: SHARE_LINK, status: "copied" } },
-  decorators: [withComparisonHeaderWidth],
+  decorators: [withNarrowWidth],
 };
 
 export const ClipboardBlocked: Story = {
   args: { forceView: { link: SHARE_LINK, status: "clipboardBlocked" } },
 };
 
-export const ClipboardBlockedInComparisonHeader: Story = {
+export const ClipboardBlockedNarrow: Story = {
   args: { forceView: { link: SHARE_LINK, status: "clipboardBlocked" } },
-  decorators: [withComparisonHeaderWidth],
+  decorators: [withNarrowWidth],
 };
 
 export const Failed: Story = {
   args: {
     forceView: {
-      message: "Something went wrong sharing your ode. Try again.",
+      message: "The ode slipped as we framed it. Try sharing again.",
       status: "error",
     },
   },

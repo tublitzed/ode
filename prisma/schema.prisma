@@ -13,6 +13,7 @@ model SharedOde {
   id         String   @id @default(cuid(2))
   comparison Json? // See Comparison type in shared/ode.ts
   createdAt  DateTime @default(now()) @map("created_at")
+  mosaic     Json? // See MosaicShape type in shared/ode.ts
   ode        String
   topic      String
 }
