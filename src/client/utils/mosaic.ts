@@ -67,7 +67,8 @@ const ring = (outer: number, inner: number) =>
   `M${inner} ${inner} V${CANVAS_UNITS - inner} H${CANVAS_UNITS - inner} V${inner} Z`;
 
 const tileUnits = (TILE_SIZE * CANVAS_UNITS) / MOSAIC_SIZE;
-const frameInset = tileUnits * 5;
+export const FRAME_INSET = tileUnits * 5;
+export const PICTURE_TRANSFORM = `translate(${FRAME_INSET} ${FRAME_INSET}) scale(${(CANVAS_UNITS - FRAME_INSET * 2) / CANVAS_UNITS})`;
 const frameShapes = FRAME_COLORS.map((fill, index) => ({
   d: ring(tileUnits * (index === 0 ? 0 : index + 1), tileUnits * (index + 2)),
   fill,
@@ -99,14 +100,14 @@ const paintRegions = (shapes: MosaicShape[]) => {
   };
 
   const unit = MOSAIC_SIZE / CANVAS_UNITS;
-  const scale = (unit * (CANVAS_UNITS - frameInset * 2)) / CANVAS_UNITS;
+  const scale = (unit * (CANVAS_UNITS - FRAME_INSET * 2)) / CANVAS_UNITS;
   context.setTransform(
     scale,
     0,
     0,
     scale,
-    frameInset * unit,
-    frameInset * unit,
+    FRAME_INSET * unit,
+    FRAME_INSET * unit,
   );
   shapes.forEach(paint);
   context.setTransform(unit, 0, 0, unit, 0, 0);
@@ -315,7 +316,7 @@ export const buildMosaic = (shapes: MosaicShape[]): Mosaic => {
     image.data.set([...rgb, 255], i * 4);
   }
 
-  return { image, inset: frameInset, owner, shapes, tiles };
+  return { image, inset: FRAME_INSET, owner, shapes, tiles };
 };
 
 export const paintMosaic = (canvas: HTMLCanvasElement, mosaic: Mosaic) => {

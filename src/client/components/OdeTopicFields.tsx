@@ -1,6 +1,5 @@
-import type { KeyboardEvent, SubmitEvent } from "react";
+import type { KeyboardEvent, ReactNode, SubmitEvent } from "react";
 
-import OdeProgressStatus from "@/client/components/OdeProgressStatus";
 import { Button } from "@/client/components/ui/button";
 import { MAX_TOPIC_LENGTH } from "@/shared/ode";
 
@@ -9,7 +8,8 @@ type OdeTopicFieldsProps = {
   isWriting?: boolean;
   onSubmit?: () => void;
   onTopicChange?: (topic: string) => void;
-  phrases?: string[];
+  placeholder?: string;
+  status?: ReactNode;
   topic: string;
 };
 
@@ -46,7 +46,8 @@ const OdeTopicFields = ({
   isWriting = false,
   onSubmit,
   onTopicChange,
-  phrases,
+  placeholder,
+  status,
   topic,
 }: OdeTopicFieldsProps) => {
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
@@ -67,7 +68,7 @@ const OdeTopicFields = ({
           aria-describedby={error ? "topic-hint topic-error" : "topic-hint"}
           aria-invalid={error ? true : undefined}
           autoComplete="off"
-          className="border-input caret-destructive focus-visible:border-destructive w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
+          className="border-input caret-destructive focus-visible:border-destructive placeholder:text-muted-foreground w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
           id="topic"
           maxLength={MAX_TOPIC_LENGTH}
           name="topic"
@@ -76,6 +77,7 @@ const OdeTopicFields = ({
             onTopicChange?.(event.target.value.replace(LINE_BREAKS, " "));
           }}
           onKeyDown={submitOnEnter}
+          placeholder={placeholder}
           readOnly={isWriting}
           ref={fitHeight}
           required
@@ -83,12 +85,14 @@ const OdeTopicFields = ({
           value={topic}
         />
       </div>
+      <p className="font-display text-muted-foreground mt-3 text-[clamp(1.375rem,2.5vw,1.875rem)] leading-tight tracking-[-0.01em]">
+        …with Anthropic
+      </p>
       <p
-        className="text-muted-foreground mt-5 max-w-[40ch] text-lg leading-normal text-balance"
+        className="text-muted-foreground mt-6 max-w-[40ch] text-lg leading-normal text-balance"
         id="topic-hint"
       >
-        Name anything, from pizza to Mondays. Claude writes the ode, then lays
-        its picture in stone.
+        Name anything, from pizza to Mondays.
       </p>
       {error && (
         <p
@@ -102,11 +106,7 @@ const OdeTopicFields = ({
       <Button className="mt-7" disabled={isWriting} type="submit">
         {getButtonLabel(isWriting, error)}
       </Button>
-      {isWriting && (
-        <div className="mt-4">
-          <OdeProgressStatus hasTiles={false} phrases={phrases} />
-        </div>
-      )}
+      {isWriting && status && <div className="mt-4">{status}</div>}
     </form>
   );
 };

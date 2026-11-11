@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import MosaicPanel from "@/client/components/MosaicPanel";
 import OdeActions from "@/client/components/OdeActions";
+import OdeProgressStatus from "@/client/components/OdeProgressStatus";
 import OdeTitle from "@/client/components/OdeTitle";
 import OdeTopicFields from "@/client/components/OdeTopicFields";
 import OdeVerse from "@/client/components/OdeVerse";
@@ -69,7 +70,17 @@ const OdeResult = ({
           </OdeActions>
         </>
       ) : (
-        <OdeTopicFields isWriting phrases={LAYING_PHRASES} topic={topic} />
+        <OdeTopicFields
+          isWriting
+          status={
+            <OdeProgressStatus
+              hasTiles={false}
+              phrases={LAYING_PHRASES}
+              tone="accent"
+            />
+          }
+          topic={topic}
+        />
       )}
     </>
   );

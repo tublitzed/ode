@@ -266,7 +266,7 @@ The materials of the floor itself.
 - **Display** (400, clamp(3.5rem, 8vw, 4.5rem), 1, -0.02em): "Ode" on the login page.
 - **Headline** (400, clamp(2.5rem, 5vw, 3.75rem), 1.05, -0.02em): "Ode to {topic}" and other page titles, balanced and allowed to break anywhere so a long topic cannot overflow. The form sets "Ode to" at this size with the input inline, at 1.25 line height so the field fits.
 - **Title** (400, 1.625rem, 1.5): Ode type names heading comparison columns.
-- **Wordmark** (400, 1.5rem, 1.33): "Ode" in the logged-in header.
+- **Wordmark** (400, 1.5rem, 1.33): "Ode" in the logged-in header, led by the 1.75rem nightingale favicon with a 0.625rem gap.
 - **Verse** (400, 1.25rem, 1.55): The poem, left-aligned at up to 34rem, with a 1.5rem hanging indent on wrapped lines and 1.1em between stanzas. **Verse compact** (1.125rem, 1.55) sets the comparison columns.
 - **Status** (Newsreader 400, 1.125rem, 1.5): Rotating progress phrases, 40ch at most.
 - **Lede** (Figtree 400, 1.125rem, 1.5): The form hint and the declined reason, soft umber, balanced, 40 to 44ch. **Body** (1rem, 1.5) carries the ode type line.
@@ -336,6 +336,7 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 
 - **Style:** No box. Transparent, square, with a 2px ink rule beneath and an oxblood caret. Height 3rem.
 - **Title field:** The topic field is set inside the headline, following the words "Ode to", with a 3px rule. It is a one-row text area that sizes to its content from 8ch up to the full column, then wraps onto more lines, centered, so a long topic reads as a title instead of scrolling out of view. Enter submits and line breaks become spaces. Where content sizing is unsupported, it spans the column and grows in height as you type.
+- **Byline:** "…with Anthropic" sits 0.75rem under the title field in Young Serif at clamp(1.375rem, 2.5vw, 1.875rem), soft umber, so the headline completes the pun: "Ode to Tomatoes … with Anthropic." It appears only inside the logged-in app, never on logged-out pages.
 - **Focus:** The rule turns oxblood; the password field's rule also thickens to 3px.
 - **Error / Disabled:** Oxblood text at weight 500 beneath the field, announced as an alert; the password field's rule also turns oxblood. Disabled fields drop to 60% opacity.
 
@@ -356,6 +357,12 @@ With prefers-reduced-motion, laying skips straight to the finished mosaic and re
 **How Claude draws.** Claude acts as a mosaicist and returns flat closed SVG paths with a stone code, on a 240-unit square, listed back to front. Its brief is an emblema from a Pompeii floor: one recognizable object, about 65% of the canvas, centered and whole, naturalistically modeled with three or four tones of each color lit from the upper left, with a soft Slate 3 cast shadow to the lower right and an empty background. Every piece is at least 10 units across so the tiles can resolve it. The server keeps at most 60 structurally valid shapes. With fewer than five, or if the drawing fails, the ode ships with its empty framed panel.
 
 ### Tile Loader
+
+On the empty form, the bed shows a sinopia: the red-chalk underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
+
+While Claude writes, the bed shows a draft instead: nine short lines of red-chalk handwriting in two stanzas, drawn one after another (0.7s each, 0.78s apart), held, then faded so a new page starts every 9.5s. Under the button, the status trades filler for true ode lore in Newsreader, soft umber, every 5.2s (Neruda's odes to tomatoes and socks, Keats's nightingale, Horace's carpe diem, Pindar's Olympic odes, million-tile Roman floors, Schiller and Beethoven, Shelley's west wind). Laying keeps the short oxblood “Laying the tiles…” line.
+
+Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
 
 Twelve small stone tiles in a row, 0.25rem apart, each placed and lifted in turn (2.6s loop, 90ms stagger, tilts of up to 4 degrees), above a rotating status phrase. Stone colors repeat in the order rosso, serpentine, terracotta, lapis, stone black, giallo. With reduced motion the tiles sit still and fully visible.
 

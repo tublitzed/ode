@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 
 import {
   buildMosaic,
@@ -49,6 +50,7 @@ const wait = (ms: number, signal: AbortSignal) =>
 export type MosaicState = "laid" | "laying" | "waiting";
 
 type MosaicPanelProps = {
+  children?: ReactNode;
   className?: string;
   label: string;
   onLaid?: () => void;
@@ -57,6 +59,7 @@ type MosaicPanelProps = {
 };
 
 const MosaicPanel = ({
+  children,
   className,
   label,
   onLaid,
@@ -127,7 +130,7 @@ const MosaicPanel = ({
   return (
     <div
       className={cn(
-        "aspect-square w-full shadow-[0_2px_3px_rgb(52_40_30/0.18),0_28px_60px_-18px_rgb(52_40_30/0.45)]",
+        "relative aspect-square w-full shadow-[0_2px_3px_rgb(52_40_30/0.18),0_28px_60px_-18px_rgb(52_40_30/0.45)]",
         className,
       )}
     >
@@ -139,6 +142,7 @@ const MosaicPanel = ({
         ref={canvasRef}
         width={MOSAIC_SIZE}
       />
+      {children}
     </div>
   );
 };
