@@ -1,5 +1,5 @@
-import MosaicPanel from "@/client/components/MosaicPanel";
-import OdeTitle from "@/client/components/OdeTitle";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import OdeTitle from "@/client/components/odes/OdeTitle";
 import { Button } from "@/client/components/ui/button";
 
 type OdeDeclinedProps = {

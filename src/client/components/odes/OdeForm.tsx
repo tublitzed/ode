@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import type { ComponentProps } from "react";
 
-import MortarSheen from "@/client/components/MortarSheen";
-import MosaicPanel from "@/client/components/MosaicPanel";
-import OdeProgressStatus from "@/client/components/OdeProgressStatus";
-import OdeTopicFields from "@/client/components/OdeTopicFields";
-import Sinopia from "@/client/components/Sinopia";
+import MortarSheen from "@/client/components/mosaics/MortarSheen";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import Sinopia from "@/client/components/mosaics/Sinopia";
+import OdeProgressStatus from "@/client/components/odes/OdeProgressStatus";
+import OdeTopicFields from "@/client/components/odes/OdeTopicFields";
 import { SKETCHES } from "@/client/utils/sketches";
 
 const SKETCH_DRAW_MS = 1600;

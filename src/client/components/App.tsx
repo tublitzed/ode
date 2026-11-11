@@ -1,10 +1,13 @@
 import { useState } from "react";
 
-import OdeComparison from "@/client/components/OdeComparison";
-import type { OdeColumn, OdeSlot } from "@/client/components/OdeComparison";
-import OdeDeclined from "@/client/components/OdeDeclined";
-import OdeForm from "@/client/components/OdeForm";
-import OdeResult from "@/client/components/OdeResult";
+import OdeComparison from "@/client/components/odes/OdeComparison";
+import type {
+  OdeColumn,
+  OdeSlot,
+} from "@/client/components/odes/OdeComparison";
+import OdeDeclined from "@/client/components/odes/OdeDeclined";
+import OdeForm from "@/client/components/odes/OdeForm";
+import OdeResult from "@/client/components/odes/OdeResult";
 import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import { httpRequest } from "@/client/utils/httpRequest";

@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import MosaicPanel from "@/client/components/MosaicPanel";
-import OdeActions from "@/client/components/OdeActions";
-import OdeProgressStatus from "@/client/components/OdeProgressStatus";
-import OdeTitle from "@/client/components/OdeTitle";
-import OdeTopicFields from "@/client/components/OdeTopicFields";
-import OdeVerse from "@/client/components/OdeVerse";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import OdeActions from "@/client/components/odes/OdeActions";
+import OdeProgressStatus from "@/client/components/odes/OdeProgressStatus";
+import OdeTitle from "@/client/components/odes/OdeTitle";
+import OdeTopicFields from "@/client/components/odes/OdeTopicFields";
+import OdeVerse from "@/client/components/odes/OdeVerse";
 import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
 import { DEFAULT_ODE_TYPE, ODE_TYPE_DETAILS } from "@/shared/ode";

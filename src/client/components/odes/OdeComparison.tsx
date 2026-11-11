@@ -1,11 +1,11 @@
 import { cn } from "cn";
 import type { ReactNode } from "react";
 
-import MosaicPanel from "@/client/components/MosaicPanel";
-import OdeActions from "@/client/components/OdeActions";
-import OdeProgressStatus from "@/client/components/OdeProgressStatus";
-import OdeTitle from "@/client/components/OdeTitle";
-import OdeVerse from "@/client/components/OdeVerse";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import OdeActions from "@/client/components/odes/OdeActions";
+import OdeProgressStatus from "@/client/components/odes/OdeProgressStatus";
+import OdeTitle from "@/client/components/odes/OdeTitle";
+import OdeVerse from "@/client/components/odes/OdeVerse";
 import { Button } from "@/client/components/ui/button";
 import { ODE_TYPE_DETAILS } from "@/shared/ode";
 import type { MosaicShape, OdeType } from "@/shared/ode";

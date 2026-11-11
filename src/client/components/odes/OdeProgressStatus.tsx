@@ -13,15 +13,6 @@ const TILE_COLORS = [
   "#8EAE63",
 ];
 
-const DEFAULT_PHRASES = [
-  "Consulting the muses…",
-  "Sketching on wet mortar…",
-  "Sorting the tiles by color…",
-  "Breaking lines in unexpected places…",
-  "Searching for the perfect image…",
-  "Polishing a stanza…",
-];
-
 const tileStyle = (index: number) =>
   ({
     "--tilt": `${((index * 37) % 9) - 4}deg`,
@@ -34,7 +25,7 @@ type OdeProgressStatusProps = {
   hasTiles?: boolean;
   intervalMs?: number;
   label?: string;
-  phrases?: string[];
+  phrases: string[];
   tone?: "accent" | "quiet";
 };
 
@@ -43,7 +34,7 @@ const OdeProgressStatus = ({
   hasTiles = true,
   intervalMs = DEFAULT_INTERVAL_MS,
   label = "Writing your ode.",
-  phrases = DEFAULT_PHRASES,
+  phrases,
   tone = "quiet",
 }: OdeProgressStatusProps) => {
   const [phraseIndex, setPhraseIndex] = useState(0);

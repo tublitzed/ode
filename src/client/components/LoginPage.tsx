@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
-import MosaicPanel from "@/client/components/MosaicPanel";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
 import { Button } from "@/client/components/ui/button";
 import { Input } from "@/client/components/ui/input";
 import { Label } from "@/client/components/ui/label";

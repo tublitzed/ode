@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import MosaicPanel from "@/client/components/MosaicPanel";
-import OdeComparison from "@/client/components/OdeComparison";
-import type { OdeColumn } from "@/client/components/OdeComparison";
-import OdeTitle from "@/client/components/OdeTitle";
-import OdeVerse from "@/client/components/OdeVerse";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import OdeComparison from "@/client/components/odes/OdeComparison";
+import type { OdeColumn } from "@/client/components/odes/OdeComparison";
+import OdeTitle from "@/client/components/odes/OdeTitle";
+import OdeVerse from "@/client/components/odes/OdeVerse";
 import { httpRequest } from "@/client/utils/httpRequest";
 import {
   COMPARISON_TYPES,
