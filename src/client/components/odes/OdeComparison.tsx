@@ -44,6 +44,20 @@ type OdeComparisonProps = {
 
 const COLUMN_CLASS = "border-rule border-t-2 pt-5";
 
+const scrollIntoViewIfNeeded = (node: HTMLElement | null) => {
+  if (!node) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  node.scrollIntoView({
+    behavior: prefersReducedMotion ? "auto" : "smooth",
+    block: "nearest",
+  });
+};
+
 const OdeComparison = ({
   actions,
   columns,
@@ -79,7 +93,7 @@ const OdeComparison = ({
                 key={type}
               >
                 <h2 className="font-display text-[1.625rem]">{pendingLabel}</h2>
-                <div className="mt-6">
+                <div className="mt-6 scroll-mb-28" ref={scrollIntoViewIfNeeded}>
                   <OdeProgressStatus
                     align="start"
                     intervalMs={LOADER_INTERVAL_MS}
