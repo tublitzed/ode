@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
 
+import { drawMosaic } from "#/server/odes/drawMosaic.ts";
 import { generateOde } from "#/server/odes/generate.ts";
 import {
   DEFAULT_ODE_TYPE,
@@ -16,15 +17,16 @@ import {
 } from "#/shared/ode.ts";
 
 const BUSY = {
-  message: "Ode is very busy right now. Try again in a moment.",
+  message: "Every poet is mid-verse right now. Try again in a moment.",
   status: 503,
 };
 const UNEXPECTED = {
-  message: "Something went wrong writing your ode. Try again.",
+  message: "Our poet dropped the quill. Try again.",
   status: 500,
 };
 const UNREACHABLE = {
-  message: "We couldn't reach our poet. Try again in a moment.",
+  message:
+    "Our poet wandered off in search of inspiration. Try again in a moment.",
   status: 502,
 };
 
@@ -44,6 +46,15 @@ const toFailure = (error: unknown) => {
   return UNEXPECTED;
 };
 
+const drawMosaicSafely = async (topic: string) => {
+  try {
+    return await drawMosaic(topic);
+  } catch (error) {
+    Sentry.captureException(error);
+    return undefined;
+  }
+};
+
 const isUsableSourceOde = (value: unknown): value is string =>
   typeof value === "string" &&
   value.trim().length > 0 &&
@@ -57,7 +68,7 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
 
   if (!topic || topic.length > MAX_TOPIC_LENGTH) {
     res.status(400).json({
-      error: `Enter a word or phrase of up to ${MAX_TOPIC_LENGTH} characters.`,
+      error: `Every ode needs a subject: a word or phrase of up to ${MAX_TOPIC_LENGTH} characters.`,
     });
     return;
   }
@@ -65,21 +76,35 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
   const type: unknown = req.body?.type ?? DEFAULT_ODE_TYPE;
 
   if (!isOdeType(type)) {
-    res.status(400).json({ error: "That's not a type of ode we can write." });
+    res.status(400).json({
+      error:
+        "We don’t know that kind of ode. Try a Pindaric, Horatian or irregular one.",
+    });
     return;
   }
 
   const sourceOde: unknown = req.body?.sourceOde;
 
   if (sourceOde !== undefined && !isUsableSourceOde(sourceOde)) {
-    res
-      .status(400)
-      .json({ error: "We can't use that ode as a starting point." });
+    res.status(400).json({
+      error: "We can’t build on that ode. Write a fresh one and try again.",
+    });
     return;
   }
 
+  const pendingMosaic =
+    sourceOde === undefined ? drawMosaicSafely(topic) : undefined;
+
   try {
-    res.json(await generateOde(topic, type, sourceOde));
+    const ode = await generateOde(topic, type, sourceOde);
+
+    if (ode.status !== "ode" || !pendingMosaic) {
+      res.json(ode);
+      return;
+    }
+
+    const mosaic = await pendingMosaic;
+    res.json(mosaic ? { ...ode, mosaic } : ode);
   } catch (error) {
     const failure = toFailure(error);
 

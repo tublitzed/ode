@@ -8,7 +8,13 @@ import { getSharedOdeId } from "#/shared/sharedOdePath.ts";
 export const SESSION_COOKIE = "ode_session";
 export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-const PUBLIC_PATHS = new Set(["/api/login", "/login"]);
+const PUBLIC_PATHS = new Set([
+  "/api/login",
+  "/apple-touch-icon.png",
+  "/favicon-32.png",
+  "/favicon.svg",
+  "/login",
+]);
 
 export type IsPublicPath = (path: string) => boolean;
 

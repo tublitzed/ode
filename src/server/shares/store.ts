@@ -1,16 +1,17 @@
 import type { Db } from "#/server/db.ts";
-import { toComparison } from "#/shared/ode.ts";
+import { parseMosaic, toComparison } from "#/shared/ode.ts";
 import type { SharedOde } from "#/shared/ode.ts";
 
 export const createSharedOde = async (
   db: Db,
-  { comparison, ode, topic }: SharedOde,
+  { comparison, mosaic, ode, topic }: SharedOde,
 ) => {
   const hasComparison = Object.keys(comparison ?? {}).length > 0;
 
   const { id } = await db.sharedOde.create({
     data: {
       comparison: hasComparison ? comparison : undefined,
+      mosaic,
       ode,
       topic,
     },
@@ -25,7 +26,7 @@ export const getSharedOde = async (
   id: string,
 ): Promise<SharedOde | undefined> => {
   const sharedOde = await db.sharedOde.findUnique({
-    select: { comparison: true, ode: true, topic: true },
+    select: { comparison: true, mosaic: true, ode: true, topic: true },
     where: { id },
   });
 
@@ -33,10 +34,16 @@ export const getSharedOde = async (
     return undefined;
   }
 
-  const { comparison, ode, topic } = sharedOde;
+  const { comparison, mosaic, ode, topic } = sharedOde;
   const savedComparison = toComparison(comparison);
+  const savedMosaic = parseMosaic(mosaic);
 
-  return Object.keys(savedComparison).length > 0
-    ? { comparison: savedComparison, ode, topic }
-    : { ode, topic };
+  return {
+    ...(Object.keys(savedComparison).length > 0 && {
+      comparison: savedComparison,
+    }),
+    ...(savedMosaic && { mosaic: savedMosaic }),
+    ode,
+    topic,
+  };
 };

@@ -4,10 +4,14 @@ import { reactErrorHandler } from "@sentry/react";
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 
+import "@fontsource-variable/figtree/index.css";
+import "@fontsource-variable/newsreader/index.css";
+import "@fontsource/young-serif/index.css";
 import "@/client/index.css";
 
 import LoginPage from "@/client/components/LoginPage";
 import SharedOdePage from "@/client/components/shares/SharedOdePage";
+import { logNightingale } from "@/client/utils/consoleNightingale";
 import { getSharedOdeId } from "@/shared/sharedOdePath";
 
 // Load the app bundle only after logged in.
@@ -27,6 +31,7 @@ if (isLoginPage) {
 
 const sharedOdeId = getSharedOdeId(window.location.pathname);
 
+// SPA with a login page and a shared ode page that's outside the auth gate.
 const renderPage = () => {
   if (isLoginPage) {
     return <LoginPage />;
@@ -42,6 +47,8 @@ const renderPage = () => {
     </Suspense>
   );
 };
+
+logNightingale();
 
 createRoot(root, {
   onCaughtError: reactErrorHandler(),

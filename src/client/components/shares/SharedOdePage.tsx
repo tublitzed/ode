@@ -1,15 +1,10 @@
-import { cn } from "cn";
 import { useEffect, useState } from "react";
 
-import OdeComparison from "@/client/components/OdeComparison";
-import type { OdeColumn } from "@/client/components/OdeComparison";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/client/components/ui/card";
+import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
+import OdeComparison from "@/client/components/odes/OdeComparison";
+import type { OdeColumn } from "@/client/components/odes/OdeComparison";
+import OdeTitle from "@/client/components/odes/OdeTitle";
+import OdeVerse from "@/client/components/odes/OdeVerse";
 import { httpRequest } from "@/client/utils/httpRequest";
 import {
   COMPARISON_TYPES,
@@ -45,58 +40,62 @@ const hasComparison = (view: View) =>
   view.status === "found" &&
   Object.keys(view.sharedOde.comparison ?? {}).length > 0;
 
+const renderMessage = (title: string, message: string) => (
+  <>
+    <OdeTitle>{title}</OdeTitle>
+    <p className="text-muted-foreground mt-3 max-w-[44ch] text-lg leading-normal text-balance">
+      {message}
+    </p>
+  </>
+);
+
 const renderView = (view: View) => {
   if (view.status === "loading") {
-    return <p className="text-sm text-muted-foreground">Finding this ode…</p>;
+    return <p className="text-muted-foreground">Finding this ode…</p>;
   }
 
   if (view.status === "notFound") {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>We couldn't find that ode</CardTitle>
-          <CardDescription>
-            The link may be incomplete, or the ode may have been removed.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+    return renderMessage(
+      "This ode has flown the nest",
+      "The link may be incomplete, or the ode may have been taken down.",
     );
   }
 
   if (view.status === "error") {
-    return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>We couldn't load that ode</CardTitle>
-          <CardDescription>{view.message}</CardDescription>
-        </CardHeader>
-      </Card>
-    );
+    return renderMessage("This ode has lost its voice", view.message);
   }
 
   if (hasComparison(view)) {
     return (
       <OdeComparison
         columns={toColumns(view.sharedOde)}
+        mosaic={view.sharedOde.mosaic}
         topic={view.sharedOde.topic}
       />
     );
   }
 
+  const { mosaic, topic } = view.sharedOde;
+
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="wrap-anywhere">
-          Ode to {view.sharedOde.topic}
-        </CardTitle>
-        <CardDescription>
-          <span className="font-medium">{label}.</span> {description}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="whitespace-pre-line">{view.sharedOde.ode}</p>
-      </CardContent>
-    </Card>
+    <>
+      {mosaic && (
+        <MosaicPanel
+          className="max-w-[min(25rem,72vw)]"
+          label={`A mosaic for the ode to ${topic}`}
+          shapes={mosaic}
+          state="laid"
+        />
+      )}
+      <OdeTitle className={mosaic ? "mt-10" : undefined}>
+        Ode to {topic}
+      </OdeTitle>
+      <p className="text-muted-foreground mt-3 max-w-[44ch] leading-normal text-balance">
+        <span className="text-foreground font-semibold">{label}.</span>{" "}
+        {description}
+      </p>
+      <OdeVerse className="mt-9 max-w-136 text-left" ode={view.sharedOde.ode} />
+    </>
   );
 };
 
@@ -140,12 +139,7 @@ const SharedOdePage = ({ forceView, id }: SharedOdePageProps) => {
   }, [forceView, id]);
 
   return (
-    <main
-      className={cn(
-        "mx-auto flex min-h-svh w-full flex-col items-center justify-center gap-4 p-4",
-        hasComparison(view) ? "max-w-7xl" : "max-w-md",
-      )}
-    >
+    <main className="flex min-h-svh w-full flex-col items-center justify-center px-4 py-16 text-center">
       {renderView(view)}
     </main>
   );

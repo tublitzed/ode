@@ -1,15 +1,22 @@
 # Ode
 
-Simple Ode builder.
+Make odes with Anthropic! A toy app that allows you to enter a phrase, generate an ode, and then make variants of it.
+
+## System Requirements
+
+- Node 24+
+- Postgres
 
 ## Setup
 
-1. `npm i`
-1. cp `.env.example .env`. You'll need an `ANTHROPIC_API_KEY` set to use the app.
-2. `createdb ode`
-3. `npm run migrate:dev`
-4. `npm run dev`
-5. Use the sample app password in `.env` to access the app
+1. `npm i` - install dependencies
+2. `createdb ode` - create database
+3. `cp .env.example .env` - setup environment variables
+   1. You'll need an `ANTHROPIC_API_KEY` set to use the app
+   2. Set your `DATABASE_URL`, replacing the placeholder username
+4. `npm run migrate:dev` - run migrations
+5. `npm run dev` - start the app
+6. Use the sample app password in `.env` to login
 
 
 ## Infra
@@ -22,6 +29,6 @@ Migrations are run via a pre-deploy step which is set to `npx prisma migrate dep
 
 This is a simple web app with React/TypeScript on the front-end and Express for the server. Uses prisma & postgres to store shareable odes.
 
-- src/client - Uses [Shadcdn](https://ui.shadcn.com/docs/components) for UI components, and some Ode state components. Writes a few things to localStorage.
-- src/server - Routes, simple auth logic (gated by a single env var), ode generator.
+- src/client - Mostly React. Uses [Shadcdn](https://ui.shadcn.com/docs/components) for UI base components, and includes some rendering utils for drawing mosaics on canvas.
+- src/server - Express app with simple auth logic (gated by a single env var), ode generator.
 - src/shared - used by client and server.

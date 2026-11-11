@@ -9,3 +9,8 @@ node_modules/
 dist/
 storybook-static/
 src/generated/
+
+# Impeccable skill
+.impeccable/
+!.impeccable/design.json
+!.impeccable/config.json

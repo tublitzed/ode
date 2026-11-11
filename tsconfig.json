@@ -17,7 +17,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@stories/*": ["./stories/*"]
     }
   },
   "include": [".storybook", "src", "stories", "tests", "vite.config.ts"]

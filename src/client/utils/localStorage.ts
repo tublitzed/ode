@@ -1,5 +1,5 @@
-import { isOdeType } from "@/shared/ode";
-import type { OdeType } from "@/shared/ode";
+import { isOdeType, parseMosaic } from "@/shared/ode";
+import type { MosaicShape, OdeType } from "@/shared/ode";
 
 const STORAGE_KEY = "ode:lastOde";
 
@@ -7,6 +7,7 @@ export type SavedComparison = Partial<Record<OdeType, string>>;
 
 export type LastOde = {
   comparison?: SavedComparison;
+  mosaic?: MosaicShape[];
   ode: string;
   shareIds?: Record<string, string>;
   topic: string;
@@ -39,13 +40,14 @@ export const loadLastOde = (): LastOde | undefined => {
       return undefined;
     }
 
-    const { comparison, ode, shareIds, topic } = JSON.parse(stored);
+    const { comparison, mosaic, ode, shareIds, topic } = JSON.parse(stored);
     if (typeof ode !== "string" || typeof topic !== "string") {
       return undefined;
     }
 
     return {
       comparison: readComparison(comparison),
+      mosaic: parseMosaic(mosaic),
       ode,
       shareIds: readShareIds(shareIds),
       topic,

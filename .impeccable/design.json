@@ -1,0 +1,929 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T00:30:58.000Z",
+  "title": "Design System: Ode",
+  "extensions": {
+    "colorMeta": {
+      "plaster": {
+        "role": "neutral",
+        "displayName": "Plaster",
+        "canonical": "#e6e0d6",
+        "tonalRamp": [
+          "#0e0b05",
+          "#28231c",
+          "#443f37",
+          "#656057",
+          "#888279",
+          "#ada79d",
+          "#d3cdc3",
+          "#f4eee4"
+        ]
+      },
+      "plaster-shade": {
+        "role": "neutral",
+        "displayName": "Plaster Shade",
+        "canonical": "#dcd4c7",
+        "tonalRamp": [
+          "#0f0a03",
+          "#292319",
+          "#453f34",
+          "#665f54",
+          "#898276",
+          "#aea79a",
+          "#d5cdc0",
+          "#f6ede0"
+        ]
+      },
+      "plaster-line": {
+        "role": "neutral",
+        "displayName": "Plaster Line",
+        "canonical": "#cfc6b8",
+        "tonalRamp": [
+          "#100a03",
+          "#2a2318",
+          "#463f33",
+          "#675f53",
+          "#8a8275",
+          "#afa699",
+          "#d5ccbe",
+          "#f6eddf"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#221e1b",
+        "tonalRamp": [
+          "#0e0a08",
+          "#272320",
+          "#433f3b",
+          "#645f5c",
+          "#87827e",
+          "#aca6a3",
+          "#d2ccc8",
+          "#f3ede9"
+        ]
+      },
+      "umber": {
+        "role": "neutral",
+        "displayName": "Umber",
+        "canonical": "#2b2420",
+        "tonalRamp": [
+          "#100a07",
+          "#29221e",
+          "#463e3a",
+          "#675f5a",
+          "#8a817c",
+          "#afa6a0",
+          "#d5ccc6",
+          "#f6ece7"
+        ]
+      },
+      "umber-lifted": {
+        "role": "neutral",
+        "displayName": "Umber Lifted",
+        "canonical": "#4a3e36",
+        "tonalRamp": [
+          "#120904",
+          "#2c211a",
+          "#493d35",
+          "#6a5e55",
+          "#8e8077",
+          "#b3a59b",
+          "#d9cac1",
+          "#faebe1"
+        ]
+      },
+      "umber-soft": {
+        "role": "neutral",
+        "displayName": "Soft Umber",
+        "canonical": "#5b5148",
+        "tonalRamp": [
+          "#110904",
+          "#2b221a",
+          "#473e35",
+          "#695e55",
+          "#8c8177",
+          "#b1a59b",
+          "#d7cbc1",
+          "#f8ece1"
+        ]
+      },
+      "limewash": {
+        "role": "neutral",
+        "displayName": "Limewash",
+        "canonical": "#f6f2ea",
+        "tonalRamp": [
+          "#0d0b06",
+          "#27241e",
+          "#433f39",
+          "#636059",
+          "#86837c",
+          "#aba7a0",
+          "#d1cdc5",
+          "#f2eee6"
+        ]
+      },
+      "oxblood": {
+        "role": "primary",
+        "displayName": "Oxblood",
+        "canonical": "#a8352a",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0000",
+          "#7c0101",
+          "#a53328",
+          "#cf594b",
+          "#f97e6e",
+          "#febab0",
+          "#ffe9e5"
+        ]
+      },
+      "grout": {
+        "role": "tertiary",
+        "displayName": "Grout",
+        "canonical": "#C4B79E",
+        "tonalRamp": [
+          "#110a00",
+          "#2d220d",
+          "#493e29",
+          "#6b5f48",
+          "#8e826a",
+          "#b3a68e",
+          "#d9ccb3",
+          "#fbedd3"
+        ]
+      },
+      "ground-stone": {
+        "role": "tertiary",
+        "displayName": "Ground Stone",
+        "canonical": "#E9E0CC",
+        "tonalRamp": [
+          "#100a01",
+          "#2a2314",
+          "#463f2f",
+          "#67604e",
+          "#8b8270",
+          "#afa794",
+          "#d6cdb9",
+          "#f7eed9"
+        ]
+      },
+      "sketch": {
+        "role": "tertiary",
+        "displayName": "Sketch Line",
+        "canonical": "rgba(150, 62, 40, 0.75)",
+        "tonalRamp": [
+          "#1d0200",
+          "#460c00",
+          "#731d05",
+          "#9a412b",
+          "#c1654e",
+          "#ea8a71",
+          "#febbaa",
+          "#fee9e4"
+        ]
+      },
+      "lapis-1": {
+        "role": "secondary",
+        "displayName": "Lapis 1",
+        "canonical": "#BCD4E3",
+        "tonalRamp": [
+          "#000d16",
+          "#132732",
+          "#2e434f",
+          "#4e6471",
+          "#718795",
+          "#94acba",
+          "#bad2e1",
+          "#def2ff"
+        ]
+      },
+      "lapis-2": {
+        "role": "secondary",
+        "displayName": "Lapis 2",
+        "canonical": "#7AA6C7",
+        "tonalRamp": [
+          "#000d19",
+          "#01273e",
+          "#194460",
+          "#3b6584",
+          "#5e89a9",
+          "#81aecf",
+          "#a7d4f7",
+          "#e0f1ff"
+        ]
+      },
+      "lapis-3": {
+        "role": "secondary",
+        "displayName": "Lapis 3",
+        "canonical": "#3F6E9C",
+        "tonalRamp": [
+          "#000c1c",
+          "#012545",
+          "#11426d",
+          "#356491",
+          "#5887b7",
+          "#7bacde",
+          "#a7d3ff",
+          "#e3f0fe"
+        ]
+      },
+      "lapis-4": {
+        "role": "secondary",
+        "displayName": "Lapis 4",
+        "canonical": "#203E66",
+        "tonalRamp": [
+          "#000a20",
+          "#052349",
+          "#224068",
+          "#42628c",
+          "#6485b2",
+          "#88aad9",
+          "#aed0ff",
+          "#e5effe"
+        ]
+      },
+      "serpentine-1": {
+        "role": "secondary",
+        "displayName": "Serpentine 1",
+        "canonical": "#C6D7A2",
+        "tonalRamp": [
+          "#090d00",
+          "#1f2800",
+          "#394615",
+          "#596737",
+          "#7b8a59",
+          "#9fb07c",
+          "#c5d6a1",
+          "#e6f7c1"
+        ]
+      },
+      "serpentine-2": {
+        "role": "secondary",
+        "displayName": "Serpentine 2",
+        "canonical": "#8EAE63",
+        "tonalRamp": [
+          "#070e00",
+          "#1a2a00",
+          "#314801",
+          "#4f6b20",
+          "#718f45",
+          "#94b569",
+          "#badb8f",
+          "#dafdae"
+        ]
+      },
+      "serpentine-3": {
+        "role": "secondary",
+        "displayName": "Serpentine 3",
+        "canonical": "#5B7F3E",
+        "tonalRamp": [
+          "#050f00",
+          "#152b00",
+          "#294a03",
+          "#496c2b",
+          "#6b904f",
+          "#8fb672",
+          "#b4dc97",
+          "#d4feb7"
+        ]
+      },
+      "serpentine-4": {
+        "role": "secondary",
+        "displayName": "Serpentine 4",
+        "canonical": "#33502A",
+        "tonalRamp": [
+          "#020f00",
+          "#102c06",
+          "#2c4823",
+          "#4c6a43",
+          "#6e8e65",
+          "#92b388",
+          "#b7d9ad",
+          "#d7fbcd"
+        ]
+      },
+      "slate-1": {
+        "role": "secondary",
+        "displayName": "Slate 1",
+        "canonical": "#E3E0DA",
+        "tonalRamp": [
+          "#0d0b07",
+          "#26241f",
+          "#423f3b",
+          "#63605b",
+          "#86837d",
+          "#aaa7a2",
+          "#d0cdc7",
+          "#f1eee8"
+        ]
+      },
+      "slate-2": {
+        "role": "secondary",
+        "displayName": "Slate 2",
+        "canonical": "#B6B1A8",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27231c",
+          "#433f38",
+          "#646058",
+          "#87837a",
+          "#aca79e",
+          "#d2cdc4",
+          "#f3eee4"
+        ]
+      },
+      "slate-3": {
+        "role": "secondary",
+        "displayName": "Slate 3",
+        "canonical": "#7F7A72",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27231d",
+          "#443f38",
+          "#646058",
+          "#87827a",
+          "#aca79e",
+          "#d2cdc4",
+          "#f3eee5"
+        ]
+      },
+      "slate-4": {
+        "role": "secondary",
+        "displayName": "Slate 4",
+        "canonical": "#4B4742",
+        "tonalRamp": [
+          "#0e0b07",
+          "#27231f",
+          "#433f3a",
+          "#64605a",
+          "#87827d",
+          "#aba7a1",
+          "#d2cdc7",
+          "#f3eee7"
+        ]
+      },
+      "sienna-1": {
+        "role": "secondary",
+        "displayName": "Sienna 1",
+        "canonical": "#DBC09E",
+        "tonalRamp": [
+          "#130900",
+          "#341f00",
+          "#513b1c",
+          "#745c3d",
+          "#987e5e",
+          "#bda382",
+          "#e4c9a7",
+          "#ffebd2"
+        ]
+      },
+      "sienna-2": {
+        "role": "secondary",
+        "displayName": "Sienna 2",
+        "canonical": "#B18B63",
+        "tonalRamp": [
+          "#140800",
+          "#351e01",
+          "#59370e",
+          "#7c5831",
+          "#a07b53",
+          "#c6a077",
+          "#eec59c",
+          "#feebd7"
+        ]
+      },
+      "sienna-3": {
+        "role": "secondary",
+        "displayName": "Sienna 3",
+        "canonical": "#7D5B3E",
+        "tonalRamp": [
+          "#160700",
+          "#381c00",
+          "#57381b",
+          "#7a583b",
+          "#9f7b5d",
+          "#c59f80",
+          "#ecc5a5",
+          "#ffeada"
+        ]
+      },
+      "sienna-4": {
+        "role": "secondary",
+        "displayName": "Sienna 4",
+        "canonical": "#4A3423",
+        "tonalRamp": [
+          "#160700",
+          "#331f0e",
+          "#513a29",
+          "#735b49",
+          "#977d6a",
+          "#bda28e",
+          "#e4c8b3",
+          "#ffeadb"
+        ]
+      },
+      "terracotta-1": {
+        "role": "secondary",
+        "displayName": "Terracotta 1",
+        "canonical": "#F3C38B",
+        "tonalRamp": [
+          "#140800",
+          "#351e00",
+          "#593702",
+          "#81561d",
+          "#a67943",
+          "#cc9e67",
+          "#f4c48c",
+          "#ffebd5"
+        ]
+      },
+      "terracotta-2": {
+        "role": "secondary",
+        "displayName": "Terracotta 2",
+        "canonical": "#E39445",
+        "tonalRamp": [
+          "#150700",
+          "#381c00",
+          "#5e3401",
+          "#8c5001",
+          "#ba6e14",
+          "#e29344",
+          "#febf86",
+          "#feead9"
+        ]
+      },
+      "terracotta-3": {
+        "role": "secondary",
+        "displayName": "Terracotta 3",
+        "canonical": "#C06A27",
+        "tonalRamp": [
+          "#170600",
+          "#3b1a01",
+          "#642f00",
+          "#944901",
+          "#bf6a26",
+          "#e88f4f",
+          "#ffbd93",
+          "#ffeadd"
+        ]
+      },
+      "terracotta-4": {
+        "role": "secondary",
+        "displayName": "Terracotta 4",
+        "canonical": "#84441A",
+        "tonalRamp": [
+          "#180500",
+          "#3d1800",
+          "#662d00",
+          "#8e4d24",
+          "#b47048",
+          "#dc946b",
+          "#ffbd98",
+          "#feeadf"
+        ]
+      },
+      "rosso-1": {
+        "role": "secondary",
+        "displayName": "Rosso 1",
+        "canonical": "#EAA696",
+        "tonalRamp": [
+          "#1d0100",
+          "#440f04",
+          "#652d20",
+          "#8a4e40",
+          "#b07062",
+          "#d79585",
+          "#ffbbab",
+          "#fee9e4"
+        ]
+      },
+      "rosso-2": {
+        "role": "secondary",
+        "displayName": "Rosso 2",
+        "canonical": "#D2614B",
+        "tonalRamp": [
+          "#1e0100",
+          "#480800",
+          "#781200",
+          "#a33622",
+          "#cc5c46",
+          "#f6816a",
+          "#ffbbac",
+          "#fee9e4"
+        ]
+      },
+      "rosso-3": {
+        "role": "secondary",
+        "displayName": "Rosso 3",
+        "canonical": "#A8352A",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0000",
+          "#7c0101",
+          "#a53328",
+          "#cf594b",
+          "#f97e6e",
+          "#febab0",
+          "#ffe9e5"
+        ]
+      },
+      "rosso-4": {
+        "role": "secondary",
+        "displayName": "Rosso 4",
+        "canonical": "#6E1F1A",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0002",
+          "#6f201b",
+          "#96433b",
+          "#bd675d",
+          "#e68b80",
+          "#febab1",
+          "#ffe9e5"
+        ]
+      },
+      "giallo-1": {
+        "role": "secondary",
+        "displayName": "Giallo 1",
+        "canonical": "#F5DF95",
+        "tonalRamp": [
+          "#0f0b00",
+          "#2d2301",
+          "#4d3e03",
+          "#735f0c",
+          "#978239",
+          "#bca75e",
+          "#e3cd84",
+          "#ffeeb8"
+        ]
+      },
+      "giallo-2": {
+        "role": "secondary",
+        "displayName": "Giallo 2",
+        "canonical": "#E3BA47",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2201",
+          "#4f3d03",
+          "#775d01",
+          "#a17e03",
+          "#cba228",
+          "#f2c957",
+          "#ffedc1"
+        ]
+      },
+      "giallo-3": {
+        "role": "secondary",
+        "displayName": "Giallo 3",
+        "canonical": "#BA8B26",
+        "tonalRamp": [
+          "#120a00",
+          "#312101",
+          "#533b02",
+          "#7d5901",
+          "#a87a04",
+          "#cf9f3f",
+          "#f7c568",
+          "#ffeccc"
+        ]
+      },
+      "giallo-4": {
+        "role": "secondary",
+        "displayName": "Giallo 4",
+        "canonical": "#7D5C1A",
+        "tonalRamp": [
+          "#120900",
+          "#312101",
+          "#543b02",
+          "#7b5a17",
+          "#9f7d3f",
+          "#c5a263",
+          "#edc888",
+          "#feeccd"
+        ]
+      },
+      "stone-white": {
+        "role": "tertiary",
+        "displayName": "Stone White",
+        "canonical": "#F7F4EE",
+        "tonalRamp": [
+          "#0d0b07",
+          "#26241f",
+          "#423f3b",
+          "#63605b",
+          "#85837d",
+          "#aaa7a2",
+          "#d0cdc8",
+          "#f1eee8"
+        ]
+      },
+      "stone-cream": {
+        "role": "tertiary",
+        "displayName": "Stone Cream",
+        "canonical": "#EDE3CC",
+        "tonalRamp": [
+          "#110a00",
+          "#2b2311",
+          "#473f2c",
+          "#68604c",
+          "#8b826d",
+          "#b0a791",
+          "#d7cdb6",
+          "#f8eed7"
+        ]
+      },
+      "stone-black": {
+        "role": "tertiary",
+        "displayName": "Stone Black",
+        "canonical": "#2A2522",
+        "tonalRamp": [
+          "#0e0a08",
+          "#282320",
+          "#443e3b",
+          "#655f5c",
+          "#88827e",
+          "#ada6a2",
+          "#d3ccc8",
+          "#f4ede9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "\"Ode\" on the login page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "\"Ode to {topic}\", page titles, and the inline topic field."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Ode type names heading comparison columns."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "\"Ode\" in the logged-in header."
+      },
+      "verse": {
+        "displayName": "Verse",
+        "purpose": "The poem."
+      },
+      "verse-compact": {
+        "displayName": "Verse Compact",
+        "purpose": "The poems in comparison columns."
+      },
+      "status": {
+        "displayName": "Status",
+        "purpose": "Rotating progress phrases."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "The form hint and the declined reason."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "The ode type line."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button labels."
+      },
+      "input": {
+        "displayName": "Input",
+        "purpose": "Text typed into the password field."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Column descriptions."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Tooltip text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "exhibit",
+        "value": "0 2px 3px rgb(52 40 30 / 0.18), 0 28px 60px -18px rgb(52 40 30 / 0.45)",
+        "purpose": "The mosaic panel, at every size."
+      },
+      {
+        "name": "seat",
+        "value": "0 1px 2px rgb(43 36 32 / 0.3)",
+        "purpose": "The primary button only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "frame-sweep",
+        "value": "1100ms, cubic ease-out over tile count",
+        "purpose": "Frame tiles laid around bare grout in an angular sweep, once per page load."
+      },
+      {
+        "name": "sketch-hold",
+        "value": "650ms",
+        "purpose": "The red-brown sketch held on bare mortar before tiles go down."
+      },
+      {
+        "name": "picture-lay",
+        "value": "1900ms, cubic ease-out over tile count",
+        "purpose": "Picture tiles laid course by course from each shape's outline inward."
+      },
+      {
+        "name": "ground-lay",
+        "value": "1500ms, cubic ease-out over tile count",
+        "purpose": "Ground tiles laid around the finished picture."
+      },
+      {
+        "name": "rise",
+        "value": "800ms cubic-bezier(0.16, 1, 0.3, 1), from translateY(12px) and blur(4px)",
+        "purpose": "Verse and actions entering once the panel is laid."
+      },
+      {
+        "name": "loader-lay",
+        "value": "2.6s infinite, 90ms stagger",
+        "purpose": "The twelve-tile loader in comparison columns still being written."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Paints the finished mosaic at once, reveals the poem, and holds the loader still."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "48rem"
+      },
+      {
+        "name": "xl",
+        "value": "80rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Umber with limewash text, the one primary action in a view.",
+      "html": "<button class=\"ds-btn-primary\">Write my ode</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.625rem 1.25rem; border-radius: 0.3rem; font: 500 1rem \"Figtree Variable\", ui-sans-serif, sans-serif; cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; border: 2px solid var(--primary, #2b2420); background: var(--primary, #2b2420); color: var(--primary-foreground, #f6f2ea); box-shadow: 0 1px 2px rgb(43 36 32 / 0.3); } .ds-btn-primary:hover { background: #4a3e36; border-color: #4a3e36; } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; } .ds-btn-primary:disabled { opacity: 0.6; pointer-events: none; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "A 2px ink border on no fill, for secondary actions and suggested topics.",
+      "html": "<button class=\"ds-btn-outline\">Compare Pindaric and Horatian odes</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.625rem 1.25rem; border-radius: 0.3rem; font: 500 1rem \"Figtree Variable\", ui-sans-serif, sans-serif; cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; border: 2px solid var(--foreground, #221e1b); background: transparent; color: var(--foreground, #221e1b); } .ds-btn-outline:hover { background: var(--accent, #dcd4c7); } .ds-btn-outline:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Soft secondary action with no border, such as \"Enter a different topic\".",
+      "html": "<button class=\"ds-btn-ghost\">Enter a different topic</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.625rem 1.25rem; border-radius: 0.3rem; font: 500 1rem \"Figtree Variable\", ui-sans-serif, sans-serif; cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; border: 0; background: transparent; color: var(--muted-foreground, #5b5148); } .ds-btn-ghost:hover { background: var(--accent, #dcd4c7); color: var(--foreground, #221e1b); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; }"
+    },
+    {
+      "name": "Link Button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "Underlined soft umber text with no padding; the header's Log out only.",
+      "html": "<button class=\"ds-btn-link\">Log out</button>",
+      "css": ".ds-btn-link { display: inline-flex; align-items: center; padding: 0.25rem 0; border: 0; background: transparent; color: var(--muted-foreground, #5b5148); font: 500 0.875rem \"Figtree Variable\", ui-sans-serif, sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; } .ds-btn-link:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; }"
+    },
+    {
+      "name": "Compact Button",
+      "kind": "button",
+      "refersTo": "button-compact",
+      "description": "Action-bar size: 2.75rem tall with 0.875rem text on phones, full size from 40rem up.",
+      "html": "<button class=\"ds-btn-compact\">Write another ode</button>",
+      "css": ".ds-btn-compact { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 0.75rem; border-radius: 0.3rem; border: 2px solid var(--primary, #2b2420); background: var(--primary, #2b2420); color: var(--primary-foreground, #f6f2ea); font: 500 0.875rem \"Figtree Variable\", ui-sans-serif, sans-serif; box-shadow: 0 1px 2px rgb(43 36 32 / 0.3); cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; } .ds-btn-compact:hover { background: #4a3e36; border-color: #4a3e36; } .ds-btn-compact:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; } @media (min-width: 40rem) { .ds-btn-compact { min-height: 3rem; padding: 0.625rem 1.25rem; font-size: 1rem; } }"
+    },
+    {
+      "name": "Rule Input",
+      "kind": "input",
+      "refersTo": "input-rule",
+      "description": "A line on the plaster with an oxblood caret, thickening to oxblood on focus.",
+      "html": "<input class=\"ds-input\" type=\"text\" aria-label=\"Password\" placeholder=\"Password\" />",
+      "css": ".ds-input { width: 100%; height: 3rem; padding: 0; border: 0; border-bottom: 2px solid var(--input, #221e1b); border-radius: 0; background: transparent; caret-color: var(--destructive, #a8352a); color: var(--foreground, #221e1b); font: 400 1.125rem \"Figtree Variable\", ui-sans-serif, sans-serif; outline: none; transition: border-color 150ms; } .ds-input::placeholder { color: var(--muted-foreground, #5b5148); } .ds-input:focus-visible { border-bottom: 3px solid var(--destructive, #a8352a); }"
+    },
+    {
+      "name": "Title Field",
+      "kind": "input",
+      "refersTo": "input-title",
+      "description": "The topic field, set inside the headline after the words \"Ode to\".",
+      "html": "<div class=\"ds-title-field\"><label for=\"ds-topic\">Ode to</label><input id=\"ds-topic\" class=\"ds-title-input\" value=\"Tuesdays\" /></div>",
+      "css": ".ds-title-field { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 0 0.4em; color: var(--foreground, #221e1b); font: 400 clamp(2.5rem, 5vw, 3.75rem)/1.25 \"Young Serif\", Georgia, serif; letter-spacing: -0.02em; } .ds-title-input { width: 9ch; padding: 0 0 0.25rem; border: 0; border-bottom: 3px solid var(--input, #221e1b); border-radius: 0; background: transparent; caret-color: var(--destructive, #a8352a); color: inherit; font: inherit; letter-spacing: inherit; outline: none; } .ds-title-input:focus-visible { border-bottom-color: var(--destructive, #a8352a); }"
+    },
+    {
+      "name": "Tooltip",
+      "kind": "custom",
+      "refersTo": "tooltip",
+      "description": "Umber caption that explains a Pindaric section name.",
+      "html": "<span class=\"ds-tooltip\" role=\"tooltip\">The “turn.” The opening section, which a Greek chorus sang while moving one way across the stage.</span>",
+      "css": ".ds-tooltip { display: inline-block; max-width: 20rem; padding: 0.5rem 0.75rem; border-radius: 0.3rem; background: var(--popover, #2b2420); color: var(--popover-foreground, #f6f2ea); font: 400 0.75rem/1.33 \"Figtree Variable\", ui-sans-serif, sans-serif; text-wrap: balance; }"
+    },
+    {
+      "name": "Mosaic Panel",
+      "kind": "custom",
+      "refersTo": "mosaic-panel",
+      "description": "Static CSS approximation of the empty framed panel; the real panel is a canvas of tile courses.",
+      "html": "<div class=\"ds-mosaic\" role=\"img\" aria-label=\"An empty mosaic\"><div class=\"ds-mosaic-cream\"><div class=\"ds-mosaic-red\"><div class=\"ds-mosaic-ground\"></div></div></div></div>",
+      "css": ".ds-mosaic { position: relative; box-sizing: border-box; width: 16rem; aspect-ratio: 1; padding: 3.61%; background: #2A2522; box-shadow: 0 2px 3px rgb(52 40 30 / 0.18), 0 28px 60px -18px rgb(52 40 30 / 0.45); } .ds-mosaic::after { content: \"\"; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, #C4B79E 0 1px, transparent 1px 7px), repeating-linear-gradient(90deg, #C4B79E 0 1px, transparent 1px 7px); } .ds-mosaic-cream { box-sizing: border-box; height: 100%; padding: 1.95%; background: #EDE3CC; } .ds-mosaic-red { box-sizing: border-box; height: 100%; padding: 2%; background: #A8352A; } .ds-mosaic-ground { height: 100%; background: #E9E0CC; }"
+    },
+    {
+      "name": "Tile Loader",
+      "kind": "custom",
+      "refersTo": "loader-tile",
+      "description": "Twelve stone tiles placed and lifted in turn, above a rotating status phrase, in comparison columns still being written.",
+      "html": "<output class=\"ds-loader\"><span class=\"ds-loader-row\" aria-hidden=\"true\"><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:0ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:90ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:180ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-1deg;animation-delay:270ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:0deg;animation-delay:360ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:1deg;animation-delay:450ms;background:#E3BA47\"></i><i class=\"ds-loader-tile\" style=\"--tilt:2deg;animation-delay:540ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:3deg;animation-delay:630ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:4deg;animation-delay:720ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:810ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:900ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:990ms;background:#E3BA47\"></i></span><span class=\"ds-loader-phrase\">Sharpening the quill…</span></output>",
+      "css": ".ds-loader { display: flex; flex-direction: column; align-items: center; gap: 1rem; } .ds-loader-row { display: flex; gap: 0.25rem; } .ds-loader-tile { width: 0.875rem; height: 0.875rem; border-radius: 2px; opacity: 0; animation: ds-lay 2.6s infinite; } .ds-loader-phrase { color: var(--muted-foreground, #5b5148); font: 400 1.125rem/1.5 \"Newsreader Variable\", Georgia, serif; } @keyframes ds-lay { 0% { opacity: 0; transform: translateY(-6px) rotate(var(--tilt)); } 12%, 70% { opacity: 1; transform: rotate(var(--tilt)); } 90%, 100% { opacity: 0; } } @media (prefers-reduced-motion: reduce) { .ds-loader-tile { animation: none; opacity: 1; } }"
+    },
+    {
+      "name": "Verse",
+      "kind": "custom",
+      "description": "The poem in Newsreader, with hanging indents and stanza gaps.",
+      "html": "<div class=\"ds-verse\"><p><span>Oh Tuesday,</span><span>unremarkable,</span><span>you came anyway.</span></p><p><span>I kept a chair for you.</span></p></div>",
+      "css": ".ds-verse { max-width: 34rem; color: var(--foreground, #221e1b); font: 400 1.25rem/1.55 \"Newsreader Variable\", Georgia, serif; text-align: left; } .ds-verse p { margin: 1.1em 0 0; } .ds-verse p:first-child { margin-top: 0; } .ds-verse span { display: block; padding-left: 1.5rem; text-indent: -1.5rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Emblema on Plaster",
+    "overview": "Every ode is an exhibit: one square Roman floor mosaic, framed in stone bands and hung on a plaster wall, with the poem set below it. The mosaic holds the room's color, depth and texture. Everything else is limewashed wall, dark ink and a single oxblood red, so the picture reads as a made thing and the interface reads as the museum around it.\n\nThe system is quiet and low in density. A screen holds one panel, one title in a heavy old-style serif, and a centered column of text. The picture is drawn by Claude for each subject as flat closed shapes, then cut into stone in the browser: small tiles run in courses along every contour, the way a mosaicist's lines follow a form, with thin warm grout between them and a small shift of tone from tile to tile.\n\nThe signature moment is the laying. The picture appears first as a red-brown sketch on bare mortar, then tiles go down from each shape's outline inward, then the cream ground fills in around it. The poem waits until the last tile is down. Someone who prefers reduced motion gets the finished mosaic at once, and a returning reader finds it already laid.",
+    "keyCharacteristics": [
+      "One framed square mosaic per screen, centered above the text.",
+      "A warm plaster page with dark ink and one interface hue.",
+      "A closed palette of 31 stones that only ever appears as tiles.",
+      "Three type voices: Young Serif names, Figtree operates, Newsreader sings.",
+      "Depth reserved for the panel; the interface is otherwise flat.",
+      "A timed laying sequence with a complete reduced-motion path."
+    ],
+    "rules": [
+      {
+        "name": "The Stones Stay In The Floor Rule",
+        "body": "Stone colors appear on the page only as tiles: the panel and the twelve-tile loader. Text, fills and rules use the plaster neutrals and oxblood.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Red Rule",
+        "body": "Oxblood is the only interface hue. It marks attention: focus, an active field, an error, a selection.",
+        "section": "colors"
+      },
+      {
+        "name": "The Closed Quarry Rule",
+        "body": "A picture is made only from the 31 named stone codes. The server drops any shape with another fill, so a drawing cannot introduce a color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Only Heavy Object Rule",
+        "body": "The deep shadow belongs to the panel. Nothing else on the wall casts one.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Exhibit Rule",
+        "body": "A screen holds one panel, centered, above its text. Comparison shows several poems and still one picture.",
+        "section": "layout"
+      },
+      {
+        "name": "The Course Follows The Form Rule",
+        "body": "Tiles run along contours, never across a fixed grid. That is what makes the panel a mosaic and not a pixelated image.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "Young Serif names things: the wordmark, titles, column headings. Newsreader carries anything sung or murmured: verse and progress phrases. Figtree carries everything operated or explained.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single Weight Rule",
+        "body": "Young Serif ships in one weight (400). Hierarchy in display type comes from size alone.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do put new screens on plaster with one panel centered above the text, 2.5rem above the title.",
+      "Do keep the panel the same size across a flow so the wall stays still.",
+      "Do run new hues through the stone palette, as tile colors only.",
+      "Do give every new motion a reduced-motion path that ends on the finished state, as the mosaic does.",
+      "Do hold back the poem until a fresh mosaic is laid."
+    ],
+    "donts": [
+      "Don't introduce pink to the page, the frame or any interface element. The user dislikes it. Rosso 1 stays a highlight inside a modeled red object.",
+      "Don't give anything but the panel the Exhibit shadow.",
+      "Don't add a second picture to a screen, or box the text in cards; text sits directly on plaster.",
+      "Don't replace tile courses with a fixed grid or a pixelated image.",
+      "Don't ask the generator for stroked contours; the shapes are filled and the courses of tile supply the line.",
+      "Don't ask the generator for letters, numerals, people or faces on objects. This is a limit of its current brief, chosen so a stranger can name the subject; the Roman originals have all of them."
+    ]
+  }
+}
