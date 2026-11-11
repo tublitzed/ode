@@ -53,6 +53,7 @@ type View =
       isRevising?: boolean;
       mosaic?: MosaicShape[];
       ode: string;
+      revisionError?: string;
       status: "ode";
       topic: string;
     };
@@ -216,7 +217,7 @@ const App = ({ forceView }: AppProps) => {
       -MAX_CHANGE_REQUESTS,
     );
 
-    setView({ ...view, isRevising: true });
+    setView({ ...view, isRevising: true, revisionError: undefined });
 
     const result = await requestOde({
       changeRequests,
@@ -229,8 +230,17 @@ const App = ({ forceView }: AppProps) => {
       return;
     }
 
-    if (!result.ok || result.data.status === "declined") {
-      setView({ ...view, isRevising: false });
+    if (!result.ok) {
+      setView({ ...view, isRevising: false, revisionError: result.message });
+      return;
+    }
+
+    if (result.data.status === "declined") {
+      setView({
+        ...view,
+        isRevising: false,
+        revisionError: result.data.reason,
+      });
       return;
     }
 
@@ -298,6 +308,14 @@ const App = ({ forceView }: AppProps) => {
 
     if (written) {
       replaceColumn(written);
+    }
+  };
+
+  const handleChangeRequestChange = (nextChangeRequest: string) => {
+    setChangeRequest(nextChangeRequest);
+
+    if (view.status === "ode" && view.revisionError) {
+      setView({ ...view, revisionError: undefined });
     }
   };
 
@@ -377,10 +395,11 @@ const App = ({ forceView }: AppProps) => {
           isRevising={view.isRevising ?? false}
           mosaic={view.mosaic}
           ode={view.ode}
-          onChangeRequestChange={setChangeRequest}
+          onChangeRequestChange={handleChangeRequestChange}
           onCompare={() => handleCompare(view.ode, view.topic)}
           onRevise={revise}
           onWriteAnother={startOver}
+          revisionError={view.revisionError}
           topic={view.topic}
         />
       );

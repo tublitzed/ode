@@ -24,6 +24,7 @@ type OdeResultProps = {
   onCompare: () => void;
   onRevise: () => void;
   onWriteAnother: () => void;
+  revisionError?: string;
   topic: string;
 };
 
@@ -39,6 +40,7 @@ const OdeResult = ({
   onCompare,
   onRevise,
   onWriteAnother,
+  revisionError,
   topic,
 }: OdeResultProps) => {
   const [isLaid, setIsLaid] = useState(!isFresh);
@@ -66,6 +68,7 @@ const OdeResult = ({
           />
           <OdeRevisionForm
             changeRequest={changeRequest}
+            error={revisionError}
             isRevising={isRevising}
             onChangeRequestChange={onChangeRequestChange}
             onSubmit={onRevise}

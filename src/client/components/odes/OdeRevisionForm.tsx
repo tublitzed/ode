@@ -7,6 +7,7 @@ import { MAX_CHANGE_REQUEST_LENGTH } from "@/shared/ode";
 
 type OdeRevisionFormProps = {
   changeRequest: string;
+  error?: string;
   isRevising: boolean;
   onChangeRequestChange: (changeRequest: string) => void;
   onSubmit: () => void;
@@ -14,6 +15,7 @@ type OdeRevisionFormProps = {
 
 const OdeRevisionForm = ({
   changeRequest,
+  error,
   isRevising,
   onChangeRequestChange,
   onSubmit,
@@ -31,6 +33,8 @@ const OdeRevisionForm = ({
       <Label htmlFor="change-request">Want to change anything?</Label>
       <div className="flex items-end gap-3">
         <Input
+          aria-describedby={error ? "change-request-error" : undefined}
+          aria-invalid={error ? true : undefined}
           autoComplete="off"
           id="change-request"
           maxLength={MAX_CHANGE_REQUEST_LENGTH}
@@ -49,6 +53,15 @@ const OdeRevisionForm = ({
           {isRevising ? "Revising…" : "Revise"}
         </Button>
       </div>
+      {error && (
+        <p
+          className="text-destructive font-medium"
+          id="change-request-error"
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
     </form>
   );
 };
