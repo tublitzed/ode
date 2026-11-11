@@ -72,7 +72,10 @@ const LoginPage = () => {
       </h1>
       <form className="mt-8 grid w-full max-w-sm gap-6" onSubmit={handleSubmit}>
         <div className="grid gap-1">
-          <Label className="text-muted-foreground" htmlFor="password">
+          <Label
+            className="text-muted-foreground justify-center text-center"
+            htmlFor="password"
+          >
             Enter the password to continue:
           </Label>
           <Input
@@ -80,6 +83,7 @@ const LoginPage = () => {
             aria-invalid={error ? true : undefined}
             autoComplete="current-password"
             autoFocus
+            className="text-center"
             id="password"
             name="password"
             onChange={(event) => setPassword(event.target.value)}
@@ -89,7 +93,7 @@ const LoginPage = () => {
           />
           {error && (
             <p
-              className="text-destructive mt-2 font-medium"
+              className="text-destructive mt-2 text-center font-medium"
               id="password-error"
               role="alert"
             >

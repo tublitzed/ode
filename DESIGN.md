@@ -360,7 +360,7 @@ With prefers-reduced-motion, laying skips straight to the finished mosaic and re
 
 On the empty form, the bed shows a sinopia: the red-chalk underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
 
-While Claude writes, the bed shows a draft instead: nine short lines of red-chalk handwriting in two stanzas, drawn one after another (0.7s each, 0.78s apart), held, then faded so a new page starts every 9.5s. Under the button, the status trades filler for true ode lore in Newsreader, soft umber, every 5.2s (Neruda's odes to tomatoes and socks, Keats's nightingale, Horace's carpe diem, Pindar's Olympic odes, million-tile Roman floors, Schiller and Beethoven, Shelley's west wind). Laying keeps the short oxblood “Laying the tiles…” line.
+While Claude writes, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, one plain line in Newsreader, soft umber, says what is happening: "Claude is writing your ode to {topic}." Laying keeps the short oxblood “Laying the tiles…” line.
 
 Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
 

@@ -126,3 +126,16 @@
 @utility animate-lay {
   animation: lay 2.6s infinite;
 }
+
+@keyframes sheen {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@utility animate-sheen {
+  animation: sheen 3.4s ease-in-out infinite;
+}
