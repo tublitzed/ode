@@ -14,7 +14,8 @@ import SharedOdePage from "@/client/components/shares/SharedOdePage";
 import { logNightingale } from "@/client/utils/consoleNightingale";
 import { getSharedOdeId } from "@/shared/sharedOdePath";
 
-// Load the app bundle only after logged in.
+// Load the app bundles only after logged in.
+const AboutPage = lazy(() => import("@/client/components/AboutPage"));
 const App = lazy(() => import("@/client/components/App"));
 
 const root = document.getElementById("root");
@@ -23,6 +24,7 @@ if (!root) {
   throw new Error("Missing #root element");
 }
 
+const isAboutPage = window.location.pathname === "/about";
 const isLoginPage = window.location.pathname === "/login";
 
 if (isLoginPage) {
@@ -41,11 +43,7 @@ const renderPage = () => {
     return <SharedOdePage id={sharedOdeId} />;
   }
 
-  return (
-    <Suspense>
-      <App />
-    </Suspense>
-  );
+  return <Suspense>{isAboutPage ? <AboutPage /> : <App />}</Suspense>;
 };
 
 logNightingale();
