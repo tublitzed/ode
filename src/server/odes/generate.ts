@@ -1,9 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
-
+import { anthropic, MODEL } from "#/server/anthropic.ts";
 import type { OdeResponse, OdeType } from "#/shared/ode.ts";
-
-const MODEL = "claude-sonnet-5-5";
-const REQUEST_TIMEOUT_MS = 60_000;
 
 const REFUSAL_REASON = "That subject isn’t in our songbook. Try another one.";
 const STATIC_SUGGESTIONS = ["Tomatoes", "A rainy morning", "My favorite mug"];
@@ -94,14 +90,12 @@ const buildUserMessage = (topic: string, sourceOde: string | undefined) => {
     : topicTag;
 };
 
-const client = new Anthropic({ maxRetries: 1, timeout: REQUEST_TIMEOUT_MS });
-
 export const generateOde = async (
   topic: string,
   type: OdeType,
   sourceOde?: string,
 ): Promise<OdeResponse> => {
-  const response = await client.messages.create({
+  const response = await anthropic.messages.create({
     max_tokens: 16000,
     messages: [{ content: buildUserMessage(topic, sourceOde), role: "user" }],
     model: MODEL,
