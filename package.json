@@ -2,7 +2,7 @@
   "name": "ode",
   "version": "0.0.1",
   "description": "making odes... with Anthropic :)",
-  "private": true,
+  "author": "rachel@tublitzed.com",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

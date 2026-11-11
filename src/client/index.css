@@ -91,7 +91,7 @@
   }
 }
 
-@keyframes sinopia {
+@keyframes sketch-fade {
   0% {
     opacity: 0;
   }
@@ -115,8 +115,8 @@
   }
 }
 
-@utility animate-sinopia {
-  animation: sinopia 5s linear both;
+@utility animate-sketch-fade {
+  animation: sketch-fade 5s linear both;
 }
 
 @utility animate-rise {

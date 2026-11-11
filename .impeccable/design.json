@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-09T01:45:26.464Z",
+  "generatedAt": "2026-11-11T00:30:58.000Z",
   "title": "Design System: Ode",
   "extensions": {
     "colorMeta": {
@@ -749,7 +749,7 @@
       {
         "name": "loader-lay",
         "value": "2.6s infinite, 90ms stagger",
-        "purpose": "The twelve-tile progress loader."
+        "purpose": "The twelve-tile loader in comparison columns still being written."
       },
       {
         "name": "reduced-motion",
@@ -789,9 +789,25 @@
       "name": "Ghost Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Soft umber text with no border, for quiet exits.",
-      "html": "<button class=\"ds-btn-ghost\">Log out</button>",
+      "description": "Soft secondary action with no border, such as \"Enter a different topic\".",
+      "html": "<button class=\"ds-btn-ghost\">Enter a different topic</button>",
       "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.625rem 1.25rem; border-radius: 0.3rem; font: 500 1rem \"Figtree Variable\", ui-sans-serif, sans-serif; cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; border: 0; background: transparent; color: var(--muted-foreground, #5b5148); } .ds-btn-ghost:hover { background: var(--accent, #dcd4c7); color: var(--foreground, #221e1b); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; }"
+    },
+    {
+      "name": "Link Button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "Underlined soft umber text with no padding; the header's Log out only.",
+      "html": "<button class=\"ds-btn-link\">Log out</button>",
+      "css": ".ds-btn-link { display: inline-flex; align-items: center; padding: 0.25rem 0; border: 0; background: transparent; color: var(--muted-foreground, #5b5148); font: 500 0.875rem \"Figtree Variable\", ui-sans-serif, sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; } .ds-btn-link:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; }"
+    },
+    {
+      "name": "Compact Button",
+      "kind": "button",
+      "refersTo": "button-compact",
+      "description": "Action-bar size: 2.75rem tall with 0.875rem text on phones, full size from 40rem up.",
+      "html": "<button class=\"ds-btn-compact\">Write another ode</button>",
+      "css": ".ds-btn-compact { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 0.75rem; border-radius: 0.3rem; border: 2px solid var(--primary, #2b2420); background: var(--primary, #2b2420); color: var(--primary-foreground, #f6f2ea); font: 500 0.875rem \"Figtree Variable\", ui-sans-serif, sans-serif; box-shadow: 0 1px 2px rgb(43 36 32 / 0.3); cursor: pointer; transition: color 150ms, background-color 150ms, border-color 150ms; } .ds-btn-compact:hover { background: #4a3e36; border-color: #4a3e36; } .ds-btn-compact:focus-visible { outline: 2px solid var(--ring, #a8352a); outline-offset: 3px; } @media (min-width: 40rem) { .ds-btn-compact { min-height: 3rem; padding: 0.625rem 1.25rem; font-size: 1rem; } }"
     },
     {
       "name": "Rule Input",
@@ -829,8 +845,8 @@
       "name": "Tile Loader",
       "kind": "custom",
       "refersTo": "loader-tile",
-      "description": "Twelve stone tiles placed and lifted in turn, above a status phrase.",
-      "html": "<output class=\"ds-loader\"><span class=\"ds-loader-row\" aria-hidden=\"true\"><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:0ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:90ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:180ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-1deg;animation-delay:270ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:0deg;animation-delay:360ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:1deg;animation-delay:450ms;background:#E3BA47\"></i><i class=\"ds-loader-tile\" style=\"--tilt:2deg;animation-delay:540ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:3deg;animation-delay:630ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:4deg;animation-delay:720ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:810ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:900ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:990ms;background:#E3BA47\"></i></span><span class=\"ds-loader-phrase\">Sketching on wet mortar…</span></output>",
+      "description": "Twelve stone tiles placed and lifted in turn, above a rotating status phrase, in comparison columns still being written.",
+      "html": "<output class=\"ds-loader\"><span class=\"ds-loader-row\" aria-hidden=\"true\"><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:0ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:90ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:180ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-1deg;animation-delay:270ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:0deg;animation-delay:360ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:1deg;animation-delay:450ms;background:#E3BA47\"></i><i class=\"ds-loader-tile\" style=\"--tilt:2deg;animation-delay:540ms;background:#A8352A\"></i><i class=\"ds-loader-tile\" style=\"--tilt:3deg;animation-delay:630ms;background:#8EAE63\"></i><i class=\"ds-loader-tile\" style=\"--tilt:4deg;animation-delay:720ms;background:#C06A27\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-4deg;animation-delay:810ms;background:#7AA6C7\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-3deg;animation-delay:900ms;background:#2A2522\"></i><i class=\"ds-loader-tile\" style=\"--tilt:-2deg;animation-delay:990ms;background:#E3BA47\"></i></span><span class=\"ds-loader-phrase\">Sharpening the quill…</span></output>",
       "css": ".ds-loader { display: flex; flex-direction: column; align-items: center; gap: 1rem; } .ds-loader-row { display: flex; gap: 0.25rem; } .ds-loader-tile { width: 0.875rem; height: 0.875rem; border-radius: 2px; opacity: 0; animation: ds-lay 2.6s infinite; } .ds-loader-phrase { color: var(--muted-foreground, #5b5148); font: 400 1.125rem/1.5 \"Newsreader Variable\", Georgia, serif; } @keyframes ds-lay { 0% { opacity: 0; transform: translateY(-6px) rotate(var(--tilt)); } 12%, 70% { opacity: 1; transform: rotate(var(--tilt)); } 90%, 100% { opacity: 0; } } @media (prefers-reduced-motion: reduce) { .ds-loader-tile { animation: none; opacity: 1; } }"
     },
     {

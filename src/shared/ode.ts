@@ -31,27 +31,28 @@ export const ODE_TYPE_DETAILS: Record<
 export const isOdeType = (value: unknown): value is OdeType =>
   ODE_TYPES.includes(value as OdeType);
 
-const TESSERA_HUES = ["b", "g", "k", "n", "o", "r", "y"] as const;
-const TESSERA_TONES = [1, 2, 3, 4] as const;
+const TILE_HUES = ["b", "g", "k", "n", "o", "r", "y"] as const;
+const TILE_TONES = [1, 2, 3, 4] as const;
 
-export const TESSERA_COLORS = [
-  ...TESSERA_HUES.flatMap((hue) =>
-    TESSERA_TONES.map((tone) => `${hue}${tone}` as const),
+export const TILE_COLORS = [
+  ...TILE_HUES.flatMap((hue) =>
+    TILE_TONES.map((tone) => `${hue}${tone}` as const),
   ),
   "C",
   "K",
   "W",
 ] as const;
 
-export type TesseraColor = (typeof TESSERA_COLORS)[number];
+export type TileColor = (typeof TILE_COLORS)[number];
 
-export type MosaicShape = { d: string; fill: TesseraColor };
+export type MosaicShape = { d: string; fill: TileColor };
 
-export const isTesseraColor = (value: unknown): value is TesseraColor =>
-  TESSERA_COLORS.includes(value as TesseraColor);
+export const isTileColor = (value: unknown): value is TileColor =>
+  TILE_COLORS.includes(value as TileColor);
 
 export const MAX_MOSAIC_SHAPES = 60;
 const MAX_PATH_LENGTH = 4000;
+// Allows only characters valid in SVG path data (commands, numbers, separators), so `d` can't carry markup or other text.
 const PATH_DATA = /^[MmLlHhVvCcSsQqTtAaZz0-9eE\s,.+-]+$/;
 
 export const isMosaicShape = (value: unknown): value is MosaicShape =>
@@ -62,7 +63,7 @@ export const isMosaicShape = (value: unknown): value is MosaicShape =>
   typeof value.d === "string" &&
   value.d.length <= MAX_PATH_LENGTH &&
   PATH_DATA.test(value.d) &&
-  isTesseraColor(value.fill);
+  isTileColor(value.fill);
 
 export const parseMosaic = (value: unknown): MosaicShape[] | undefined =>
   Array.isArray(value) &&

@@ -31,6 +31,7 @@ if (isLoginPage) {
 
 const sharedOdeId = getSharedOdeId(window.location.pathname);
 
+// SPA with a login page and a shared ode page that's outside the auth gate.
 const renderPage = () => {
   if (isLoginPage) {
     return <LoginPage />;

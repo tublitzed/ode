@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 
 import MortarSheen from "@/client/components/mosaics/MortarSheen";
 import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
-import Sinopia from "@/client/components/mosaics/Sinopia";
+import MosaicSketch from "@/client/components/mosaics/MosaicSketch";
 import OdeProgressStatus from "@/client/components/odes/OdeProgressStatus";
 import OdeTopicFields from "@/client/components/odes/OdeTopicFields";
 import { SKETCHES } from "@/client/utils/sketches";
@@ -42,7 +42,7 @@ const OdeForm = (props: ComponentProps<typeof OdeTopicFields>) => {
         state="waiting"
       >
         {isIdle && (
-          <Sinopia
+          <MosaicSketch
             cycleMs={SKETCH_INTERVAL_MS}
             drawMs={SKETCH_DRAW_MS}
             key={sketchIndex}

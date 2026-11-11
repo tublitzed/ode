@@ -1,10 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-import {
-  isMosaicShape,
-  MAX_MOSAIC_SHAPES,
-  TESSERA_COLORS,
-} from "#/shared/ode.ts";
+import { isMosaicShape, MAX_MOSAIC_SHAPES, TILE_COLORS } from "#/shared/ode.ts";
 import type { MosaicShape } from "#/shared/ode.ts";
 
 const MIN_SHAPES = 5;
@@ -30,7 +26,7 @@ const OUTPUT_SCHEMA = {
         additionalProperties: false,
         properties: {
           d: { type: "string" },
-          fill: { enum: TESSERA_COLORS, type: "string" },
+          fill: { enum: TILE_COLORS, type: "string" },
         },
         required: ["d", "fill"],
         type: "object",

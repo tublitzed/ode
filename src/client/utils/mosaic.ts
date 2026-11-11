@@ -1,4 +1,4 @@
-import type { MosaicShape, TesseraColor } from "@/shared/ode";
+import type { MosaicShape, TileColor } from "@/shared/ode";
 
 type Rgb = [number, number, number];
 
@@ -272,7 +272,7 @@ export const buildMosaic = (shapes: MosaicShape[]): Mosaic => {
   const distances = measureDistances(regions);
   const { index, tiles } = placeTiles(regions, distances);
   const tileNumbers = new Map(tiles.map((tile, number) => [tile, number]));
-  const colors = fills.map((fill) => toRgb(colorOf(fill as TesseraColor)));
+  const colors = fills.map((fill) => toRgb(colorOf(fill as TileColor)));
   const ground = toRgb(GROUND);
   const grout = toRgb(GROUT);
   const image = new ImageData(MOSAIC_SIZE, MOSAIC_SIZE);

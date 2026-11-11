@@ -155,6 +155,15 @@ components:
   button-ghost-hover:
     backgroundColor: "{colors.plaster-shade}"
     textColor: "{colors.ink}"
+  button-compact:
+    typography: "{typography.small}"
+    rounded: "{rounded.md}"
+    padding: "0.5rem 0.75rem"
+    height: "2.75rem"
+  button-link:
+    textColor: "{colors.umber-soft}"
+    typography: "{typography.small}"
+    padding: "0.25rem 0"
   input-rule:
     textColor: "{colors.ink}"
     typography: "{typography.input}"
@@ -270,7 +279,7 @@ The materials of the floor itself.
 - **Verse** (400, 1.25rem, 1.55): The poem, left-aligned at up to 34rem, with a 1.5rem hanging indent on wrapped lines and 1.1em between stanzas. **Verse compact** (1.125rem, 1.55) sets the comparison columns.
 - **Status** (Newsreader 400, 1.125rem, 1.5): Rotating progress phrases, 40ch at most.
 - **Lede** (Figtree 400, 1.125rem, 1.5): The form hint and the declined reason, soft umber, balanced, 40 to 44ch. **Body** (1rem, 1.5) carries the ode type line.
-- **Button** (500, 1rem) and **Input** (400, 1.125rem): Controls.
+- **Button** (500, 1rem) and **Input** (400, 1.125rem): Controls. Compact buttons in the action bar drop to 0.875rem below 40rem.
 - **Label** (500, 0.875rem, 1) names a field. **Small** (400, 0.875rem) is column descriptions. **Caption** (400, 0.75rem) is tooltip text.
 
 ### Named Rules
@@ -330,7 +339,10 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 - **Primary:** Umber with limewash text and a 2px matching border. At most one per view: "Write my ode", "Write another ode", "Log in".
 - **Hover / Focus:** Colors transition on hover; primary lifts to umber lifted. Focus is a 2px oxblood outline, offset 3px. Disabled drops to 60% opacity.
 - **Outline:** 2px ink border on no fill, plaster shade on hover. Secondary actions and suggested topics, whose labels may wrap.
-- **Ghost:** Soft umber text with no border, ink on plaster shade on hover. "Log out", "Enter a different topic".
+- **Ghost:** Soft umber text with no border, ink on plaster shade on hover. "Enter a different topic".
+- **Link:** Soft umber small text, underlined, with no padding or minimum height. "Log out" in the header only.
+- **Compact size:** The action bar's buttons ("Compare Pindaric and Horatian odes", "Share this ode", "Write another ode") are 2.75rem tall with 0.75rem side padding and 0.875rem text on phones, then return to full size from 40rem up.
+- **Cursor:** Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
 
 ### Inputs / Fields
 
@@ -354,17 +366,17 @@ The system's signature. A square canvas 720px on a side, scaled to its container
 
 With prefers-reduced-motion, laying skips straight to the finished mosaic and reveals the poem immediately. On a fresh ode, the verse and actions stay hidden until the panel reports it is laid, then enter with the rise animation (800ms, cubic-bezier(0.16, 1, 0.3, 1), from 12px down and a 4px blur). Tile tone shifts by up to 9 levels per channel, from a fixed seed, so a drawing always lays the same way.
 
-**How Claude draws.** Claude acts as a mosaicist and returns flat closed SVG paths with a stone code, on a 240-unit square, listed back to front. Its brief is an emblema from a Pompeii floor: one recognizable object, about 65% of the canvas, centered and whole, naturalistically modeled with three or four tones of each color lit from the upper left, with a soft Slate 3 cast shadow to the lower right and an empty background. Every piece is at least 10 units across so the tiles can resolve it. The server keeps at most 60 structurally valid shapes. With fewer than five, or if the drawing fails, the ode ships with its empty framed panel.
+**How Claude draws.** Claude acts as a mosaicist and returns flat closed SVG paths with a stone code, on a 240-unit square, listed back to front. Its brief is an emblema from a Pompeii floor: one recognizable object, about 80% of the canvas (190 of 240 units across), centered and whole, naturalistically modeled with three or four tones of each color lit from the upper left, with a soft Slate 3 cast shadow to the lower right and an empty background. Every piece is at least 10 units across so the tiles can resolve it. The server keeps at most 60 structurally valid shapes. With fewer than five, or if the drawing fails, the ode ships with its empty framed panel.
 
-### Tile Loader
+### Mosaic Sketch and Wet Mortar
 
-On the empty form, the bed shows a sinopia: the red-chalk underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
+On the empty form, the bed shows a sketch in red chalk, the underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
 
 While Claude writes, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, one plain line in Newsreader, soft umber, says what is happening: "Claude is writing your ode to {topic}." Laying keeps the short oxblood “Laying the tiles…” line.
 
-Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
+### Tile Loader
 
-Twelve small stone tiles in a row, 0.25rem apart, each placed and lifted in turn (2.6s loop, 90ms stagger, tilts of up to 4 degrees), above a rotating status phrase. Stone colors repeat in the order rosso, serpentine, terracotta, lapis, stone black, giallo. With reduced motion the tiles sit still and fully visible.
+Used only in comparison columns that are still being written, left-aligned under the column's title. Twelve small stone tiles in a row, 0.25rem apart, each placed and lifted in turn (2.6s loop, 90ms stagger, tilts of up to 4 degrees), above a Newsreader status phrase that rotates every 5s between ode lore and short asides ("Sharpening the quill…"). Stone colors repeat in the order rosso, serpentine, terracotta, lapis, stone black, giallo. With reduced motion the tiles sit still and fully visible.
 
 ## Do's and Don'ts
 

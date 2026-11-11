@@ -1,6 +1,6 @@
 import { PICTURE_TRANSFORM } from "@/client/utils/mosaic";
 
-type SinopiaProps = {
+type MosaicSketchProps = {
   cycleMs: number;
   drawMs: number;
   paths: string[];
@@ -8,16 +8,16 @@ type SinopiaProps = {
   strokeWidth?: number;
 };
 
-const Sinopia = ({
+const MosaicSketch = ({
   cycleMs,
   drawMs,
   paths,
   staggerMs,
   strokeWidth = 1.1,
-}: SinopiaProps) => (
+}: MosaicSketchProps) => (
   <svg
     aria-hidden
-    className="animate-sinopia pointer-events-none absolute inset-0 size-full motion-reduce:animate-none"
+    className="animate-sketch-fade pointer-events-none absolute inset-0 size-full motion-reduce:animate-none"
     style={{ animationDuration: `${cycleMs}ms` }}
     viewBox="0 0 240 240"
   >
@@ -45,4 +45,4 @@ const Sinopia = ({
   </svg>
 );
 
-export default Sinopia;
+export default MosaicSketch;

@@ -2,23 +2,21 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import SharedOdePage from "@/client/components/shares/SharedOdePage";
 
-const SAMPLE_ODE = `O tomato,
-warm
-from the windowsill,
-you sit there
-round as a small
-red secret.
-
-O tomato,
-you are a garden
-holding its breath.`;
+import {
+  LONG_TOPIC,
+  SAMPLE_HORATIAN_ODE,
+  SAMPLE_MOSAIC,
+  SAMPLE_ODE,
+  SAMPLE_PINDARIC_ODE,
+  SAMPLE_TOPIC,
+} from "@stories/fixtures";
 
 type Story = StoryObj<typeof SharedOdePage>;
 
 const meta: Meta<typeof SharedOdePage> = {
   args: { id: "x7Kq2mPa9LwR" },
   component: SharedOdePage,
-  title: "SharedOdePage",
+  parameters: { layout: "fullscreen" },
 };
 
 export default meta;
@@ -26,7 +24,20 @@ export default meta;
 export const Found: Story = {
   args: {
     forceView: {
-      sharedOde: { ode: SAMPLE_ODE, topic: "Tomatoes" },
+      sharedOde: {
+        mosaic: SAMPLE_MOSAIC,
+        ode: SAMPLE_ODE,
+        topic: SAMPLE_TOPIC,
+      },
+      status: "found",
+    },
+  },
+};
+
+export const FoundWithoutMosaic: Story = {
+  args: {
+    forceView: {
+      sharedOde: { ode: SAMPLE_ODE, topic: SAMPLE_TOPIC },
       status: "found",
     },
   },
@@ -37,19 +48,12 @@ export const WithComparison: Story = {
     forceView: {
       sharedOde: {
         comparison: {
-          horatian: `A lantern red hangs low upon the vine,
-And summer gathers in its quiet skin.`,
-          pindaric: `Strophe
-Sing, chorus, of the tomato's flame!
-
-Antistrophe
-Sing back, chorus, of its humble name!
-
-Epode
-Praise it, and be still.`,
+          horatian: SAMPLE_HORATIAN_ODE,
+          pindaric: SAMPLE_PINDARIC_ODE,
         },
+        mosaic: SAMPLE_MOSAIC,
         ode: SAMPLE_ODE,
-        topic: "Tomatoes",
+        topic: SAMPLE_TOPIC,
       },
       status: "found",
     },
@@ -59,7 +63,7 @@ Praise it, and be still.`,
 export const LongTopic: Story = {
   args: {
     forceView: {
-      sharedOde: { ode: SAMPLE_ODE, topic: "a".repeat(100) },
+      sharedOde: { mosaic: SAMPLE_MOSAIC, ode: SAMPLE_ODE, topic: LONG_TOPIC },
       status: "found",
     },
   },
