@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import AppHeader from "@/client/components/AppHeader";
 import OdeComparison from "@/client/components/odes/OdeComparison";
 import type {
   OdeColumn,
@@ -51,14 +52,6 @@ type View =
 
 type AppProps = {
   forceView?: View & { columns?: OdeColumn[] }; // Storybook only
-};
-
-const logOut = async () => {
-  try {
-    await fetch("/api/logout", { method: "POST" });
-  } finally {
-    window.location.assign("/login");
-  }
 };
 
 const getInitialView = (): View => {
@@ -344,25 +337,7 @@ const App = ({ forceView }: AppProps) => {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <header className="flex items-center justify-between px-4 py-5 md:px-12 md:py-7">
-        <span className="font-display flex items-center gap-2.5 text-2xl">
-          <img
-            alt=""
-            className="size-7"
-            height={28}
-            src="/favicon.svg"
-            width={28}
-          />
-          Ode
-        </span>
-        <Button
-          className="text-muted-foreground min-h-0 px-0 py-1 text-sm"
-          onClick={logOut}
-          variant="link"
-        >
-          Log out
-        </Button>
-      </header>
+      <AppHeader />
       <main className="flex w-full flex-1 flex-col items-center px-4 pb-20 text-center">
         {renderView()}
       </main>
