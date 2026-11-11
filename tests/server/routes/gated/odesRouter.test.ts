@@ -18,7 +18,12 @@ import {
 } from "@/server/auth.ts";
 import type { ServerContext } from "@/server/context.ts";
 import { generateOde } from "@/server/odes/generate.ts";
-import { MAX_ODE_LENGTH, MAX_TOPIC_LENGTH } from "@/shared/ode.ts";
+import {
+  MAX_CHANGE_REQUEST_LENGTH,
+  MAX_CHANGE_REQUESTS,
+  MAX_ODE_LENGTH,
+  MAX_TOPIC_LENGTH,
+} from "@/shared/ode.ts";
 
 vi.mock("@sentry/node", () => ({ captureException: vi.fn() }));
 vi.mock("@/server/odes/generate.ts", () => ({ generateOde: vi.fn() }));
@@ -140,11 +145,7 @@ describe("POST /api/odes", () => {
       ode: "O tomato,\nstar of earth",
       status: "ode",
     });
-    expect(mockGenerateOde).toHaveBeenCalledWith(
-      "Tomatoes",
-      "irregular",
-      undefined,
-    );
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes", "irregular", {});
   });
 
   it("returns a decline with suggestions without reporting it", async () => {
@@ -174,11 +175,7 @@ describe("POST /api/odes", () => {
       .set("Cookie", sessionCookie)
       .send({ topic: "  Tomatoes\n" });
 
-    expect(mockGenerateOde).toHaveBeenCalledWith(
-      "Tomatoes",
-      "irregular",
-      undefined,
-    );
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes", "irregular", {});
   });
 
   it("accepts a topic at the maximum length", async () => {
@@ -201,11 +198,9 @@ describe("POST /api/odes", () => {
       .send({ sourceOde: "O tomato", topic: "Tomatoes", type: "horatian" });
 
     expect(res.status).toBe(200);
-    expect(mockGenerateOde).toHaveBeenCalledWith(
-      "Tomatoes",
-      "horatian",
-      "O tomato",
-    );
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes", "horatian", {
+      sourceOde: "O tomato",
+    });
   });
 
   it.each([
@@ -214,6 +209,54 @@ describe("POST /api/odes", () => {
     ["a non-string source ode", { sourceOde: 42 }],
     ["a whitespace-only source ode", { sourceOde: "   " }],
     ["a too-long source ode", { sourceOde: "a".repeat(MAX_ODE_LENGTH + 1) }],
+    ["change requests without a previous ode", { changeRequests: ["Shorter"] }],
+    ["a previous ode without change requests", { previousOde: "O tomato" }],
+    [
+      "a non-string previous ode",
+      { changeRequests: ["Shorter"], previousOde: 42 },
+    ],
+    [
+      "a too-long previous ode",
+      {
+        changeRequests: ["Shorter"],
+        previousOde: "a".repeat(MAX_ODE_LENGTH + 1),
+      },
+    ],
+    [
+      "change requests that aren't an array",
+      { changeRequests: "Shorter", previousOde: "O tomato" },
+    ],
+    ["empty change requests", { changeRequests: [], previousOde: "O tomato" }],
+    [
+      "too many change requests",
+      {
+        changeRequests: Array(MAX_CHANGE_REQUESTS + 1).fill("Shorter"),
+        previousOde: "O tomato",
+      },
+    ],
+    [
+      "a non-string change request",
+      { changeRequests: [42], previousOde: "O tomato" },
+    ],
+    [
+      "a whitespace-only change request",
+      { changeRequests: ["   "], previousOde: "O tomato" },
+    ],
+    [
+      "a too-long change request",
+      {
+        changeRequests: ["a".repeat(MAX_CHANGE_REQUEST_LENGTH + 1)],
+        previousOde: "O tomato",
+      },
+    ],
+    [
+      "a revision with a source ode",
+      {
+        changeRequests: ["Shorter"],
+        previousOde: "O tomato",
+        sourceOde: "O tomato",
+      },
+    ],
   ])("returns 400 for %s", async (_label, body) => {
     const app = await buildApp();
 
@@ -237,6 +280,44 @@ describe("POST /api/odes", () => {
         sourceOde: "a".repeat(MAX_ODE_LENGTH),
         topic: "Tomatoes",
         type: "pindaric",
+      });
+
+    expect(res.status).toBe(200);
+  });
+
+  it("passes a trimmed revision to the generator", async () => {
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({
+        changeRequests: ["Keep it short", "  Mention basil  "],
+        previousOde: "O tomato",
+        topic: "Tomatoes",
+      });
+
+    expect(res.status).toBe(200);
+    expect(mockGenerateOde).toHaveBeenCalledWith("Tomatoes", "irregular", {
+      revision: {
+        changeRequests: ["Keep it short", "Mention basil"],
+        previousOde: "O tomato",
+      },
+    });
+  });
+
+  it("accepts the maximum number of change requests at the maximum length", async () => {
+    const app = await buildApp();
+
+    const res = await request(app)
+      .post("/api/odes")
+      .set("Cookie", sessionCookie)
+      .send({
+        changeRequests: Array(MAX_CHANGE_REQUESTS).fill(
+          "a".repeat(MAX_CHANGE_REQUEST_LENGTH),
+        ),
+        previousOde: "O tomato",
+        topic: "Tomatoes",
       });
 
     expect(res.status).toBe(200);

@@ -8,9 +8,12 @@ import express from "express";
 import type { Router } from "express";
 
 import { generateOde } from "#/server/odes/generate.ts";
+import type { Revision } from "#/server/odes/generate.ts";
 import {
   DEFAULT_ODE_TYPE,
   isOdeType,
+  MAX_CHANGE_REQUEST_LENGTH,
+  MAX_CHANGE_REQUESTS,
   MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
 } from "#/shared/ode.ts";
@@ -44,10 +47,57 @@ const toFailure = (error: unknown) => {
   return UNEXPECTED;
 };
 
-const isUsableSourceOde = (value: unknown): value is string =>
+const isUsableOde = (value: unknown): value is string =>
   typeof value === "string" &&
   value.trim().length > 0 &&
   value.length <= MAX_ODE_LENGTH;
+
+const isUsableChangeRequest = (value: unknown): value is string =>
+  typeof value === "string" &&
+  value.trim().length > 0 &&
+  value.trim().length <= MAX_CHANGE_REQUEST_LENGTH;
+
+const isUsableChangeRequests = (value: unknown): value is string[] =>
+  Array.isArray(value) &&
+  value.length > 0 &&
+  value.length <= MAX_CHANGE_REQUESTS &&
+  value.every(isUsableChangeRequest);
+
+type RevisionResult = { error: string } | { revision: Revision | undefined };
+
+const readRevision = (body: unknown): RevisionResult => {
+  const { changeRequests, previousOde, sourceOde } = (body ?? {}) as Record<
+    string,
+    unknown
+  >;
+
+  if (changeRequests === undefined && previousOde === undefined) {
+    return { revision: undefined };
+  }
+
+  if (sourceOde !== undefined) {
+    return { error: "We can't compare and revise an ode at the same time." };
+  }
+
+  if (!isUsableOde(previousOde)) {
+    return { error: "We can't revise that ode." };
+  }
+
+  if (!isUsableChangeRequests(changeRequests)) {
+    return {
+      error: `Describe your change in up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
+    };
+  }
+
+  return {
+    revision: {
+      changeRequests: changeRequests.map((changeRequest) =>
+        changeRequest.trim(),
+      ),
+      previousOde,
+    },
+  };
+};
 
 export const odesRouter: Router = express.Router();
 
@@ -71,15 +121,27 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
 
   const sourceOde: unknown = req.body?.sourceOde;
 
-  if (sourceOde !== undefined && !isUsableSourceOde(sourceOde)) {
+  if (sourceOde !== undefined && !isUsableOde(sourceOde)) {
     res
       .status(400)
       .json({ error: "We can't use that ode as a starting point." });
     return;
   }
 
+  const revisionResult = readRevision(req.body);
+
+  if ("error" in revisionResult) {
+    res.status(400).json({ error: revisionResult.error });
+    return;
+  }
+
   try {
-    res.json(await generateOde(topic, type, sourceOde));
+    res.json(
+      await generateOde(topic, type, {
+        revision: revisionResult.revision,
+        sourceOde,
+      }),
+    );
   } catch (error) {
     const failure = toFailure(error);
 

@@ -130,7 +130,9 @@ describe("generateOde", () => {
       modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
     );
 
-    await generateOde("Tomatoes", "pindaric", "O tomato,\nstar of earth");
+    await generateOde("Tomatoes", "pindaric", {
+      sourceOde: "O tomato,\nstar of earth",
+    });
 
     const request = create.mock.calls[0][0];
     expect(request.messages).toEqual([
@@ -141,6 +143,62 @@ describe("generateOde", () => {
       },
     ]);
     expect(request.system).toContain("<source_ode>");
+  });
+
+  it("leaves revision instructions out without a revision", async () => {
+    create.mockResolvedValueOnce(
+      modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+    );
+
+    await generateOde("Tomatoes", "irregular");
+
+    expect(create.mock.calls[0][0].system).not.toContain("<change_request>");
+  });
+
+  it("sends a first revision without earlier requests", async () => {
+    create.mockResolvedValueOnce(
+      modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+    );
+
+    await generateOde("Tomatoes", "irregular", {
+      revision: { changeRequests: ["Mention basil"], previousOde: "O tomato" },
+    });
+
+    const request = create.mock.calls[0][0];
+    expect(request.messages).toEqual([
+      {
+        content:
+          "<topic>Tomatoes</topic>\n<previous_ode>O tomato</previous_ode>\n<change_request>Mention basil</change_request>",
+        role: "user",
+      },
+    ]);
+    expect(request.system).toContain("<change_request>");
+    expect(request.system).not.toContain("<source_ode>");
+  });
+
+  it("sends earlier requests separately from the new one", async () => {
+    create.mockResolvedValueOnce(
+      modelResponse({ ode: "O", reason: "", status: "ode", suggestions: [] }),
+    );
+
+    await generateOde("Tomatoes", "irregular", {
+      revision: {
+        changeRequests: ["Keep it short", "Make it funny", "Mention basil"],
+        previousOde: "O tomato",
+      },
+    });
+
+    expect(create.mock.calls[0][0].messages[0].content).toBe(
+      [
+        "<topic>Tomatoes</topic>",
+        "<previous_ode>O tomato</previous_ode>",
+        "<earlier_requests>",
+        "<request>Keep it short</request>",
+        "<request>Make it funny</request>",
+        "</earlier_requests>",
+        "<change_request>Mention basil</change_request>",
+      ].join("\n"),
+    );
   });
 
   it("throws on an unexpected stop reason", async () => {
