@@ -75,8 +75,8 @@ const OdeResult = ({
           status={
             <OdeProgressStatus
               hasTiles={false}
+              label="Laying the tiles."
               phrases={LAYING_PHRASES}
-              tone="accent"
             />
           }
           topic={topic}

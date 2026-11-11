@@ -26,7 +26,6 @@ type OdeProgressStatusProps = {
   intervalMs?: number;
   label?: string;
   phrases: string[];
-  tone?: "accent" | "quiet";
 };
 
 const OdeProgressStatus = ({
@@ -35,7 +34,6 @@ const OdeProgressStatus = ({
   intervalMs = DEFAULT_INTERVAL_MS,
   label = "Writing your ode.",
   phrases,
-  tone = "quiet",
 }: OdeProgressStatusProps) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
 
@@ -72,11 +70,8 @@ const OdeProgressStatus = ({
       )}
       <span
         aria-hidden
-        className={
-          tone === "quiet"
-            ? "font-verse text-muted-foreground min-h-[3em] max-w-[40ch] text-lg leading-normal text-balance"
-            : "text-destructive min-h-6 font-medium text-balance"
-        }
+        className="animate-in fade-in font-verse text-muted-foreground min-h-[3em] max-w-[40ch] text-lg leading-normal wrap-anywhere text-balance duration-700 motion-reduce:animate-none"
+        key={phraseIndex}
       >
         {phrases[phraseIndex % phrases.length]}
       </span>

@@ -372,7 +372,7 @@ With prefers-reduced-motion, laying skips straight to the finished mosaic and re
 
 On the empty form, the bed shows a sketch in red chalk, the underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
 
-While Claude writes, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, one plain line in Newsreader, soft umber, says what is happening: "Claude is writing your ode to {topic}." Laying keeps the short oxblood “Laying the tiles…” line.
+While the ode is being written, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, a line in Newsreader, soft umber, opens with "Writing your ode to {topic}…" and then rotates every 4.5s, fading in over 700ms, through short process asides ("Consulting the muses…", "Mixing the mortar…") alternating with ode lore. The interface never names the model; the brand line is "Ode with Anthropic". When the ode arrives, the same quiet line hands off to “Laying the tiles…” while the mosaic lays. Status text never uses oxblood, which is reserved for focus, errors and selection.
 
 ### Tile Loader
 

@@ -8,9 +8,22 @@ import OdeProgressStatus from "@/client/components/odes/OdeProgressStatus";
 import OdeTopicFields from "@/client/components/odes/OdeTopicFields";
 import { SKETCHES } from "@/client/utils/sketches";
 
+const PHRASE_INTERVAL_MS = 4500;
 const SKETCH_DRAW_MS = 1600;
 const SKETCH_INTERVAL_MS = 5000;
 const SKETCH_STAGGER_MS = 70;
+
+const WRITING_PHRASES = [
+  "Consulting the muses…",
+  "Pablo Neruda wrote odes to tomatoes, socks and onions.",
+  "Breaking lines in unexpected places…",
+  "Keats wrote “Ode to a Nightingale” in the spring of 1819.",
+  "Warming up the nightingale…",
+  "Schiller’s “Ode to Joy” became the finale of Beethoven’s Ninth.",
+  "Mixing the mortar…",
+  "Shelley wrote “Ode to the West Wind” in a wood near Florence.",
+  "Polishing a stanza…",
+];
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -58,7 +71,9 @@ const OdeForm = (props: ComponentProps<typeof OdeTopicFields>) => {
         status={
           <OdeProgressStatus
             hasTiles={false}
-            phrases={[`Claude is writing your ode to ${topic}.`]}
+            intervalMs={PHRASE_INTERVAL_MS}
+            label={`Writing your ode to ${topic}.`}
+            phrases={[`Writing your ode to ${topic}…`, ...WRITING_PHRASES]}
           />
         }
       />
