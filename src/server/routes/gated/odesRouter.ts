@@ -156,7 +156,11 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
   }
 
   const { revision } = revisionResult;
+
+  // We have comparisons and revisions in addition to fresh odes.
   const isFreshOde = sourceOde === undefined && revision === undefined;
+
+  // No need to make a new mosaic for anything but a fresh ode.
   const pendingMosaic = isFreshOde ? drawMosaicSafely(topic) : undefined;
 
   try {

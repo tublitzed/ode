@@ -32,3 +32,10 @@ This is a simple web app with React/TypeScript on the front-end and Express for 
 - src/client - Mostly React. Uses [Shadcdn](https://ui.shadcn.com/docs/components) for UI base components, and includes some rendering utils for drawing mosaics on canvas.
 - src/server - Express app with simple auth logic (gated by a single env var), ode generator.
 - src/shared - used by client and server.
+
+## Tests
+
+- Visual rendering testing via storybook - `npm run storybook`
+- Automated tests via `npm test` which is also run in CI via GitHub Actions.
+- To run a single test file: `npm test -- tests/server/routes/gated/odesRouter.test.ts`
+- To run all tests matching a path: `npx vitest Router` (matches every test file containing "Router")
