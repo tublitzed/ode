@@ -32,6 +32,7 @@ import type {
   OdeType,
 } from "@/shared/ode";
 
+const DECLINED_REVISION = "Our muse politely declines.";
 const UNSAVED_ODE_MESSAGE =
   "This one trailed off mid-verse. Try writing it again.";
 
@@ -232,7 +233,7 @@ const App = ({ forceView }: AppProps) => {
       setView({
         ...view,
         isRevising: false,
-        revisionError: result.data.reason,
+        revisionError: `${DECLINED_REVISION} ${result.data.reason}`,
       });
       return;
     }

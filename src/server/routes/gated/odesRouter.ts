@@ -87,18 +87,22 @@ const readRevision = (body: unknown): RevisionResult => {
   }
 
   if (sourceOde !== undefined) {
-    return { error: "We can’t compare and revise an ode at the same time." };
+    return {
+      error:
+        "Even the muse works one draft at a time. Compare or revise, not both.",
+    };
   }
 
   if (!isUsableOde(previousOde)) {
     return {
-      error: "We can’t revise that ode. Write a fresh one and try again.",
+      error:
+        "That draft slipped out of reach. Write a fresh ode and try again.",
     };
   }
 
   if (!isUsableChangeRequests(changeRequests)) {
     return {
-      error: `Describe your change in up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
+      error: `Every revision needs a note: a change of up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
     };
   }
 
