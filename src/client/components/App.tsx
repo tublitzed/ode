@@ -361,6 +361,7 @@ const App = ({ forceView }: AppProps) => {
                 <Button
                   className={isWriting ? "col-span-2" : undefined}
                   disabled={isWriting}
+                  disabledReason="Wait for both odes to finish."
                   onClick={startOver}
                   size="compact"
                 >

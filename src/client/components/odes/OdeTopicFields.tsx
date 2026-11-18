@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode, SubmitEvent } from "react";
 
 import { Button } from "@/client/components/ui/button";
@@ -14,6 +15,7 @@ type OdeTopicFieldsProps = {
 };
 
 const LINE_BREAKS = /\s*\n\s*/g;
+const MISSING_TOPIC = "Even the muse needs a subject. Name one above.";
 
 const getButtonLabel = (isWriting: boolean, error: string | undefined) => {
   if (isWriting) {
@@ -50,8 +52,36 @@ const OdeTopicFields = ({
   status,
   topic,
 }: OdeTopicFieldsProps) => {
+  const fieldRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isMissingTopic, setIsMissingTopic] = useState(false);
+  const message = error ?? (isMissingTopic ? MISSING_TOPIC : undefined);
+  const describedBy =
+    [isWriting ? undefined : "topic-hint", message ? "topic-error" : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
+
+  const setField = useCallback((field: HTMLTextAreaElement | null) => {
+    fieldRef.current = field;
+    fitHeight(field);
+  }, []);
+
+  useEffect(() => {
+    if (isWriting) {
+      return;
+    }
+
+    fieldRef.current?.focus({ preventScroll: true });
+  }, [isWriting]);
+
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!topic.trim()) {
+      setIsMissingTopic(true);
+      fieldRef.current?.focus();
+      return;
+    }
+
     onSubmit?.();
   };
 
@@ -65,22 +95,23 @@ const OdeTopicFields = ({
           Ode to
         </label>
         <textarea
-          aria-describedby={error ? "topic-hint topic-error" : "topic-hint"}
-          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          aria-invalid={message ? true : undefined}
+          aria-required
           autoComplete="off"
-          className="border-input caret-destructive focus-visible:border-destructive placeholder:text-muted-foreground w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
+          className="border-input caret-destructive focus-visible:border-destructive aria-invalid:border-destructive placeholder:text-muted-foreground w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
           id="topic"
           maxLength={MAX_TOPIC_LENGTH}
           name="topic"
           onChange={(event) => {
             fitHeight(event.target);
+            setIsMissingTopic(false);
             onTopicChange?.(event.target.value.replace(LINE_BREAKS, " "));
           }}
           onKeyDown={submitOnEnter}
           placeholder={placeholder}
           readOnly={isWriting}
-          ref={fitHeight}
-          required
+          ref={setField}
           rows={1}
           value={topic}
         />
@@ -88,25 +119,32 @@ const OdeTopicFields = ({
       <p className="font-display text-muted-foreground mt-3 text-[clamp(1.375rem,2.5vw,1.875rem)] leading-tight tracking-[-0.01em]">
         …with Anthropic
       </p>
-      <p
-        className="text-muted-foreground mt-6 max-w-[40ch] text-lg leading-normal text-balance"
-        id="topic-hint"
-      >
-        Name anything, from pizza to Mondays.
-      </p>
-      {error && (
+      <div className="mt-6 flex min-h-[3em] max-w-[40ch] flex-col items-center text-lg leading-normal">
+        {isWriting && status ? (
+          status
+        ) : (
+          <p className="text-muted-foreground text-balance" id="topic-hint">
+            Name anything, from pizza to Mondays.
+          </p>
+        )}
+      </div>
+      {message && (
         <p
-          className="text-destructive mt-3 font-medium"
+          className="text-destructive font-medium"
           id="topic-error"
           role="alert"
         >
-          {error}
+          {message}
         </p>
       )}
-      <Button className="mt-7" disabled={isWriting} type="submit">
+      <Button
+        className="mt-4"
+        disabled={isWriting}
+        disabledReason="The poet is still writing your ode."
+        type="submit"
+      >
         {getButtonLabel(isWriting, error)}
       </Button>
-      {isWriting && status && <div className="mt-4">{status}</div>}
     </form>
   );
 };

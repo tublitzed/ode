@@ -19,12 +19,6 @@ Make odes with Anthropic! A toy app that allows you to enter a phrase, generate 
 6. Use the sample app password in `.env` to login
 
 
-## Infra
-
-- Will auto-deploy to Railway on merges to main.
-
-Migrations are run via a pre-deploy step which is set to `npx prisma migrate deploy`.
-
 ## Code Structure
 
 This is a simple web app with React/TypeScript on the front-end and Express for the server. Uses prisma & postgres to store shareable odes.

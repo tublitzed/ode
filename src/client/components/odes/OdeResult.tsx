@@ -13,6 +13,7 @@ import { DEFAULT_ODE_TYPE, ODE_TYPE_DETAILS } from "@/shared/ode";
 import type { MosaicShape } from "@/shared/ode";
 
 const LAYING_PHRASES = ["Laying the tiles…"];
+const REVISING_REASON = "Wait for the poet to finish this draft.";
 
 type OdeResultProps = {
   changeRequest: string;
@@ -77,6 +78,7 @@ const OdeResult = ({
             <Button
               className="col-span-2"
               disabled={isRevising}
+              disabledReason={REVISING_REASON}
               onClick={onCompare}
               size="compact"
               variant="outline"
@@ -85,6 +87,7 @@ const OdeResult = ({
             </Button>
             <ShareOde
               disabled={isRevising}
+              disabledReason={REVISING_REASON}
               key={ode}
               mosaic={mosaic}
               ode={ode}
@@ -93,6 +96,7 @@ const OdeResult = ({
             />
             <Button
               disabled={isRevising}
+              disabledReason={REVISING_REASON}
               onClick={onWriteAnother}
               size="compact"
             >

@@ -337,12 +337,15 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 
 - **Shape:** Slightly softened corners (0.3rem), 3rem minimum height.
 - **Primary:** Umber with limewash text and a 2px matching border. At most one per view: "Write my ode", "Write another ode", "Log in".
-- **Hover / Focus:** Colors transition on hover; primary lifts to umber lifted. Focus is a 2px oxblood outline, offset 3px. Disabled drops to 60% opacity.
+- **Hover / Focus:** Colors transition on hover; primary lifts to umber lifted. Focus is a solid 2px oxblood outline, offset 3px, on every variant.
+- **Disabled:** The button loses its ink: a dashed soft umber border at half strength, no fill or shadow, and soft umber text. Every disabled button carries a short reason in the voice of the site ("Write a note for the poet first.", "Wait for the poet to finish this draft."), shown in a tooltip on hover and keyboard focus. A button with a reason stays focusable as `aria-disabled` and ignores clicks, so keyboard and screen-reader users reach the reason too.
 - **Outline:** 2px ink border on no fill, plaster shade on hover. Secondary actions and suggested topics, whose labels may wrap.
+- **Secondary:** Plaster shade fill with no visible border, a darker plaster on hover. For optional next steps that should sit below the action bar in weight, such as "Revise".
 - **Ghost:** Soft umber text with no border, ink on plaster shade on hover. "Enter a different topic".
 - **Link:** Soft umber small text, underlined, with no padding or minimum height. "Log out" in the header only.
+- **Small size:** 2.5rem tall with 0.875rem side padding and 0.875rem text. Paired with Secondary for optional actions beside a 2.5rem field.
 - **Compact size:** The action bar's buttons ("Compare Pindaric and Horatian odes", "Share this ode", "Write another ode") are 2.75rem tall with 0.75rem side padding and 0.875rem text on phones, then return to full size from 40rem up.
-- **Cursor:** Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
+- **Cursor:** Every enabled button and button-role element uses the pointer cursor. Disabled buttons use the not-allowed cursor, and Pindaric section labels keep the help cursor.
 
 ### Inputs / Fields
 
@@ -350,6 +353,7 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 - **Title field:** The topic field is set inside the headline, following the words "Ode to", with a 3px rule. It is a one-row text area that sizes to its content from 8ch up to the full column, then wraps onto more lines, centered, so a long topic reads as a title instead of scrolling out of view. Enter submits and line breaks become spaces. Where content sizing is unsupported, it spans the column and grows in height as you type.
 - **Byline:** "…with Anthropic" sits 0.75rem under the title field in Young Serif at clamp(1.375rem, 2.5vw, 1.875rem), soft umber, so the headline completes the pun: "Ode to Tomatoes … with Anthropic." It appears only inside the logged-in app, never on logged-out pages.
 - **Focus:** The rule turns oxblood; the password field's rule also thickens to 3px.
+- **Empty topic:** The topic field takes focus when the form opens. Submitting it empty skips the browser's validation bubble: focus returns to the field, its rule turns oxblood, and "Even the muse needs a subject. Name one above." appears beneath as an error.
 - **Error / Disabled:** Oxblood text at weight 500 beneath the field, announced as an alert; the password field's rule also turns oxblood. Disabled fields drop to 60% opacity.
 
 ### Tooltip
@@ -372,7 +376,7 @@ With prefers-reduced-motion, laying skips straight to the finished mosaic and re
 
 On the empty form, the bed shows a sketch in red chalk, the underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
 
-While the ode is being written, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, a line in Newsreader, soft umber, opens with "Writing your ode to {topic}…" and then rotates every 4.5s, fading in over 700ms, through short process asides ("Consulting the muses…", "Mixing the mortar…") alternating with ode lore. The interface never names the model; the brand line is "Ode with Anthropic". When the ode arrives, the same quiet line hands off to “Laying the tiles…” while the mosaic lays. Status text never uses oxblood, which is reserved for focus, errors and selection.
+While the ode is being written, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. In place of the form hint, above the button, a line in Newsreader, soft umber, opens with "Writing your ode to {topic}…" and then rotates every 4.5s, fading in over 700ms, through short process asides ("Consulting the muses…", "Mixing the mortar…") alternating with ode lore. The interface never names the model; the brand line is "Ode with Anthropic". When the ode arrives, the same quiet line hands off to “Laying the tiles…” while the mosaic lays. Status text never uses oxblood, which is reserved for focus, errors and selection.
 
 ### Tile Loader
 

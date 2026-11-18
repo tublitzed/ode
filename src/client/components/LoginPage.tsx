@@ -101,7 +101,12 @@ const LoginPage = () => {
             </p>
           )}
         </div>
-        <Button className="w-full" disabled={isSubmitting} type="submit">
+        <Button
+          className="w-full"
+          disabled={isSubmitting}
+          disabledReason="Checking the password."
+          type="submit"
+        >
           {isSubmitting ? "Logging in…" : "Log in"}
         </Button>
       </form>

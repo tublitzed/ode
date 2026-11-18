@@ -13,6 +13,7 @@ import type { Comparison, MosaicShape } from "@/shared/ode";
 type ShareOdeProps = {
   comparison?: Comparison;
   disabled?: boolean;
+  disabledReason?: string;
   forceView?: View; // Storybook only
   mosaic?: MosaicShape[];
   ode: string;
@@ -48,11 +49,14 @@ const renderLabel = (view: View) => {
   return "Share this ode";
 };
 
+const SHARING_REASON = "Your link is on its way.";
+
 const toLink = (id: string) => `${window.location.origin}/o/${id}`;
 
 const ShareOde = ({
   comparison,
   disabled = false,
+  disabledReason,
   forceView,
   mosaic,
   ode,
@@ -114,6 +118,11 @@ const ShareOde = ({
       <Button
         className="w-full"
         disabled={disabled || view.status === "sharing"}
+        disabledReason={
+          view.status === "sharing"
+            ? SHARING_REASON
+            : (disabledReason ?? SHARING_REASON)
+        }
         onClick={share}
         size={size}
         variant="outline"
