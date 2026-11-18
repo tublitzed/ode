@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 
 import AppHeader from "@/client/components/AppHeader";
@@ -20,7 +21,11 @@ import {
   saveLastOde,
 } from "@/client/utils/localStorage";
 import type { SavedComparison } from "@/client/utils/localStorage";
-import { COMPARISON_TYPES, DEFAULT_ODE_TYPE } from "@/shared/ode";
+import {
+  COMPARISON_TYPES,
+  DEFAULT_ODE_TYPE,
+  MAX_CHANGE_REQUESTS,
+} from "@/shared/ode";
 import type {
   Comparison,
   MosaicShape,
@@ -28,10 +33,13 @@ import type {
   OdeType,
 } from "@/shared/ode";
 
+const DECLINED_REVISION = "Our muse politely declines.";
 const UNSAVED_ODE_MESSAGE =
   "This one trailed off mid-verse. Try writing it again.";
 
 type OdeRequest = {
+  changeRequests?: string[];
+  previousOde?: string;
   sourceOde?: string;
   topic: string;
   type: OdeType;
@@ -43,9 +51,12 @@ type View =
   | { status: "generating"; topic: string }
   | { status: "idle" }
   | {
+      changeRequests: string[];
       isFresh: boolean;
+      isRevising?: boolean;
       mosaic?: MosaicShape[];
       ode: string;
+      revisionError?: string;
       status: "ode";
       topic: string;
     };
@@ -62,6 +73,7 @@ const getInitialView = (): View => {
   }
 
   return {
+    changeRequests: lastOde.changeRequests ?? [],
     isFresh: false,
     mosaic: lastOde.mosaic,
     ode: lastOde.ode,
@@ -146,6 +158,7 @@ const writeComparisonColumn = async (
 };
 
 const App = ({ forceView }: AppProps) => {
+  const [changeRequest, setChangeRequest] = useState("");
   const [columns, setColumns] = useState<OdeColumn[]>(
     () => forceView?.columns ?? getInitialColumns(),
   );
@@ -186,7 +199,55 @@ const App = ({ forceView }: AppProps) => {
       topic: nextTopic,
     };
     saveLastOde(lastOde);
-    setView({ ...lastOde, isFresh: true, status: "ode" });
+    setView({ ...lastOde, changeRequests: [], isFresh: true, status: "ode" });
+  };
+
+  const revise = async () => {
+    const trimmedChangeRequest = changeRequest.trim();
+    if (view.status !== "ode" || !trimmedChangeRequest) {
+      return;
+    }
+
+    const changeRequests = [...view.changeRequests, trimmedChangeRequest].slice(
+      -MAX_CHANGE_REQUESTS,
+    );
+
+    setView({ ...view, isRevising: true, revisionError: undefined });
+
+    const result = await requestOde({
+      changeRequests,
+      previousOde: view.ode,
+      topic: view.topic,
+      type: DEFAULT_ODE_TYPE,
+    });
+
+    if (!result) {
+      return;
+    }
+
+    if (!result.ok) {
+      setView({ ...view, isRevising: false, revisionError: result.message });
+      return;
+    }
+
+    if (result.data.status === "declined") {
+      setView({
+        ...view,
+        isRevising: false,
+        revisionError: `${DECLINED_REVISION} ${result.data.reason}`,
+      });
+      return;
+    }
+
+    const lastOde = {
+      changeRequests,
+      mosaic: view.mosaic,
+      ode: result.data.ode,
+      topic: view.topic,
+    };
+    saveLastOde(lastOde);
+    setChangeRequest("");
+    setView({ ...lastOde, isFresh: false, status: "ode" });
   };
 
   const handleSubmit = () => {
@@ -245,8 +306,17 @@ const App = ({ forceView }: AppProps) => {
     }
   };
 
+  const handleChangeRequestChange = (nextChangeRequest: string) => {
+    setChangeRequest(nextChangeRequest);
+
+    if (view.status === "ode" && view.revisionError) {
+      setView({ ...view, revisionError: undefined });
+    }
+  };
+
   const startOver = () => {
     clearLastOde();
+    setChangeRequest("");
     setColumns([]);
     setTopic("");
     setView({ status: "idle" });
@@ -292,9 +362,11 @@ const App = ({ forceView }: AppProps) => {
                 <Button
                   className={isWriting ? "col-span-2" : undefined}
                   disabled={isWriting}
+                  disabledReason="Wait for both odes to finish."
                   onClick={startOver}
                   size="compact"
                 >
+                  <Pencil />
                   Write another ode
                 </Button>
               </>
@@ -315,11 +387,16 @@ const App = ({ forceView }: AppProps) => {
 
       return (
         <OdeResult
+          changeRequest={changeRequest}
           isFresh={view.isFresh}
+          isRevising={view.isRevising ?? false}
           mosaic={view.mosaic}
           ode={view.ode}
+          onChangeRequestChange={handleChangeRequestChange}
           onCompare={() => handleCompare(view.ode, view.topic)}
+          onRevise={revise}
           onWriteAnother={startOver}
+          revisionError={view.revisionError}
           topic={view.topic}
         />
       );

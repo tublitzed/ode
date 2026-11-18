@@ -278,7 +278,7 @@ The materials of the floor itself.
 - **Wordmark** (400, 1.5rem, 1.33): "Ode" in the logged-in header, led by the 1.75rem nightingale favicon with a 0.625rem gap.
 - **Verse** (400, 1.25rem, 1.55): The poem, left-aligned at up to 34rem, with a 1.5rem hanging indent on wrapped lines and 1.1em between stanzas. **Verse compact** (1.125rem, 1.55) sets the comparison columns.
 - **Status** (Newsreader 400, 1.125rem, 1.5): Rotating progress phrases, 40ch at most.
-- **Lede** (Figtree 400, 1.125rem, 1.5): The form hint and the declined reason, soft umber, balanced, 40 to 44ch. **Body** (1rem, 1.5) carries the ode type line.
+- **Lede** (Figtree 400, 1.125rem, 1.5): The form hint and the declined reason, soft umber, balanced, 40 to 44ch. **Body** (1rem, 1.5) carries the ode type descriptions in a comparison.
 - **Button** (500, 1rem) and **Input** (400, 1.125rem): Controls. Compact buttons in the action bar drop to 0.875rem below 40rem.
 - **Label** (500, 0.875rem, 1) names a field. **Small** (400, 0.875rem) is column descriptions. **Caption** (400, 0.75rem) is tooltip text.
 
@@ -292,7 +292,7 @@ The materials of the floor itself.
 
 The layout is "Exhibit": one column on the center axis, with one framed panel above the text. The page has a slim header (wordmark left, Log out right) and a main column that centers everything. Header padding is 1rem and widens to 1.5rem by 3rem at 48rem; main has a 1rem gutter and 5rem of bottom padding.
 
-The panel is square, min(25rem, 72vw) wide, and stays the same size through form, progress, declined and result, so the wall does not rearrange as the ode is made and a phone still shows the form's button on the first screen. The title sits 2.5rem below it. On the result, the type line and verse follow on that axis, with the verse block left-aligned inside its centered 34rem measure. The verse is 1.125rem on phones and 1.25rem from 40rem up.
+The panel is square, min(25rem, 72vw) wide, and stays the same size through form, progress, declined and result, so the wall does not rearrange as the ode is made and a phone still shows the form's button on the first screen. The title sits 2.5rem below it. On the result, the verse follows on that axis (the ode type is named only in a comparison), with the verse block left-aligned inside its centered 34rem measure. The verse is 1.125rem on phones and 1.25rem from 40rem up.
 
 The ode's actions live in a bar pinned to the bottom of the viewport while the poem scrolls beneath it, which then rests at the end of the page: solid plaster, a 1px rule above, and safe-area padding below. On phones it is a two-column grid of 44px buttons, with the long Compare action across both columns. From 40rem up the buttons sit in one centered row at full size. The comparison uses the same bar.
 
@@ -336,13 +336,16 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 ### Buttons
 
 - **Shape:** Slightly softened corners (0.3rem), 3rem minimum height.
-- **Primary:** Umber with limewash text and a 2px matching border. At most one per view: "Write my ode", "Write another ode", "Log in".
-- **Hover / Focus:** Colors transition on hover; primary lifts to umber lifted. Focus is a 2px oxblood outline, offset 3px. Disabled drops to 60% opacity.
+- **Primary:** Umber with limewash text and a 2px matching border, led by a 1rem Lucide icon: a pencil for "Write my ode" and "Write another ode", a log-in arrow for "Log in". At most one per view.
+- **Hover / Focus:** Colors transition on hover; primary lifts to umber lifted. Focus is a solid 2px oxblood outline, offset 3px, on every variant.
+- **Disabled:** The button loses its ink: a dashed soft umber border at half strength, no fill or shadow, and soft umber text. Every disabled button carries a short reason in the voice of the site ("Write a note for the poet first.", "Wait for the poet to finish this draft."), shown in a tooltip on hover and keyboard focus. A button with a reason stays focusable as `aria-disabled` and ignores clicks, so keyboard and screen-reader users reach the reason too.
 - **Outline:** 2px ink border on no fill, plaster shade on hover. Secondary actions and suggested topics, whose labels may wrap.
+- **Secondary:** Plaster shade fill with no visible border, a darker plaster on hover. For optional next steps that should sit below the action bar in weight, such as "Revise".
 - **Ghost:** Soft umber text with no border, ink on plaster shade on hover. "Enter a different topic".
 - **Link:** Soft umber small text, underlined, with no padding or minimum height. "Log out" in the header only.
-- **Compact size:** The action bar's buttons ("Compare Pindaric and Horatian odes", "Share this ode", "Write another ode") are 2.75rem tall with 0.75rem side padding and 0.875rem text on phones, then return to full size from 40rem up.
-- **Cursor:** Every enabled button and button-role element uses the pointer cursor. Disabled buttons keep the arrow, and Pindaric section labels keep the help cursor.
+- **Small size:** 2.5rem tall with 0.875rem side padding and 0.875rem text. Paired with Secondary for optional actions beside a 2.5rem field.
+- **Compact size:** The action bar's buttons ("Compare odes", "Share this ode", "Write another ode") are 2.75rem tall with 0.75rem side padding and 0.875rem text on phones, then return to full size from 40rem up.
+- **Cursor:** Every enabled button and button-role element uses the pointer cursor. Disabled buttons use the not-allowed cursor, and Pindaric section labels keep the help cursor.
 
 ### Inputs / Fields
 
@@ -350,6 +353,7 @@ Controls are shadcn primitives restyled to sit quietly on plaster; the panel doe
 - **Title field:** The topic field is set inside the headline, following the words "Ode to", with a 3px rule. It is a one-row text area that sizes to its content from 8ch up to the full column, then wraps onto more lines, centered, so a long topic reads as a title instead of scrolling out of view. Enter submits and line breaks become spaces. Where content sizing is unsupported, it spans the column and grows in height as you type.
 - **Byline:** "…with Anthropic" sits 0.75rem under the title field in Young Serif at clamp(1.375rem, 2.5vw, 1.875rem), soft umber, so the headline completes the pun: "Ode to Tomatoes … with Anthropic." It appears only inside the logged-in app, never on logged-out pages.
 - **Focus:** The rule turns oxblood; the password field's rule also thickens to 3px.
+- **Empty topic:** The topic field takes focus when the form opens. Submitting it empty skips the browser's validation bubble: focus returns to the field, its rule turns oxblood, and "Even the muse needs a subject. Name one above." appears beneath as an error.
 - **Error / Disabled:** Oxblood text at weight 500 beneath the field, announced as an alert; the password field's rule also turns oxblood. Disabled fields drop to 60% opacity.
 
 ### Tooltip
@@ -370,9 +374,9 @@ With prefers-reduced-motion, laying skips straight to the finished mosaic and re
 
 ### Mosaic Sketch and Wet Mortar
 
-On the empty form, the bed shows a sketch in red chalk, the underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject. Typing clears both. With reduced motion, the first sketch stays still.
+On the empty form, the bed shows a sketch in red chalk, the underdrawing a mosaicist made on wet mortar. It sketches one example subject at a time (pizza, my cat, the moon, coffee, tomatoes): each line draws itself over 1.6s, 70ms apart, the whole sketch fades in and out over 5s, and the topic field's placeholder names the same subject in soft umber at 70%, light enough to read as a placeholder while holding 3:1 at display size. Typing clears both. With reduced motion, the first sketch stays still.
 
-While the ode is being written, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. Under the button, a line in Newsreader, soft umber, opens with "Writing your ode to {topic}…" and then rotates every 4.5s, fading in over 700ms, through short process asides ("Consulting the muses…", "Mixing the mortar…") alternating with ode lore. The interface never names the model; the brand line is "Ode with Anthropic". When the ode arrives, the same quiet line hands off to “Laying the tiles…” while the mosaic lays. Status text never uses oxblood, which is reserved for focus, errors and selection.
+While the ode is being written, the bed stays quiet: nothing is drawn, and a soft light sheen (22% warm white, 105deg) passes across the wet mortar every 3.4s, hidden under reduced motion. In place of the form hint, above the button, a line in Newsreader, soft umber, opens with "Writing your ode to {topic}…" and then rotates every 4.5s, fading in over 700ms, through short process asides ("Consulting the muses…", "Mixing the mortar…") alternating with ode lore. The interface never names the model; the brand line is "Ode with Anthropic". When the ode arrives, the same quiet line hands off to “Laying the tiles…” while the mosaic lays. Status text never uses oxblood, which is reserved for focus, errors and selection.
 
 ### Tile Loader
 

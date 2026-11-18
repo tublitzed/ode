@@ -9,9 +9,12 @@ import type { Router } from "express";
 
 import { drawMosaic } from "#/server/odes/drawMosaic.ts";
 import { generateOde } from "#/server/odes/generate.ts";
+import type { Revision } from "#/server/odes/generate.ts";
 import {
   DEFAULT_ODE_TYPE,
   isOdeType,
+  MAX_CHANGE_REQUEST_LENGTH,
+  MAX_CHANGE_REQUESTS,
   MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
 } from "#/shared/ode.ts";
@@ -55,10 +58,63 @@ const drawMosaicSafely = async (topic: string) => {
   }
 };
 
-const isUsableSourceOde = (value: unknown): value is string =>
+const isUsableOde = (value: unknown): value is string =>
   typeof value === "string" &&
   value.trim().length > 0 &&
   value.length <= MAX_ODE_LENGTH;
+
+const isUsableChangeRequest = (value: unknown): value is string =>
+  typeof value === "string" &&
+  value.trim().length > 0 &&
+  value.trim().length <= MAX_CHANGE_REQUEST_LENGTH;
+
+const isUsableChangeRequests = (value: unknown): value is string[] =>
+  Array.isArray(value) &&
+  value.length > 0 &&
+  value.length <= MAX_CHANGE_REQUESTS &&
+  value.every(isUsableChangeRequest);
+
+type RevisionResult = { error: string } | { revision: Revision | undefined };
+
+const readRevision = (body: unknown): RevisionResult => {
+  const { changeRequests, previousOde, sourceOde } = (body ?? {}) as Record<
+    string,
+    unknown
+  >;
+
+  if (changeRequests === undefined && previousOde === undefined) {
+    return { revision: undefined };
+  }
+
+  if (sourceOde !== undefined) {
+    return {
+      error:
+        "Even the muse works one draft at a time. Compare or revise, not both.",
+    };
+  }
+
+  if (!isUsableOde(previousOde)) {
+    return {
+      error:
+        "That draft slipped out of reach. Write a fresh ode and try again.",
+    };
+  }
+
+  if (!isUsableChangeRequests(changeRequests)) {
+    return {
+      error: `Every revision needs a note: a change of up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
+    };
+  }
+
+  return {
+    revision: {
+      changeRequests: changeRequests.map((changeRequest) =>
+        changeRequest.trim(),
+      ),
+      previousOde,
+    },
+  };
+};
 
 export const odesRouter: Router = express.Router();
 
@@ -85,18 +141,30 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
 
   const sourceOde: unknown = req.body?.sourceOde;
 
-  if (sourceOde !== undefined && !isUsableSourceOde(sourceOde)) {
+  if (sourceOde !== undefined && !isUsableOde(sourceOde)) {
     res.status(400).json({
       error: "We can’t build on that ode. Write a fresh one and try again.",
     });
     return;
   }
 
-  const pendingMosaic =
-    sourceOde === undefined ? drawMosaicSafely(topic) : undefined;
+  const revisionResult = readRevision(req.body);
+
+  if ("error" in revisionResult) {
+    res.status(400).json({ error: revisionResult.error });
+    return;
+  }
+
+  const { revision } = revisionResult;
+
+  // We have comparisons and revisions in addition to fresh odes.
+  const isFreshOde = sourceOde === undefined && revision === undefined;
+
+  // No need to make a new mosaic for anything but a fresh ode.
+  const pendingMosaic = isFreshOde ? drawMosaicSafely(topic) : undefined;
 
   try {
-    const ode = await generateOde(topic, type, sourceOde);
+    const ode = await generateOde(topic, type, { revision, sourceOde });
 
     if (ode.status !== "ode" || !pendingMosaic) {
       res.json(ode);

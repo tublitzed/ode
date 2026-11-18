@@ -21,7 +21,7 @@ const GitHubIcon = () => (
 
 const AboutPage = () => {
   useEffect(() => {
-    document.title = "About · ode";
+    document.title = "About · Ode";
   }, []);
 
   return (
@@ -59,12 +59,17 @@ const AboutPage = () => {
             </span>
           </p>
         </div>
-        <Button asChild className="mt-12" variant="outline">
-          <a href={REPO_URL} rel="noreferrer" target="_blank">
-            <GitHubIcon />
-            Read the source on GitHub
-          </a>
-        </Button>
+        <div className="mt-12 flex flex-wrap justify-center gap-3">
+          <Button asChild variant="outline">
+            <a href={REPO_URL} rel="noreferrer" target="_blank">
+              <GitHubIcon />
+              Read the source on GitHub
+            </a>
+          </Button>
+          <Button asChild variant="secondary">
+            <a href="/">Write an ode</a>
+          </Button>
+        </div>
       </main>
     </div>
   );

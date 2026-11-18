@@ -42,6 +42,6 @@ export const renderPreview = (html: string, { ode, topic }: SharedOde) => {
   ].join("\n    ");
 
   return html
-    .replace(/<title>.*?<\/title>/, () => `<title>${title} · ode</title>`)
+    .replace(/<title>.*?<\/title>/, () => `<title>${title} · Ode</title>`)
     .replace("</head>", () => `  ${tags}\n  </head>`);
 };

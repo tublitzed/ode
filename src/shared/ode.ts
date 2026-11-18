@@ -1,3 +1,5 @@
+export const MAX_CHANGE_REQUEST_LENGTH = 300;
+export const MAX_CHANGE_REQUESTS = 10;
 export const MAX_ODE_LENGTH = 5000;
 export const MAX_TOPIC_LENGTH = 100;
 

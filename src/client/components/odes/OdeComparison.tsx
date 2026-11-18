@@ -13,14 +13,24 @@ import type { MosaicShape, OdeType } from "@/shared/ode";
 const LOADER_INTERVAL_MS = 5000;
 
 const LOADER_PHRASES = [
-  "Pindaric odes are named for Pindar, a Greek poet of the 5th century BCE.",
-  "Horatian odes are named for Horace, a Roman poet of the 1st century BCE.",
-  "Sharpening the quill…",
-  "Pindar wrote many of his odes to honor winners at games like the Olympics.",
-  "Horace’s odes gave us “carpe diem,” often translated as “seize the day.”",
-  "Admiring your subject…",
-  "Pindaric odes were performed by a chorus, singing and dancing as they went.",
-  "Where a Pindaric ode is a public celebration, a Horatian ode is a quiet, personal reflection.",
+  "Pindaric odes are named for Pindar, a Greek poet. Horatian odes, for Horace, a Roman one.",
+  "Tuning two lyres at once…",
+  "Pindar wrote victory odes for athletes at the Olympic, Pythian, Isthmian and Nemean games.",
+  "Horace’s odes gave us “carpe diem” and the “golden mean.”",
+  "Pacing out a strophe…",
+  "Pindar’s winners paid him to make their victories sound eternal.",
+  "Horace warned that rivaling Pindar was like flying on wax wings, Icarus-style.",
+  "Counting Latin syllables…",
+  "Pindar’s first Olympian ode opens: “Best of all things is water.”",
+  "By his own telling, Horace dropped his shield and ran at the Battle of Philippi.",
+  "Folding the epode…",
+  "Strophe means “turn” and antistrophe “counter-turn,” after the chorus’s steps.",
+  "Horace’s patron gave him a farm in the Sabine hills, and it keeps turning up in his odes.",
+  "Admiring your subject from two angles…",
+  "Legend says Alexander the Great spared Pindar’s house when he razed Thebes.",
+  "Horace borrowed his stanza shapes from the Greek poets Sappho and Alcaeus.",
+  "Ben Jonson split his own name across two stanzas of a Pindaric ode: “Ben / Jonson.”",
+  "Horace closed his third book of odes boasting it would outlast bronze.",
   "Polishing a stanza…",
 ];
 
