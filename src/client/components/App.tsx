@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 
 import AppHeader from "@/client/components/AppHeader";
@@ -365,6 +366,7 @@ const App = ({ forceView }: AppProps) => {
                   onClick={startOver}
                   size="compact"
                 >
+                  <Pencil />
                   Write another ode
                 </Button>
               </>

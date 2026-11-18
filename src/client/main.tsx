@@ -28,7 +28,7 @@ const isAboutPage = window.location.pathname === "/about";
 const isLoginPage = window.location.pathname === "/login";
 
 if (isLoginPage) {
-  document.title = "Log in · ode";
+  document.title = "Log in · Ode";
 }
 
 const sharedOdeId = getSharedOdeId(window.location.pathname);

@@ -6,11 +6,7 @@ import type { OdeColumn } from "@/client/components/odes/OdeComparison";
 import OdeTitle from "@/client/components/odes/OdeTitle";
 import OdeVerse from "@/client/components/odes/OdeVerse";
 import { httpRequest } from "@/client/utils/httpRequest";
-import {
-  COMPARISON_TYPES,
-  DEFAULT_ODE_TYPE,
-  ODE_TYPE_DETAILS,
-} from "@/shared/ode";
+import { COMPARISON_TYPES, DEFAULT_ODE_TYPE } from "@/shared/ode";
 import type { SharedOde } from "@/shared/ode";
 
 type View =
@@ -23,8 +19,6 @@ type SharedOdePageProps = {
   forceView?: View; // Storybook only
   id: string;
 };
-
-const { description, label } = ODE_TYPE_DETAILS[DEFAULT_ODE_TYPE];
 
 const toColumns = ({ comparison = {}, ode }: SharedOde): OdeColumn[] => [
   { slot: { ode, status: "ode" }, type: DEFAULT_ODE_TYPE },
@@ -90,10 +84,6 @@ const renderView = (view: View) => {
       <OdeTitle className={mosaic ? "mt-10" : undefined}>
         Ode to {topic}
       </OdeTitle>
-      <p className="text-muted-foreground mt-3 max-w-[44ch] leading-normal text-balance">
-        <span className="text-foreground font-semibold">{label}.</span>{" "}
-        {description}
-      </p>
       <OdeVerse className="mt-9 max-w-136 text-left" ode={view.sharedOde.ode} />
     </>
   );
@@ -118,7 +108,7 @@ const SharedOdePage = ({ forceView, id }: SharedOdePageProps) => {
       }
 
       if (result.ok) {
-        document.title = `Ode to ${result.data.topic} · ode`;
+        document.title = `Ode to ${result.data.topic} · Ode`;
         setView({ sharedOde: result.data, status: "found" });
         return;
       }

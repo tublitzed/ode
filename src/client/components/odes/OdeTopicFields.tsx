@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode, SubmitEvent } from "react";
 
@@ -99,7 +100,7 @@ const OdeTopicFields = ({
           aria-invalid={message ? true : undefined}
           aria-required
           autoComplete="off"
-          className="border-input caret-destructive focus-visible:border-destructive aria-invalid:border-destructive placeholder:text-muted-foreground w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
+          className="border-input caret-destructive focus-visible:border-destructive aria-invalid:border-destructive placeholder:text-muted-foreground/70 w-full max-w-full resize-none overflow-hidden rounded-none border-0 border-b-[3px] bg-transparent pb-1 text-center text-balance outline-none supports-[field-sizing:content]:w-auto supports-[field-sizing:content]:min-w-[8ch] [field-sizing:content]"
           id="topic"
           maxLength={MAX_TOPIC_LENGTH}
           name="topic"
@@ -143,6 +144,7 @@ const OdeTopicFields = ({
         disabledReason="The poet is still writing your ode."
         type="submit"
       >
+        <Pencil />
         {getButtonLabel(isWriting, error)}
       </Button>
     </form>

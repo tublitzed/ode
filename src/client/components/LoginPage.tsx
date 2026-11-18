@@ -1,3 +1,4 @@
+import { LogIn } from "lucide-react";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 
@@ -107,6 +108,7 @@ const LoginPage = () => {
           disabledReason="Checking the password."
           type="submit"
         >
+          <LogIn />
           {isSubmitting ? "Logging in…" : "Log in"}
         </Button>
       </form>

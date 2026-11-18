@@ -1,3 +1,4 @@
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 
 import MosaicPanel from "@/client/components/mosaics/MosaicPanel";
@@ -9,7 +10,6 @@ import OdeTopicFields from "@/client/components/odes/OdeTopicFields";
 import OdeVerse from "@/client/components/odes/OdeVerse";
 import ShareOde from "@/client/components/shares/ShareOde";
 import { Button } from "@/client/components/ui/button";
-import { DEFAULT_ODE_TYPE, ODE_TYPE_DETAILS } from "@/shared/ode";
 import type { MosaicShape } from "@/shared/ode";
 
 const LAYING_PHRASES = ["Laying the tiles…"];
@@ -28,8 +28,6 @@ type OdeResultProps = {
   revisionError?: string;
   topic: string;
 };
-
-const { description, label } = ODE_TYPE_DETAILS[DEFAULT_ODE_TYPE];
 
 const OdeResult = ({
   changeRequest,
@@ -58,10 +56,6 @@ const OdeResult = ({
       {isLaid ? (
         <>
           <OdeTitle className="mt-10">Ode to {topic}</OdeTitle>
-          <p className="text-muted-foreground mt-3 max-w-[44ch] leading-normal text-balance">
-            <span className="text-foreground font-semibold">{label}.</span>{" "}
-            {description}
-          </p>
           <OdeVerse
             className="animate-rise mt-9 max-w-136 text-left motion-reduce:animate-none"
             key={ode}
@@ -83,7 +77,7 @@ const OdeResult = ({
               size="compact"
               variant="outline"
             >
-              Compare Pindaric and Horatian odes
+              Compare odes
             </Button>
             <ShareOde
               disabled={isRevising}
@@ -100,6 +94,7 @@ const OdeResult = ({
               onClick={onWriteAnother}
               size="compact"
             >
+              <Pencil />
               Write another ode
             </Button>
           </OdeActions>

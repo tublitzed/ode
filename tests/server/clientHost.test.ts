@@ -48,7 +48,7 @@ describe("page handler", () => {
     const res = await request(buildApp()).get(SHARE_PATH);
 
     expect(res.status).toBe(200);
-    expect(res.text).toContain("<title>Ode to Tomatoes · ode</title>");
+    expect(res.text).toContain("<title>Ode to Tomatoes · Ode</title>");
     expect(res.text).toContain(
       '<meta property="og:title" content="Ode to Tomatoes" />',
     );
@@ -83,7 +83,7 @@ describe("page handler", () => {
 
     const res = await request(buildApp()).get(SHARE_PATH);
 
-    expect(res.text).toContain("<title>Ode to $&amp; and $&#39; · ode</title>");
+    expect(res.text).toContain("<title>Ode to $&amp; and $&#39; · Ode</title>");
   });
 
   it("truncates a long description", async () => {
