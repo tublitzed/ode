@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { anthropic, MODEL } from "#/server/anthropic.ts";
 import { isMosaicShape, MAX_MOSAIC_SHAPES, TILE_COLORS } from "#/shared/ode.ts";
 import type { MosaicShape } from "#/shared/ode.ts";
@@ -15,25 +17,11 @@ Draw the picture as flat shapes on a 240 by 240 canvas. It will be laid in small
 
 Colors are codes. Each hue has four tones from lightest 1 to darkest 4: "b1" to "b4" blue, "g1" to "g4" green, "k1" to "k4" gray, "n1" to "n4" brown, "o1" to "o4" orange, "r1" to "r4" red, "y1" to "y4" gold. Also "W" white, "K" near black and "C" warm cream.`;
 
-const OUTPUT_SCHEMA = {
-  additionalProperties: false,
-  properties: {
-    shapes: {
-      items: {
-        additionalProperties: false,
-        properties: {
-          d: { type: "string" },
-          fill: { enum: TILE_COLORS, type: "string" },
-        },
-        required: ["d", "fill"],
-        type: "object",
-      },
-      type: "array",
-    },
-  },
-  required: ["shapes"],
-  type: "object",
-};
+const OUTPUT_SCHEMA = z.toJSONSchema(
+  z.object({
+    shapes: z.array(z.object({ d: z.string(), fill: z.enum(TILE_COLORS) })),
+  }),
+);
 
 export const toMosaic = (text: string): MosaicShape[] | undefined => {
   const output = JSON.parse(text);

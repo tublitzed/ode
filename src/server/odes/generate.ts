@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { anthropic, MODEL } from "#/server/anthropic.ts";
 import type { OdeResponse, OdeType } from "#/shared/ode.ts";
 
@@ -62,31 +64,30 @@ Keep it short: no more than 24 lines in total, counting blank lines and any sect
 
 ${buildExtraInstructions(options)}When you decline, leave "ode" empty. Put one short, friendly sentence in "reason" explaining why, without repeating the topic. Put exactly three alternative topics in "suggestions", each one to four words and safe for all ages. If the topic names a harmless subject alongside something you declined, build on that subject. Otherwise make them concrete everyday subjects with no connection to the declined topic.`;
 
-const OUTPUT_SCHEMA = {
-  additionalProperties: false,
-  properties: {
-    ode: { type: "string" },
-    reason: { type: "string" },
-    status: { enum: ["declined", "ode"], type: "string" },
-    suggestions: { items: { type: "string" }, type: "array" },
-  },
-  required: ["ode", "reason", "status", "suggestions"],
-  type: "object",
-};
+const ModelOutput = z.object({
+  ode: z.string(),
+  reason: z.string(),
+  status: z.enum(["declined", "ode"]),
+  suggestions: z.array(z.string()),
+});
 
-type ModelOutput = {
-  ode: string;
-  reason: string;
-  status: "declined" | "ode";
-  suggestions: string[];
-};
+type ModelOutput = z.infer<typeof ModelOutput>;
 
-const parseOutput = (text: string): ModelOutput => {
+const readJson = (text: string): unknown => {
   try {
     return JSON.parse(text);
   } catch {
     throw new Error("Response was not valid JSON");
   }
+};
+
+const parseOutput = (text: string): ModelOutput => {
+  const output = ModelOutput.safeParse(readJson(text));
+  if (!output.success) {
+    throw new Error("Response did not match the output schema");
+  }
+
+  return output.data;
 };
 
 const toOdeResponse = ({
@@ -152,7 +153,7 @@ export const generateOde = async (
     model: MODEL,
     output_config: {
       effort: "high",
-      format: { schema: OUTPUT_SCHEMA, type: "json_schema" },
+      format: { schema: z.toJSONSchema(ModelOutput), type: "json_schema" },
     },
     system: buildSystemPrompt(type, options),
   });
