@@ -9,7 +9,13 @@ import { Label } from "@/client/components/ui/label";
 import { NIGHTINGALE } from "@/client/utils/nightingale";
 
 const FALLBACK_PATH = "/";
+const GENERIC_ERROR = "The muse lost the thread. Try again.";
 const PARSE_BASE = "http://same-origin.invalid";
+
+const LOGIN_ERRORS: Record<number, string> = {
+  401: "Close, but no laurel wreath. That’s not the password.",
+  429: "Too many guesses for one sitting. Rest a while, then try again.",
+};
 
 // Only allow next path if same domain.
 export const safeNextPath = (next: string | null) => {
@@ -48,13 +54,9 @@ const LoginPage = () => {
         return;
       }
 
-      setError(
-        res.status === 401
-          ? "Close, but no laurel wreath. That’s not the password."
-          : "The muse lost the thread. Try again.",
-      );
+      setError(LOGIN_ERRORS[res.status] ?? GENERIC_ERROR);
     } catch {
-      setError("The muse lost the thread. Try again.");
+      setError(GENERIC_ERROR);
     }
 
     setIsSubmitting(false);

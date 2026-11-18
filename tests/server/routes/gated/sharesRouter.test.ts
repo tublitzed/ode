@@ -57,7 +57,6 @@ describe("POST /api/shares", () => {
     expect(res.status).toBe(201);
     expect(res.body).toEqual({ id: SHARE_ID });
     expect(mockCreateSharedOde).toHaveBeenCalledWith(testContext.db, {
-      comparison: {},
       ode: ODE,
       topic: TOPIC,
     });
