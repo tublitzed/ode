@@ -1,4 +1,4 @@
-const MAX_FAILURES = 2;
+const MAX_FAILURES = 20;
 const WINDOW_MS = 15 * 60 * 1000; // 15 mins.
 
 type Failures = { count: number; resetAt: number };
