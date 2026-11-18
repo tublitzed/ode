@@ -27,7 +27,7 @@ export const toMosaic = (text: string): MosaicShape[] | undefined => {
 
 export const drawMosaic = async (
   topic: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal, // if ode generation fails, stop generating the mosaic
 ): Promise<MosaicShape[] | undefined> => {
   const response = await anthropic.messages.create(
     {

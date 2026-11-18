@@ -1,5 +1,5 @@
-const MAX_FAILURES = 10;
-const WINDOW_MS = 15 * 60 * 1000;
+const MAX_FAILURES = 2;
+const WINDOW_MS = 15 * 60 * 1000; // 15 mins.
 
 type Failures = { count: number; resetAt: number };
 
@@ -8,6 +8,7 @@ type LoginLimiterOptions = {
   windowMs?: number;
 };
 
+// in memory rate limiter for password attempts.
 export const createLoginLimiter = ({
   maxFailures = MAX_FAILURES,
   windowMs = WINDOW_MS,

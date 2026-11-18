@@ -1,6 +1,5 @@
 import express from "express";
 import type { Express } from "express";
-
 import { createGate } from "#/server/auth.ts";
 import type { IsPublicPath } from "#/server/auth.ts";
 import { createContextMiddleware } from "#/server/context.ts";
@@ -22,7 +21,7 @@ export const createApp = async ({
   isPublicPath,
   mountClient,
 }: AppOptions) => {
-  // Entire app is gated behind auth.
+  // Entire app is gated behind auth except for shares.
   const gate = createGate(isPublicPath);
 
   const app = express();
