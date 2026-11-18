@@ -1,22 +1,23 @@
 import {
   APIConnectionError,
+  APIUserAbortError,
   InternalServerError,
   RateLimitError,
 } from "@anthropic-ai/sdk";
 import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
+import { z } from "zod";
 
 import { drawMosaic } from "#/server/odes/drawMosaic.ts";
 import { generateOde } from "#/server/odes/generate.ts";
-import type { Revision } from "#/server/odes/generate.ts";
+import { odeText, trimmedText } from "#/server/routes/requestSchemas.ts";
 import {
   DEFAULT_ODE_TYPE,
-  isOdeType,
   MAX_CHANGE_REQUEST_LENGTH,
   MAX_CHANGE_REQUESTS,
-  MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
+  ODE_TYPES,
 } from "#/shared/ode.ts";
 
 const BUSY = {
@@ -31,6 +32,64 @@ const UNREACHABLE = {
   message:
     "Our poet wandered off in search of inspiration. Try again in a moment.",
   status: 502,
+};
+
+const OdeRequest = z.object({
+  changeRequests: z
+    .array(trimmedText(MAX_CHANGE_REQUEST_LENGTH))
+    .min(1)
+    .max(MAX_CHANGE_REQUESTS)
+    .optional(),
+  previousOde: odeText.optional(),
+  sourceOde: odeText.optional(),
+  topic: trimmedText(MAX_TOPIC_LENGTH),
+  type: z.enum(ODE_TYPES).default(DEFAULT_ODE_TYPE),
+});
+
+type OdeRequest = z.infer<typeof OdeRequest>;
+
+const FIELD_ERRORS: Record<keyof OdeRequest, string> = {
+  changeRequests: `Every revision needs a note: a change of up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
+  previousOde:
+    "That draft slipped out of reach. Write a fresh ode and try again.",
+  sourceOde: "We can’t build on that ode. Write a fresh one and try again.",
+  topic: `Every ode needs a subject: a word or phrase of up to ${MAX_TOPIC_LENGTH} characters.`,
+  type: "We don’t know that kind of ode. Try a Pindaric, Horatian or irregular one.",
+};
+
+const REVISE_AND_COMPARE_ERROR =
+  "Even the muse works one draft at a time. Compare or revise, not both.";
+
+const isRequestField = (field: unknown): field is keyof OdeRequest =>
+  typeof field === "string" && Object.hasOwn(FIELD_ERRORS, field);
+
+const toFieldError = ({ issues }: z.ZodError) => {
+  const field = issues[0]?.path[0];
+  return isRequestField(field) ? FIELD_ERRORS[field] : FIELD_ERRORS.topic;
+};
+
+const getRevisionError = ({
+  changeRequests,
+  previousOde,
+  sourceOde,
+}: OdeRequest) => {
+  if (changeRequests === undefined && previousOde === undefined) {
+    return undefined;
+  }
+
+  if (sourceOde !== undefined) {
+    return REVISE_AND_COMPARE_ERROR;
+  }
+
+  if (previousOde === undefined) {
+    return FIELD_ERRORS.previousOde;
+  }
+
+  if (changeRequests === undefined) {
+    return FIELD_ERRORS.changeRequests;
+  }
+
+  return undefined;
 };
 
 const toFailure = (error: unknown) => {
@@ -49,119 +108,48 @@ const toFailure = (error: unknown) => {
   return UNEXPECTED;
 };
 
-const drawMosaicSafely = async (topic: string) => {
+const drawMosaicSafely = async (topic: string, signal: AbortSignal) => {
   try {
-    return await drawMosaic(topic);
+    return await drawMosaic(topic, signal);
   } catch (error) {
+    if (error instanceof APIUserAbortError) {
+      return undefined;
+    }
+
     Sentry.captureException(error);
     return undefined;
   }
 };
 
-const isUsableOde = (value: unknown): value is string =>
-  typeof value === "string" &&
-  value.trim().length > 0 &&
-  value.length <= MAX_ODE_LENGTH;
-
-const isUsableChangeRequest = (value: unknown): value is string =>
-  typeof value === "string" &&
-  value.trim().length > 0 &&
-  value.trim().length <= MAX_CHANGE_REQUEST_LENGTH;
-
-const isUsableChangeRequests = (value: unknown): value is string[] =>
-  Array.isArray(value) &&
-  value.length > 0 &&
-  value.length <= MAX_CHANGE_REQUESTS &&
-  value.every(isUsableChangeRequest);
-
-type RevisionResult = { error: string } | { revision: Revision | undefined };
-
-const readRevision = (body: unknown): RevisionResult => {
-  const { changeRequests, previousOde, sourceOde } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
-
-  if (changeRequests === undefined && previousOde === undefined) {
-    return { revision: undefined };
-  }
-
-  if (sourceOde !== undefined) {
-    return {
-      error:
-        "Even the muse works one draft at a time. Compare or revise, not both.",
-    };
-  }
-
-  if (!isUsableOde(previousOde)) {
-    return {
-      error:
-        "That draft slipped out of reach. Write a fresh ode and try again.",
-    };
-  }
-
-  if (!isUsableChangeRequests(changeRequests)) {
-    return {
-      error: `Every revision needs a note: a change of up to ${MAX_CHANGE_REQUEST_LENGTH} characters.`,
-    };
-  }
-
-  return {
-    revision: {
-      changeRequests: changeRequests.map((changeRequest) =>
-        changeRequest.trim(),
-      ),
-      previousOde,
-    },
-  };
-};
-
 export const odesRouter: Router = express.Router();
 
 odesRouter.post("/api/odes", express.json(), async (req, res) => {
-  const provided: unknown = req.body?.topic;
-  const topic = typeof provided === "string" ? provided.trim() : "";
+  const parsed = OdeRequest.safeParse(req.body ?? {});
 
-  if (!topic || topic.length > MAX_TOPIC_LENGTH) {
-    res.status(400).json({
-      error: `Every ode needs a subject: a word or phrase of up to ${MAX_TOPIC_LENGTH} characters.`,
-    });
+  if (!parsed.success) {
+    res.status(400).json({ error: toFieldError(parsed.error) });
     return;
   }
 
-  const type: unknown = req.body?.type ?? DEFAULT_ODE_TYPE;
+  const revisionError = getRevisionError(parsed.data);
 
-  if (!isOdeType(type)) {
-    res.status(400).json({
-      error:
-        "We don’t know that kind of ode. Try a Pindaric, Horatian or irregular one.",
-    });
+  if (revisionError) {
+    res.status(400).json({ error: revisionError });
     return;
   }
 
-  const sourceOde: unknown = req.body?.sourceOde;
-
-  if (sourceOde !== undefined && !isUsableOde(sourceOde)) {
-    res.status(400).json({
-      error: "We can’t build on that ode. Write a fresh one and try again.",
-    });
-    return;
-  }
-
-  const revisionResult = readRevision(req.body);
-
-  if ("error" in revisionResult) {
-    res.status(400).json({ error: revisionResult.error });
-    return;
-  }
-
-  const { revision } = revisionResult;
+  const { changeRequests, previousOde, sourceOde, topic, type } = parsed.data;
+  const revision =
+    changeRequests && previousOde ? { changeRequests, previousOde } : undefined;
 
   // We have comparisons and revisions in addition to fresh odes.
   const isFreshOde = sourceOde === undefined && revision === undefined;
 
   // No need to make a new mosaic for anything but a fresh ode.
-  const pendingMosaic = isFreshOde ? drawMosaicSafely(topic) : undefined;
+  const mosaicController = new AbortController();
+  const pendingMosaic = isFreshOde
+    ? drawMosaicSafely(topic, mosaicController.signal)
+    : undefined;
 
   try {
     const ode = await generateOde(topic, type, { revision, sourceOde });
@@ -181,5 +169,7 @@ odesRouter.post("/api/odes", express.json(), async (req, res) => {
     }
 
     res.status(failure.status).json({ error: failure.message });
+  } finally {
+    mosaicController.abort();
   }
 });

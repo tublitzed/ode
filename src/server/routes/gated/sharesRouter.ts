@@ -1,47 +1,37 @@
 import * as Sentry from "@sentry/node";
 import express from "express";
 import type { Router } from "express";
+import { z } from "zod";
 
+import { odeText, trimmedText } from "#/server/routes/requestSchemas.ts";
 import { createSharedOde } from "#/server/shares/store.ts";
 import {
+  COMPARISON_TYPES,
   MAX_ODE_LENGTH,
   MAX_TOPIC_LENGTH,
   parseMosaic,
-  toComparison,
 } from "#/shared/ode.ts";
+import type { MosaicShape } from "#/shared/ode.ts";
 
 const MAX_BODY_SIZE = "300kb";
 
-const trimmedString = (value: unknown) =>
-  typeof value === "string" ? value.trim() : "";
-
-const isValidComparison = (value: unknown) =>
-  value === undefined ||
-  (typeof value === "object" &&
-    value !== null &&
-    Object.keys(value).length === Object.keys(toComparison(value)).length);
-
-const isValidMosaic = (value: unknown) =>
-  value === undefined || parseMosaic(value) !== undefined;
+const ShareRequest = z.object({
+  comparison: z.partialRecord(z.enum(COMPARISON_TYPES), odeText).optional(),
+  mosaic: z
+    .custom<MosaicShape[]>((value) => parseMosaic(value) !== undefined)
+    .optional(),
+  ode: trimmedText(MAX_ODE_LENGTH),
+  topic: trimmedText(MAX_TOPIC_LENGTH),
+});
 
 export const sharesRouter: Router = express.Router();
 
 const parseBody = express.json({ limit: MAX_BODY_SIZE });
 
 sharesRouter.post("/api/shares", parseBody, async (req, res) => {
-  const comparison: unknown = req.body?.comparison;
-  const mosaic: unknown = req.body?.mosaic;
-  const ode = trimmedString(req.body?.ode);
-  const topic = trimmedString(req.body?.topic);
+  const parsed = ShareRequest.safeParse(req.body ?? {});
 
-  if (
-    !ode ||
-    !topic ||
-    ode.length > MAX_ODE_LENGTH ||
-    topic.length > MAX_TOPIC_LENGTH ||
-    !isValidComparison(comparison) ||
-    !isValidMosaic(mosaic)
-  ) {
+  if (!parsed.success) {
     res.status(400).json({
       error: "That ode can’t be framed for sharing. Try writing it again.",
     });
@@ -49,12 +39,7 @@ sharesRouter.post("/api/shares", parseBody, async (req, res) => {
   }
 
   try {
-    const id = await createSharedOde(req.context.db, {
-      comparison: toComparison(comparison),
-      mosaic: parseMosaic(mosaic),
-      ode,
-      topic,
-    });
+    const id = await createSharedOde(req.context.db, parsed.data);
     res.status(201).json({ id });
   } catch (error) {
     Sentry.captureException(error);

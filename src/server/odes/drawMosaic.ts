@@ -27,17 +27,21 @@ export const toMosaic = (text: string): MosaicShape[] | undefined => {
 
 export const drawMosaic = async (
   topic: string,
+  signal?: AbortSignal, // if ode generation fails, stop generating the mosaic
 ): Promise<MosaicShape[] | undefined> => {
-  const response = await anthropic.messages.create({
-    max_tokens: MAX_TOKENS,
-    messages: [{ content: buildMosaicUserMessage(topic), role: "user" }],
-    model: MODEL,
-    output_config: {
-      effort: "medium",
-      format: { schema: OUTPUT_SCHEMA, type: "json_schema" },
+  const response = await anthropic.messages.create(
+    {
+      max_tokens: MAX_TOKENS,
+      messages: [{ content: buildMosaicUserMessage(topic), role: "user" }],
+      model: MODEL,
+      output_config: {
+        effort: "medium",
+        format: { schema: OUTPUT_SCHEMA, type: "json_schema" },
+      },
+      system: MOSAIC_SYSTEM_PROMPT,
     },
-    system: MOSAIC_SYSTEM_PROMPT,
-  });
+    { signal },
+  );
 
   const text = response.content.find((block) => block.type === "text");
   if (response.stop_reason !== "end_turn" || !text) {

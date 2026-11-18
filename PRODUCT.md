@@ -26,7 +26,6 @@ Access is currently behind a single shared app password. A finished ode is read 
 
 - Flow today: password login, then a form takes a word or phrase ("What should this ode celebrate?"), a progress state shows rotating phrases, then the finished ode, with "Write another ode". Declined topics get a reason and three suggested topics.
 - Ode format, set by the system prompt in `src/server/llm/prompts/ode.ts`: free verse in very short enjambed lines, often one to four words, up to 30 lines counting blank lines, warm and a little playful. No title in the body; the UI titles it "Ode to {topic}". The response arrives whole, not streamed.
-- Later, not now: finished odes become shareable. Do not build sharing yet.
 - Stack: React, Tailwind and shadcn/ui on an Express server, with Storybook, deployed on Railway.
 
 ## Brand Commitments

@@ -1,5 +1,7 @@
 # Ode
 
+[![CI](https://github.com/tublitzed/ode/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tublitzed/ode/actions/workflows/ci.yml)
+
 Make odes with Anthropic! A toy app that allows you to enter a phrase, generate an ode, and then make variants of it.
 
 ## System Requirements
